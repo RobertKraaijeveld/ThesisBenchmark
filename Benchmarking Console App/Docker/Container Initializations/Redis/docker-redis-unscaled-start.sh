@@ -54,7 +54,6 @@ docker-machine ssh redis-manager0 -- "
           --appendonly yes\
           --auto-aof-rewrite-percentage 20\
           --cluster-enabled no\
-          --logfile redis-m-7002.log\
           --port 7001\
           --protected-mode no\
           --repl-diskless-sync yes\

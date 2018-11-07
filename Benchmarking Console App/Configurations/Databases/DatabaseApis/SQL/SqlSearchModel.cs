@@ -27,31 +27,28 @@ namespace Benchmarking_program.Configurations.Databases.DatabaseApis.SQL
         {
             var selectClause = $"SELECT "; 
             var fromClause = $" FROM {tableName} ";
+            var whereClause = "";
 
             foreach (var identifier in identifiersToRetrieve)
             {
                 selectClause += $"{identifier},";
             }
 
-            // trimming last comma or 'AND'
-            selectClause = selectClause.Remove(selectClause.Length - 1);
-
-            // Adding where clause if identifiersAndValuesToSearchFor contains any values. Otherwise
             if (identifiersAndValuesToSearchFor.Any())
             {
-                var whereClause = " WHERE ";
-
-                // where clause
+                whereClause = " WHERE ";
                 foreach (var identifierAndValueKv in identifiersAndValuesToSearchFor)
                 {
                     whereClause += $"{identifierAndValueKv.Key} = {identifierAndValueKv.Value} AND";
                 }
 
+                // Removing last 'AND' from where clause
                 whereClause = whereClause.Remove(whereClause.Length - 4, 4);
 
             }
 
-
+            // Removing last comma from select clause
+            selectClause = selectClause.Remove(selectClause.Length - 1);
 
             return selectClause += fromClause += whereClause += ";";
         }

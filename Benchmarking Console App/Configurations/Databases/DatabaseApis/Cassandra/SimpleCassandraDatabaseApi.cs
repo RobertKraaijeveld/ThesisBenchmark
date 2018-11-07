@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 using Benchmarking_program.Configurations.Databases.Interfaces;
 using Benchmarking_program.Models.DatabaseModels;
 using Cassandra;
@@ -35,7 +36,7 @@ namespace Benchmarking_program.Configurations.Databases.DatabaseApis.SQL
         public IEnumerable<M> Get<M>(string collectionName, ISearchModel searchModel) where M : IModel, new()
         {
             var queryText = searchModel.GetSearchString(collectionName);
-            return _cassandraMapper.Fetch<M>(queryText);
+            return _cassandraMapper.Fetch<M>(queryText).ToList();
         }
 
         public void Create<M>(IEnumerable<M> newModels, ICreateModel createModel) where M : IModel, new()

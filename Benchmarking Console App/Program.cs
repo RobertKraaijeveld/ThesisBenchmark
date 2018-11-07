@@ -34,13 +34,18 @@ namespace Benchmarking_program
             //var allModels = databaseApi.Get<SensorValueModel>("SensorValue", new MongoDbSearchModel(stuffToFilterOn, stuffToSelect));
 
 
-            var cassandraConnString = connectionStringFactory.GetDatabaseConnectionString(EDatabaseType.Cassandra);
-            var databaseApi = new SimpleCassandraDatabaseApi(cassandraConnString);
 
-            //DatabaseSeeder.SeedRandomly<SensorValueModel>(databaseApi, new CassandraCreateModel(), 1000);
-            var stuffToSelect = typeof(SensorValueModel).GetFields(BindingFlags.Instance | BindingFlags.Public)
-                                                        .Select(x => x.Name)
-                                                        .ToList();
+
+            //var cassandraConnString = connectionStringFactory.GetDatabaseConnectionString(EDatabaseType.Cassandra);
+            //var databaseApi = new SimpleCassandraDatabaseApi(cassandraConnString);
+
+            ////DatabaseSeeder.SeedRandomly<SensorValueModel>(databaseApi, new CassandraCreateModel(), 1000);
+            //var stuffToSelect = typeof(SensorValueModel).GetFields(BindingFlags.Instance | BindingFlags.Public) // TODO: USE THIS FOR GETALL METHOD
+            //                                              .Select(x => x.Name)
+            //                                              .ToList();
+            //var stuffToFilterOn = new Dictionary<string, object>(); // equivalent of saying SELECT .. FROM without a WHERE
+            //var allStuff = databaseApi.Get<SensorValueModel>("sensorvalue", new CassandraSearchModel(stuffToFilterOn, stuffToSelect));
+
         }
     }
 }
