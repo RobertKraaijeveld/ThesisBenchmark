@@ -1,0 +1,184 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{65C9DD7F-690A-4268-A4CF-0447E27807FB}</ProjectGuid>
+    <OutputType>Exe</OutputType>
+    <RootNamespace>Benchmarking_Console_App</RootNamespace>
+    <AssemblyName>Benchmarking Console App</AssemblyName>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <TargetFrameworkProfile />
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <Prefer32Bit>false</Prefer32Bit>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <Prefer32Bit>false</Prefer32Bit>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="Cassandra, Version=3.99.0.0, Culture=neutral, PublicKeyToken=10b231fbfc8c4b4d, processorArchitecture=MSIL">
+      <HintPath>..\packages\CassandraCSharpDriver.3.6.0\lib\net45\Cassandra.dll</HintPath>
+    </Reference>
+    <Reference Include="DnsClient, Version=1.0.7.0, Culture=neutral, PublicKeyToken=4574bb5573c51424, processorArchitecture=MSIL">
+      <HintPath>..\packages\DnsClient.1.0.7\lib\net45\DnsClient.dll</HintPath>
+    </Reference>
+    <Reference Include="LZ4, Version=1.0.10.93, Culture=neutral, PublicKeyToken=62e1b5ec1eec9bdd, processorArchitecture=MSIL">
+      <HintPath>..\packages\lz4net.1.0.10.93\lib\net4-client\LZ4.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Extensions.DependencyInjection.Abstractions, Version=1.0.0.0, Culture=neutral, PublicKeyToken=adb9793829ddae60, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.Extensions.DependencyInjection.Abstractions.1.0.0\lib\netstandard1.0\Microsoft.Extensions.DependencyInjection.Abstractions.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Extensions.Logging, Version=1.0.0.0, Culture=neutral, PublicKeyToken=adb9793829ddae60, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.Extensions.Logging.1.0.0\lib\netstandard1.1\Microsoft.Extensions.Logging.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Extensions.Logging.Abstractions, Version=1.0.0.0, Culture=neutral, PublicKeyToken=adb9793829ddae60, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.Extensions.Logging.Abstractions.1.0.0\lib\netstandard1.1\Microsoft.Extensions.Logging.Abstractions.dll</HintPath>
+    </Reference>
+    <Reference Include="MongoDB.Bson, Version=2.7.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\MongoDB.Bson.2.7.0\lib\net45\MongoDB.Bson.dll</HintPath>
+    </Reference>
+    <Reference Include="MongoDB.Driver, Version=2.7.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\MongoDB.Driver.2.7.0\lib\net45\MongoDB.Driver.dll</HintPath>
+    </Reference>
+    <Reference Include="MongoDB.Driver.Core, Version=2.7.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\MongoDB.Driver.Core.2.7.0\lib\net45\MongoDB.Driver.Core.dll</HintPath>
+    </Reference>
+    <Reference Include="MySqlConnector, Version=0.47.1.0, Culture=neutral, PublicKeyToken=d33d3e53aa5f8c92, processorArchitecture=MSIL">
+      <HintPath>..\packages\MySqlConnector.0.47.1\lib\net45\MySqlConnector.dll</HintPath>
+    </Reference>
+    <Reference Include="Newtonsoft.Json, Version=11.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\packages\Newtonsoft.Json.11.0.2\lib\net45\Newtonsoft.Json.dll</HintPath>
+    </Reference>
+    <Reference Include="Npgsql, Version=4.0.3.0, Culture=neutral, PublicKeyToken=5d8b90d52f46fda7, processorArchitecture=MSIL">
+      <HintPath>..\packages\Npgsql.4.0.3\lib\net45\Npgsql.dll</HintPath>
+    </Reference>
+    <Reference Include="PerstNet40, Version=1.0.5349.17983, Culture=neutral, PublicKeyToken=ac1b8589238349b8, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>.\PerstNet40.dll</HintPath>
+    </Reference>
+    <Reference Include="StackExchange.Redis, Version=1.2.6.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\StackExchange.Redis.1.2.6\lib\net45\StackExchange.Redis.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Buffers, Version=4.0.2.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Buffers.4.4.0\lib\netstandard1.1\System.Buffers.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Core" />
+    <Reference Include="System.IO.Compression" />
+    <Reference Include="System.Memory, Version=4.0.1.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Memory.4.5.0\lib\netstandard1.1\System.Memory.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Numerics" />
+    <Reference Include="System.Runtime.CompilerServices.Unsafe, Version=4.0.4.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Runtime.CompilerServices.Unsafe.4.5.0\lib\netstandard1.0\System.Runtime.CompilerServices.Unsafe.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Runtime.InteropServices.RuntimeInformation, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Runtime.InteropServices.RuntimeInformation.4.0.0\lib\net45\System.Runtime.InteropServices.RuntimeInformation.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System.Threading.Tasks.Extensions, Version=4.2.0.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Threading.Tasks.Extensions.4.5.0\lib\portable-net45+win8+wp8+wpa81\System.Threading.Tasks.Extensions.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Transactions" />
+    <Reference Include="System.ValueTuple, Version=4.0.3.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.ValueTuple.4.5.0\lib\netstandard1.0\System.ValueTuple.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Configurations\Databases\DatabaseApis\Cassandra\CassandraCreateModel.cs" />
+    <Compile Include="Configurations\Databases\DatabaseApis\Cassandra\CassandraDeleteModel.cs" />
+    <Compile Include="Configurations\Databases\DatabaseApis\Cassandra\CassandraSearchModel.cs" />
+    <Compile Include="Configurations\Databases\DatabaseApis\Cassandra\CassandraUpdateModel.cs" />
+    <Compile Include="Configurations\Databases\DatabaseApis\Cassandra\SimpleCassandraDatabaseApi.cs" />
+    <Compile Include="Configurations\Databases\DatabaseApis\DatabaseConnectionStringFactory.cs" />
+    <Compile Include="Configurations\Databases\DatabaseApis\MongoDB\AbstractMongoDbOperationModel.cs" />
+    <Compile Include="Configurations\Databases\DatabaseApis\MongoDB\MongoDbCreateModel.cs" />
+    <Compile Include="Configurations\Databases\DatabaseApis\MongoDB\MongoDbDeleteModel.cs" />
+    <Compile Include="Configurations\Databases\DatabaseApis\MongoDB\MongoDbSearchModel.cs" />
+    <Compile Include="Configurations\Databases\DatabaseApis\MongoDB\MongoDbUpdateModel.cs" />
+    <Compile Include="Configurations\Databases\DatabaseApis\MongoDB\SimpleMongoDbDatabaseApi.cs" />
+    <Compile Include="Configurations\Databases\DatabaseApis\Perst\SimplePerstDatabaseApi.cs" />
+    <Compile Include="Configurations\Databases\DatabaseApis\Redis\RedisCreateModel.cs" />
+    <Compile Include="Configurations\Databases\DatabaseApis\Redis\RedisDeleteModel.cs" />
+    <Compile Include="Configurations\Databases\DatabaseApis\Redis\RedisSearchModel.cs" />
+    <Compile Include="Configurations\Databases\DatabaseApis\Redis\RedisUpdateModel.cs" />
+    <Compile Include="Configurations\Databases\DatabaseApis\Redis\SimpleRedisDatabaseApi.cs" />
+    <Compile Include="Configurations\Databases\DatabaseApis\SQL\SimpleSQLDatabaseApi.cs" />
+    <Compile Include="Configurations\Databases\DatabaseApis\SQL\SqlCreateModel.cs" />
+    <Compile Include="Configurations\Databases\DatabaseApis\SQL\SqlDeleteModel.cs" />
+    <Compile Include="Configurations\Databases\DatabaseApis\SQL\SqlSearchModel.cs" />
+    <Compile Include="Configurations\Databases\DatabaseApis\SQL\SqlUpdateModel.cs" />
+    <Compile Include="Configurations\Databases\DatabaseSeeder.cs" />
+    <Compile Include="Configurations\Databases\DatabaseTypes\DatabaseTypeSettingConstant.cs" />
+    <Compile Include="Configurations\Databases\DatabaseTypes\EDatabaseType.cs" />
+    <Compile Include="Configurations\Databases\Interfaces\ICreateModel.cs" />
+    <Compile Include="Configurations\Databases\Interfaces\IDatabaseApi.cs" />
+    <Compile Include="Configurations\Databases\Interfaces\IDeleteModel.cs" />
+    <Compile Include="Configurations\Databases\Interfaces\ISearchModel.cs" />
+    <Compile Include="Configurations\Databases\Interfaces\IUpdateModel.cs" />
+    <Compile Include="Models\DatabaseModels\AbstractModel.cs" />
+    <Compile Include="Models\DatabaseModels\IModel.cs" />
+    <Compile Include="Models\DatabaseModels\SensorValueModel.cs" />
+    <Compile Include="Models\DatabaseModels\TestModel.cs" />
+    <Compile Include="Program.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="app.config" />
+    <None Include="db.config">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Docker\.env" />
+    <None Include="Docker\Container Initializations\Cassandra\docker-cassandra-scaled-start.sh" />
+    <None Include="Docker\Container Initializations\Cassandra\docker-cassandra-scaled-stop.sh" />
+    <None Include="Docker\Container Initializations\Cassandra\docker-cassandra-unscaled-start.sh" />
+    <None Include="Docker\Container Initializations\Cassandra\docker-cassandra-unscaled-stop.sh" />
+    <None Include="Docker\Container Initializations\MongoDB\docker-mongodb-scaled-start.sh" />
+    <None Include="Docker\Container Initializations\MongoDB\docker-mongodb-stop.sh" />
+    <None Include="Docker\Container Initializations\MongoDB\docker-mongodb-unscaled-start.sh" />
+    <None Include="Docker\Container Initializations\MySQL\docker-mysql-scaled-start.sh" />
+    <None Include="Docker\Container Initializations\MySQL\docker-mysql-scaled-stop.sh" />
+    <None Include="Docker\Container Initializations\MySQL\docker-mysql-unscaled-start.sh" />
+    <None Include="Docker\Container Initializations\MySQL\docker-mysql-unscaled-stop.sh" />
+    <None Include="Docker\Container Initializations\Portainer\docker-portainer-start.sh" />
+    <None Include="Docker\Container Initializations\PostgreSQL\docker-postgres-scaled-start.sh" />
+    <None Include="Docker\Container Initializations\PostgreSQL\docker-postgres-scaled-stop.sh" />
+    <None Include="Docker\Container Initializations\PostgreSQL\docker-postgres-unscaled-start.sh" />
+    <None Include="Docker\Container Initializations\PostgreSQL\docker-postgres-unscaled-stop.sh" />
+    <None Include="Docker\Container Initializations\Redis\docker-redis-restore-backup.sh" />
+    <None Include="Docker\Container Initializations\Redis\docker-redis-scaled-start.sh" />
+    <None Include="Docker\Container Initializations\Redis\docker-redis-stop.sh" />
+    <None Include="Docker\Container Initializations\Redis\docker-redis-unscaled-start.sh" />
+    <None Include="Docker\Container Initializations\scaled_startall.sh" />
+    <None Include="Docker\Container Initializations\unscaled_startall.sh" />
+    <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="PerstNet40.dll" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+</Project>

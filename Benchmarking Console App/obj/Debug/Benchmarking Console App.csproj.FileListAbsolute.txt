@@ -1,0 +1,46 @@
+C:\Projects\Afstudeerexperimenten\Benchmarking Console App\Benchmarking Console App\obj\Debug\Benchmarking Console App.csprojResolveAssemblyReference.cache
+C:\Projects\Afstudeerexperimenten\Benchmarking Console App\Benchmarking Console App\obj\Debug\Benchmarking Console App.csproj.CoreCompileInputs.cache
+C:\Projects\Afstudeerexperimenten\Benchmarking Console App\Benchmarking Console App\bin\Debug\Benchmarking Console App.exe.config
+C:\Projects\Afstudeerexperimenten\Benchmarking Console App\Benchmarking Console App\bin\Debug\Benchmarking Console App.exe
+C:\Projects\Afstudeerexperimenten\Benchmarking Console App\Benchmarking Console App\bin\Debug\Benchmarking Console App.pdb
+C:\Projects\Afstudeerexperimenten\Benchmarking Console App\Benchmarking Console App\bin\Debug\Cassandra.dll
+C:\Projects\Afstudeerexperimenten\Benchmarking Console App\Benchmarking Console App\bin\Debug\DnsClient.dll
+C:\Projects\Afstudeerexperimenten\Benchmarking Console App\Benchmarking Console App\bin\Debug\LZ4.dll
+C:\Projects\Afstudeerexperimenten\Benchmarking Console App\Benchmarking Console App\bin\Debug\Microsoft.Extensions.DependencyInjection.Abstractions.dll
+C:\Projects\Afstudeerexperimenten\Benchmarking Console App\Benchmarking Console App\bin\Debug\Microsoft.Extensions.Logging.Abstractions.dll
+C:\Projects\Afstudeerexperimenten\Benchmarking Console App\Benchmarking Console App\bin\Debug\Microsoft.Extensions.Logging.dll
+C:\Projects\Afstudeerexperimenten\Benchmarking Console App\Benchmarking Console App\bin\Debug\MongoDB.Bson.dll
+C:\Projects\Afstudeerexperimenten\Benchmarking Console App\Benchmarking Console App\bin\Debug\MongoDB.Driver.Core.dll
+C:\Projects\Afstudeerexperimenten\Benchmarking Console App\Benchmarking Console App\bin\Debug\MongoDB.Driver.dll
+C:\Projects\Afstudeerexperimenten\Benchmarking Console App\Benchmarking Console App\bin\Debug\MySqlConnector.dll
+C:\Projects\Afstudeerexperimenten\Benchmarking Console App\Benchmarking Console App\bin\Debug\Newtonsoft.Json.dll
+C:\Projects\Afstudeerexperimenten\Benchmarking Console App\Benchmarking Console App\bin\Debug\Npgsql.dll
+C:\Projects\Afstudeerexperimenten\Benchmarking Console App\Benchmarking Console App\bin\Debug\PerstNet40.dll
+C:\Projects\Afstudeerexperimenten\Benchmarking Console App\Benchmarking Console App\bin\Debug\StackExchange.Redis.dll
+C:\Projects\Afstudeerexperimenten\Benchmarking Console App\Benchmarking Console App\bin\Debug\System.Buffers.dll
+C:\Projects\Afstudeerexperimenten\Benchmarking Console App\Benchmarking Console App\bin\Debug\System.Memory.dll
+C:\Projects\Afstudeerexperimenten\Benchmarking Console App\Benchmarking Console App\bin\Debug\System.Runtime.CompilerServices.Unsafe.dll
+C:\Projects\Afstudeerexperimenten\Benchmarking Console App\Benchmarking Console App\bin\Debug\System.Runtime.InteropServices.RuntimeInformation.dll
+C:\Projects\Afstudeerexperimenten\Benchmarking Console App\Benchmarking Console App\bin\Debug\System.Threading.Tasks.Extensions.dll
+C:\Projects\Afstudeerexperimenten\Benchmarking Console App\Benchmarking Console App\bin\Debug\System.ValueTuple.dll
+C:\Projects\Afstudeerexperimenten\Benchmarking Console App\Benchmarking Console App\bin\Debug\Cassandra.xml
+C:\Projects\Afstudeerexperimenten\Benchmarking Console App\Benchmarking Console App\bin\Debug\DnsClient.xml
+C:\Projects\Afstudeerexperimenten\Benchmarking Console App\Benchmarking Console App\bin\Debug\Microsoft.Extensions.DependencyInjection.Abstractions.xml
+C:\Projects\Afstudeerexperimenten\Benchmarking Console App\Benchmarking Console App\bin\Debug\Microsoft.Extensions.Logging.xml
+C:\Projects\Afstudeerexperimenten\Benchmarking Console App\Benchmarking Console App\bin\Debug\Microsoft.Extensions.Logging.Abstractions.xml
+C:\Projects\Afstudeerexperimenten\Benchmarking Console App\Benchmarking Console App\bin\Debug\MongoDB.Bson.xml
+C:\Projects\Afstudeerexperimenten\Benchmarking Console App\Benchmarking Console App\bin\Debug\MongoDB.Driver.xml
+C:\Projects\Afstudeerexperimenten\Benchmarking Console App\Benchmarking Console App\bin\Debug\MongoDB.Driver.Core.xml
+C:\Projects\Afstudeerexperimenten\Benchmarking Console App\Benchmarking Console App\bin\Debug\Newtonsoft.Json.xml
+C:\Projects\Afstudeerexperimenten\Benchmarking Console App\Benchmarking Console App\bin\Debug\Npgsql.pdb
+C:\Projects\Afstudeerexperimenten\Benchmarking Console App\Benchmarking Console App\bin\Debug\Npgsql.xml
+C:\Projects\Afstudeerexperimenten\Benchmarking Console App\Benchmarking Console App\bin\Debug\StackExchange.Redis.xml
+C:\Projects\Afstudeerexperimenten\Benchmarking Console App\Benchmarking Console App\bin\Debug\System.Buffers.xml
+C:\Projects\Afstudeerexperimenten\Benchmarking Console App\Benchmarking Console App\bin\Debug\System.Memory.xml
+C:\Projects\Afstudeerexperimenten\Benchmarking Console App\Benchmarking Console App\bin\Debug\System.Runtime.CompilerServices.Unsafe.xml
+C:\Projects\Afstudeerexperimenten\Benchmarking Console App\Benchmarking Console App\bin\Debug\System.Threading.Tasks.Extensions.xml
+C:\Projects\Afstudeerexperimenten\Benchmarking Console App\Benchmarking Console App\bin\Debug\System.ValueTuple.xml
+C:\Projects\Afstudeerexperimenten\Benchmarking Console App\Benchmarking Console App\obj\Debug\Benchmarking Console App.csproj.CopyComplete
+C:\Projects\Afstudeerexperimenten\Benchmarking Console App\Benchmarking Console App\obj\Debug\Benchmarking Console App.exe
+C:\Projects\Afstudeerexperimenten\Benchmarking Console App\Benchmarking Console App\obj\Debug\Benchmarking Console App.pdb
+C:\Projects\Afstudeerexperimenten\Benchmarking Console App\Benchmarking Console App\bin\Debug\db.config
