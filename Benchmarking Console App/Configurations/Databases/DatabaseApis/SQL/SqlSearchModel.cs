@@ -1,19 +1,14 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using Benchmarking_program.Configurations.Databases.Interfaces;
+using Benchmarking_program.Models.DatabaseModels;
 
 namespace Benchmarking_program.Configurations.Databases.DatabaseApis.SQL
 {
-    public class SqlSearchModel : ISearchModel
+    public class SqlSearchModel<M> : ISearchModel<M> where M: IModel, new()
     {
         public List<string> identifiersToRetrieve { get; set; }
         public Dictionary<string, object> identifiersAndValuesToSearchFor { get; set; }
-
-        public SqlSearchModel()
-        {
-            this.identifiersToRetrieve = new List<string>();
-            this.identifiersAndValuesToSearchFor = new Dictionary<string, object>();
-        }
 
         public SqlSearchModel(List<string> identifiersToRetrieve,
                               Dictionary<string, object> identifiersAndValuesToSearchFor)
@@ -23,10 +18,10 @@ namespace Benchmarking_program.Configurations.Databases.DatabaseApis.SQL
         }
 
 
-        public string GetSearchString(string tableName)
+        public string GetSearchString<M>()
         {
             var selectClause = $"SELECT "; 
-            var fromClause = $" FROM {tableName} ";
+            var fromClause = $" FROM {nameof(M).ToLower()} ";
             var whereClause = "";
 
             foreach (var identifier in identifiersToRetrieve)

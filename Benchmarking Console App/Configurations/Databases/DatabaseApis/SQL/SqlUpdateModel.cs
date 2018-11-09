@@ -17,7 +17,7 @@ namespace Benchmarking_program.Configurations.Databases.DatabaseApis.SQL
 
         public string GetUpdateString(IModel newModel)
         {
-            var updateText = $"UPDATE {newModel.GetCollectionName()} SET ";
+            var updateText = $"UPDATE {newModel.GetType().Name.ToLower()} SET ";
             var whereClause = " WHERE ";
 
             // Creating update clause TODO: Check for nulls

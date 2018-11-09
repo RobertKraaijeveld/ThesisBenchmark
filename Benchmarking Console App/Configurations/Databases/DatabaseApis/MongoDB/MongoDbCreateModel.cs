@@ -10,7 +10,7 @@ namespace Benchmarking_program.Configurations.Databases.DatabaseApis.SQL
         public string GetCreateString(IModel model)
         {
             var createCmdText = "{";
-            var primaryKeyOfModel = model.GetPrimaryKeyPropertyName();
+            var primaryKeyOfModel = model.GetPrimaryKeyFieldName();
             
             foreach (var propertyAndValue in model.GetFieldsWithValues())
             {

@@ -1,5 +1,7 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
+using Benchmarking_Console_App.Configurations.Databases.Interfaces;
 using Benchmarking_program.Configurations.Databases.Interfaces;
 using Benchmarking_program.Models.DatabaseModels;
 using Cassandra;
@@ -13,8 +15,9 @@ namespace Benchmarking_program.Configurations.Databases.DatabaseApis.SQL
     /// </summary>
     public class SimpleCassandraDatabaseApi : IDatabaseApi
     {
+        public readonly string KEYSPACE_NAME = "benchmarkdb";
+
         private readonly string _connectionString;
-        private readonly string KEYSPACE_NAME = "benchmarkdb";
 
         private readonly Cluster _cassandraCluster;
         private readonly ISession _cassandraSession;
@@ -32,11 +35,37 @@ namespace Benchmarking_program.Configurations.Databases.DatabaseApis.SQL
             _cassandraMapper = new Mapper(_cassandraSession);
         }
 
-
-        public IEnumerable<M> Get<M>(string collectionName, ISearchModel searchModel) where M : IModel, new()
+        public IEnumerable<M> GetAll<M>(IGetAllModel<M> getAllModel) where M : IModel, new()
         {
-            var queryText = searchModel.GetSearchString(collectionName);
-            return _cassandraMapper.Fetch<M>(queryText).ToList();
+            var getAllQueryText = getAllModel.CreateGetAllString();
+            return _cassandraMapper.Fetch<M>(getAllQueryText).ToList();
+        }
+
+        public IEnumerable<M> Search<M>(ISearchModel<M> searchModel) where M : IModel, new()
+        {
+            var searchQueryText = searchModel.GetSearchString<M>();
+            return _cassandraMapper.Fetch<M>(searchQueryText).ToList();
+        }
+
+        public int Amount<M>() where M : IModel, new()
+        {
+            int amount = 0;
+
+            var allTableNames = this.GetAllTableNames();
+            foreach (var table in allTableNames)
+            {
+                amount += _cassandraMapper.First<int>($"SELECT COUNT(*) FROM {table}");
+            }
+            return amount;
+        }
+
+        public void CreateCollectionIfNotExists<M>(ICreateCollectionModel<M> createCollectionModel) where M : IModel, new()
+        {
+            if (this.GetAllTableNames().Contains(typeof(M).Name.ToLower()) == false)
+            {
+                var createCollectionTable = createCollectionModel.GetCreateCollectionText();
+                _cassandraMapper.Execute(createCollectionTable);
+            }
         }
 
         public void Create<M>(IEnumerable<M> newModels, ICreateModel createModel) where M : IModel, new()
@@ -66,9 +95,19 @@ namespace Benchmarking_program.Configurations.Databases.DatabaseApis.SQL
             }
         }
 
-        private void PutQuotesAroundTableName(string queryText)
+        public void TruncateAll()
         {
+            var allTableNamesInKeyspace = this.GetAllTableNames();
+            foreach (var table in allTableNamesInKeyspace)
+            {
+                _cassandraMapper.Execute($"TRUNCATE {this.KEYSPACE_NAME}.{table}");
+            }
+        }
 
+        public IEnumerable<string> GetAllTableNames()
+        {
+            var query = $"SELECT table_name FROM system_schema.tables WHERE keyspace_name = '{this.KEYSPACE_NAME}';";
+            return _cassandraMapper.Fetch<string>(query);
         }
     }
 }

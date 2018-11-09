@@ -5,13 +5,11 @@ namespace Benchmarking_program.Models.DatabaseModels
 {
     public interface IModel
     {
-        string GetPrimaryKeyPropertyName();
-        object GetPrimaryKeyPropertyValue();
-        string GetCollectionName();
+        string GetPrimaryKeyFieldName();
+
+        Dictionary<string, object> GetFieldsWithValues();
 
         void Randomize(int amountOfExistingModels, Random randomGenerator);
 
-        Dictionary<string, object> GetFieldsWithValues();
-        bool SchemaMatches(Dictionary<string, Type> schemaOfRow);
     }
 }

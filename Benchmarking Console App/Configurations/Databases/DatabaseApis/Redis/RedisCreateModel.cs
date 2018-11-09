@@ -1,5 +1,6 @@
 ﻿using Benchmarking_program.Configurations.Databases.Interfaces;
 using Benchmarking_program.Models.DatabaseModels;
+using Microsoft.SqlServer.Server;
 using Newtonsoft.Json;
 
 namespace Benchmarking_program.Configurations.Databases.DatabaseApis.SQL
@@ -8,10 +9,10 @@ namespace Benchmarking_program.Configurations.Databases.DatabaseApis.SQL
     {
         public string GetCreateString(IModel model)
         {
-            var key = model.GetPrimaryKeyPropertyValue();
+            var key = model.GetFieldsWithValues()[model.GetPrimaryKeyFieldName()];
             var value = JsonConvert.SerializeObject(model);
 
-            return "SET " + $"\"{key}\" \"{value}\"";
+            return "SET " + $"'{key}' '{value}'";
         }
     }
 }

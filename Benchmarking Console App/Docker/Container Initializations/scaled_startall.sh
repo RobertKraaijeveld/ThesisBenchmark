@@ -1,6 +1,8 @@
 #!/bin/bash
-./c/Projects/Afstudeerexperimenten/Benchmarking program/Docker/MySQL/docker-mysql-scaled-start.sh
-./c/Projects/Afstudeerexperimenten/Benchmarking program/Docker/PostgreSQL/docker-postgres-scaled-start.sh
-./c/Projects/Afstudeerexperimenten/Benchmarking program/Docker/Redis/docker-redis-scaled-start.sh start
-./c/Projects/Afstudeerexperimenten/Benchmarking program/Docker/MongoDB/docker-mongodb-scaled-start.sh
-./c/Projects/Afstudeerexperimenten/Benchmarking program/Docker/Cassandra/docker-cassandra-scaled-start.sh
+cd "/c/Projects/Afstudeerexperimenten/Benchmarking Console App/Benchmarking Console App/Docker/Container Initializations"
+
+./MySQL/docker-mysql-scaled-start.sh
+./PostgreSQL/docker-postgres-scaled-start.sh
+./Redis/docker-redis-scaled-start.sh start
+./MongoDB/docker-mongodb-scaled-start.sh
+./Cassandra/docker-cassandra-scaled-start.sh

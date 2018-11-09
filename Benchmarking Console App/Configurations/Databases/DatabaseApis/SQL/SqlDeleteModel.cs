@@ -9,11 +9,6 @@ namespace Benchmarking_program.Configurations.Databases.DatabaseApis.SQL
     {
         public Dictionary<string, object> identifiersAndValuesToDeleteOn { get; set; }
 
-        public SqlDeleteModel()
-        {
-            this.identifiersAndValuesToDeleteOn = new Dictionary<string, object>();
-        }
-
         public SqlDeleteModel(Dictionary<string, object> identifiersAndValuesToDeleteOn)
         {
             this.identifiersAndValuesToDeleteOn = identifiersAndValuesToDeleteOn;
@@ -23,7 +18,7 @@ namespace Benchmarking_program.Configurations.Databases.DatabaseApis.SQL
         {
             var propertiesAndValuesOfModel = model.GetFieldsWithValues();
 
-            var deleteText = $"DELETE FROM {model.GetCollectionName()}";
+            var deleteText = $"DELETE FROM {model.GetType().Name.ToLower()}";
             var whereClause = " WHERE ";
 
             foreach (var identifierAndValueKv in identifiersAndValuesToDeleteOn)

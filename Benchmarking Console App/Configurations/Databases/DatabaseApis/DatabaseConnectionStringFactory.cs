@@ -15,9 +15,9 @@ namespace Benchmarking_program.Configurations.Databases.DatabaseApis
 
         public DatabaseConnectionStringFactory()
         {
-            // Parsing appsettings.json to list of KV pairs
             connectionStringPerDatabase = 
                 File.ReadAllLines("db.config")
+                    .Where(l => !l.StartsWith("//")) // ignoring commented-out lines
                     .ToDictionary(key =>
                     {
                         return key.Split(':')[0];

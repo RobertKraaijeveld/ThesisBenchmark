@@ -7,8 +7,8 @@ namespace Benchmarking_program.Configurations.Databases.Interfaces
     /// { K: Redis-style key, SQL-style column, MongoDB-style label etc. V: Value to filter on }
     /// to be turned into the appropriate query text for that particular database.
     /// </summary>
-    public interface ISearchModel
+    public interface ISearchModel<M> where M: IModel, new()
     {
-        string GetSearchString(string collectionName);
+        string GetSearchString<M>();
     }
 }

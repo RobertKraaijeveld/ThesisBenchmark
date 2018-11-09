@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using Benchmarking_Console_App.Configurations.Databases.Interfaces;
 using Benchmarking_program.Configurations.Databases.Interfaces;
 using Benchmarking_program.Models.DatabaseModels;
 using Perst;
@@ -13,7 +14,7 @@ namespace Benchmarking_program.Configurations.Databases.DatabaseApis.SQL
     /// Provides basic CRUD functionality for the Perst KV-database.
     /// Each KV in the DB is: { Key: a string key, Value: A JSON representation of an IModel }
     /// </summary>
-    public class SimplePerstDatabaseApi : IDatabaseApi
+    public class SimplePerstDatabaseApi : IObjectOrientedDatabaseApi
     {
         private readonly Storage _storage;
         private readonly Database _database;
@@ -23,13 +24,13 @@ namespace Benchmarking_program.Configurations.Databases.DatabaseApis.SQL
         public SimplePerstDatabaseApi(string databaseFileName)
         {
             _storage = StorageFactory.Instance.CreateStorage();
-            _storage.Open(databaseFileName);
+            _storage.Open(databaseFileName, pagePoolSize: 2000); // TODO MAKE SURE THIS MATCHES DOCKER CONTAINERS
 
             _database = new Database(_storage, multithreaded: true);
         }
 
 
-        public IEnumerable<M> Get<M>(string collectionName = "", ISearchModel searchModel = null) where M : IModel, new()
+        public IEnumerable<M> GetAll<M>() where M : IModel, new()
         {
             return ExecuteDatabaseCommandsWithinTransaction(() =>
             {
@@ -44,7 +45,7 @@ namespace Benchmarking_program.Configurations.Databases.DatabaseApis.SQL
             });
         }
 
-        public IEnumerable<M> GetByFieldComparison<M>(M patternObject) where M : IModel, new()
+        public IEnumerable<M> GetByComparison<M>(M patternObject) where M : IModel, new()
         {
             return ExecuteDatabaseCommandsWithinTransaction<IEnumerable<M>>(() =>
             {
@@ -68,7 +69,7 @@ namespace Benchmarking_program.Configurations.Databases.DatabaseApis.SQL
             });
         }
 
-        public IEnumerable<M> GetByFieldsRange<M>(M low, M high) where M : IModel, new()
+        public IEnumerable<M> GetByRange<M>(M low, M high) where M : IModel, new()
         {
             _database.BeginTransaction();
             try
@@ -96,8 +97,15 @@ namespace Benchmarking_program.Configurations.Databases.DatabaseApis.SQL
             }
         }
 
+        public int Amount<M>() where M : IModel, new()
+        {
+            return ExecuteDatabaseCommandsWithinTransaction<int>(() =>
+            {
+                return _database.CountRecords(typeof(M));
+            });
+        }
 
-        public void Create<M>(IEnumerable<M> newModels, ICreateModel createModel = null) where M : IModel, new()
+        public void Create<M>(IEnumerable<M> newModels) where M : IModel, new()
         {
             // Creating a multi-dimensional index for this type if it doesn't yet exist.
             var modelType = typeof(M);
@@ -129,7 +137,7 @@ namespace Benchmarking_program.Configurations.Databases.DatabaseApis.SQL
             }
         }
 
-        public void Update<M>(IEnumerable<M> modelsWithNewValues, IUpdateModel updateModel = null) where M : IModel, new()
+        public void Update<M>(IEnumerable<M> modelsWithNewValues) where M : IModel, new()
         {
             var modelType = typeof(M);
 
@@ -149,7 +157,7 @@ namespace Benchmarking_program.Configurations.Databases.DatabaseApis.SQL
         }
 
 
-        public void Delete<M>(IEnumerable<M> modelsToDelete, IDeleteModel deleteModel = null) where M : IModel, new()
+        public void Delete<M>(IEnumerable<M> modelsToDelete) where M : IModel, new()
         {
             ExecuteDatabaseCommandsWithinTransaction<object>(() =>
             {
@@ -160,6 +168,20 @@ namespace Benchmarking_program.Configurations.Databases.DatabaseApis.SQL
                 {
                     multiDimensionalIndexForModelType.Remove(model);
                     _database.DeleteRecord(modelType, model);
+                }
+                return null;
+            });
+        }
+
+        public void DeleteAll()
+        {
+            ExecuteDatabaseCommandsWithinTransaction<object>(() =>
+            {
+                foreach (var type in _multiDimensionalIndexesPerType.Keys)
+                {
+                    _database.DropTable(type);
+                    _multiDimensionalIndexesPerType[type].Clear();
+                    _multiDimensionalIndexesPerType.Remove(type);
                 }
                 return null;
             });

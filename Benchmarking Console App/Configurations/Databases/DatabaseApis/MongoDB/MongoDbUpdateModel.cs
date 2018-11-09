@@ -30,7 +30,7 @@ namespace Benchmarking_program.Configurations.Databases.DatabaseApis.SQL
             var updatePortion = mongoDbCreateModel.GetCreateString(newModel);
 
             // Making sure filter for primary key has name _id instead of name of primary key
-            filterPortion = filterPortion.Replace(newModel.GetPrimaryKeyPropertyName(), "_id");
+            filterPortion = filterPortion.Replace(newModel.GetPrimaryKeyFieldName(), "_id");
 
             return "{" + filterPortion + "," + updatePortion + "}";
         }

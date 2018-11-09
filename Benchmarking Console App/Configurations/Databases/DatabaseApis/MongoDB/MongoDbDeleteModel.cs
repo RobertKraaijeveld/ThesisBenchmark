@@ -23,7 +23,7 @@ namespace Benchmarking_program.Configurations.Databases.DatabaseApis.SQL
 
             // If current identifier is the same as the model's primary key,
             // we exclusively filter on that property (renamed to '_id' in mongodb), for performance reasons.
-            var modelPrimaryKeyPropertyName = model.GetPrimaryKeyPropertyName();
+            var modelPrimaryKeyPropertyName = model.GetPrimaryKeyFieldName();
             if (identifiersAndValuesToDeleteOn.ContainsKey(modelPrimaryKeyPropertyName))
             {
                 var primaryKeyValue = identifiersAndValuesToDeleteOn[modelPrimaryKeyPropertyName];

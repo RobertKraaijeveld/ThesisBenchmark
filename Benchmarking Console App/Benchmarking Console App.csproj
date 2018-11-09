@@ -108,8 +108,11 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Configurations\Databases\Attributes\IsPrimaryKey.cs" />
+    <Compile Include="Configurations\Databases\DatabaseApis\Cassandra\CassandraCreateCollectionModel.cs" />
     <Compile Include="Configurations\Databases\DatabaseApis\Cassandra\CassandraCreateModel.cs" />
     <Compile Include="Configurations\Databases\DatabaseApis\Cassandra\CassandraDeleteModel.cs" />
+    <Compile Include="Configurations\Databases\DatabaseApis\Cassandra\CassandraGetAllModel.cs" />
     <Compile Include="Configurations\Databases\DatabaseApis\Cassandra\CassandraSearchModel.cs" />
     <Compile Include="Configurations\Databases\DatabaseApis\Cassandra\CassandraUpdateModel.cs" />
     <Compile Include="Configurations\Databases\DatabaseApis\Cassandra\SimpleCassandraDatabaseApi.cs" />
@@ -117,32 +120,38 @@
     <Compile Include="Configurations\Databases\DatabaseApis\MongoDB\AbstractMongoDbOperationModel.cs" />
     <Compile Include="Configurations\Databases\DatabaseApis\MongoDB\MongoDbCreateModel.cs" />
     <Compile Include="Configurations\Databases\DatabaseApis\MongoDB\MongoDbDeleteModel.cs" />
+    <Compile Include="Configurations\Databases\DatabaseApis\MongoDB\MongoDbGetAllModel.cs" />
     <Compile Include="Configurations\Databases\DatabaseApis\MongoDB\MongoDbSearchModel.cs" />
     <Compile Include="Configurations\Databases\DatabaseApis\MongoDB\MongoDbUpdateModel.cs" />
     <Compile Include="Configurations\Databases\DatabaseApis\MongoDB\SimpleMongoDbDatabaseApi.cs" />
     <Compile Include="Configurations\Databases\DatabaseApis\Perst\SimplePerstDatabaseApi.cs" />
+    <Compile Include="Configurations\Databases\DatabaseApis\Redis\RedisGetAllModel.cs" />
     <Compile Include="Configurations\Databases\DatabaseApis\Redis\RedisCreateModel.cs" />
     <Compile Include="Configurations\Databases\DatabaseApis\Redis\RedisDeleteModel.cs" />
     <Compile Include="Configurations\Databases\DatabaseApis\Redis\RedisSearchModel.cs" />
     <Compile Include="Configurations\Databases\DatabaseApis\Redis\RedisUpdateModel.cs" />
     <Compile Include="Configurations\Databases\DatabaseApis\Redis\SimpleRedisDatabaseApi.cs" />
     <Compile Include="Configurations\Databases\DatabaseApis\SQL\SimpleSQLDatabaseApi.cs" />
+    <Compile Include="Configurations\Databases\DatabaseApis\SQL\SqlCreateCollectionModel.cs" />
     <Compile Include="Configurations\Databases\DatabaseApis\SQL\SqlCreateModel.cs" />
     <Compile Include="Configurations\Databases\DatabaseApis\SQL\SqlDeleteModel.cs" />
+    <Compile Include="Configurations\Databases\DatabaseApis\SQL\SqlGetAllModel.cs" />
     <Compile Include="Configurations\Databases\DatabaseApis\SQL\SqlSearchModel.cs" />
     <Compile Include="Configurations\Databases\DatabaseApis\SQL\SqlUpdateModel.cs" />
-    <Compile Include="Configurations\Databases\DatabaseSeeder.cs" />
     <Compile Include="Configurations\Databases\DatabaseTypes\DatabaseTypeSettingConstant.cs" />
     <Compile Include="Configurations\Databases\DatabaseTypes\EDatabaseType.cs" />
     <Compile Include="Configurations\Databases\Interfaces\ICreateModel.cs" />
+    <Compile Include="Configurations\Databases\Interfaces\ICreateCollectionModel.cs" />
     <Compile Include="Configurations\Databases\Interfaces\IDatabaseApi.cs" />
     <Compile Include="Configurations\Databases\Interfaces\IDeleteModel.cs" />
+    <Compile Include="Configurations\Databases\Interfaces\IGetAllModel.cs" />
+    <Compile Include="Configurations\Databases\Interfaces\IObjectOrientedDatabaseApi.cs" />
     <Compile Include="Configurations\Databases\Interfaces\ISearchModel.cs" />
     <Compile Include="Configurations\Databases\Interfaces\IUpdateModel.cs" />
     <Compile Include="Models\DatabaseModels\AbstractModel.cs" />
     <Compile Include="Models\DatabaseModels\IModel.cs" />
-    <Compile Include="Models\DatabaseModels\SensorValueModel.cs" />
-    <Compile Include="Models\DatabaseModels\TestModel.cs" />
+    <Compile Include="Models\DatabaseModels\MinuteAveragesRow.cs" />
+    <Compile Include="Models\DatabaseModels\SensorValue.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
@@ -169,7 +178,6 @@
     <None Include="Docker\Container Initializations\PostgreSQL\docker-postgres-scaled-stop.sh" />
     <None Include="Docker\Container Initializations\PostgreSQL\docker-postgres-unscaled-start.sh" />
     <None Include="Docker\Container Initializations\PostgreSQL\docker-postgres-unscaled-stop.sh" />
-    <None Include="Docker\Container Initializations\Redis\docker-redis-restore-backup.sh" />
     <None Include="Docker\Container Initializations\Redis\docker-redis-scaled-start.sh" />
     <None Include="Docker\Container Initializations\Redis\docker-redis-stop.sh" />
     <None Include="Docker\Container Initializations\Redis\docker-redis-unscaled-start.sh" />

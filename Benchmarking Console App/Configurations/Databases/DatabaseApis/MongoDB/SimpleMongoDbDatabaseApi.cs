@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Benchmarking_Console_App.Configurations.Databases.Interfaces;
 using Benchmarking_program.Configurations.Databases.DatabaseApis.MongoDB;
 using Benchmarking_program.Configurations.Databases.Interfaces;
 using Benchmarking_program.Models.DatabaseModels;
@@ -29,28 +30,16 @@ namespace Benchmarking_program.Configurations.Databases.DatabaseApis.SQL
             _database = _mongodbConnection.GetDatabase("BenchmarkDB");
         }
 
-        public IEnumerable<M> Get<M>(string collectionName, ISearchModel searchModel) where M : IModel, new()
+        public IEnumerable<M> GetAll<M>(IGetAllModel<M> getAllModel) where M : IModel, new()
         {
-            var results = new List<M>();
+            var getAllQuery = getAllModel.CreateGetAllString();
+            return this.GetResults<M>(getAllQuery);
+        }
 
-            var queryText = searchModel.GetSearchString(collectionName);
-            var separateFilterAndProjection = this.GetSeparateFilterAndProjection(queryText);
-
-            var cursor = _database.GetCollection<M>(collectionName)
-                                  .Find(separateFilterAndProjection.Filter)
-                                  .Project(separateFilterAndProjection.Projection)
-                                  .ToCursor();
-
-            while (cursor.MoveNext())
-            {
-                var currentBatchOfDocuments = cursor.Current;
-                foreach (var document in currentBatchOfDocuments)
-                {
-                    document.Remove("_id");
-                    results.Add(BsonSerializer.Deserialize<M>(document));
-                }
-            }
-            return results;
+        public IEnumerable<M> Search<M>(ISearchModel<M> searchModel) where M : IModel, new()
+        {
+            var searchQuery = searchModel.GetSearchString<M>();
+            return this.GetResults<M>(searchQuery);
         }
 
         public bool Exists<M>(M model) where M : IModel, new()
@@ -58,9 +47,9 @@ namespace Benchmarking_program.Configurations.Databases.DatabaseApis.SQL
             var identifiersAndValuesToSearchFor = model.GetFieldsWithValues();
             var identifiersToRetrieve = model.GetFieldsWithValues().Keys.ToList();
 
-            var searchModel = new MongoDbSearchModel(identifiersAndValuesToSearchFor, identifiersToRetrieve);
+            var searchModel = new MongoDbSearchModel<M>(identifiersAndValuesToSearchFor, identifiersToRetrieve);
 
-            return this.Get<M>(model.GetCollectionName(), searchModel).Any();
+            return this.Search<M>(searchModel).Any();
         }
 
         public void Create<M>(IEnumerable<M> newModels, ICreateModel createModel) where M : IModel, new()
@@ -69,9 +58,15 @@ namespace Benchmarking_program.Configurations.Databases.DatabaseApis.SQL
             {
                 var createQueryText = createModel.GetCreateString(model);
 
-                _database.GetCollection<M>(model.GetCollectionName())
+                _database.GetCollection<M>(nameof(M))
                          .InsertOne(BsonSerializer.Deserialize<M>(createQueryText));
             }
+        }
+
+        public int Amount<M>() where M : IModel, new()
+        {
+            return (int) _database.GetCollection<M>(nameof(M))
+                                  .CountDocuments(FilterDefinition<M>.Empty);
         }
 
         public void Update<M>(IEnumerable<M> modelsWithNewValues, IUpdateModel updateModel) where M : IModel, new()
@@ -95,11 +90,40 @@ namespace Benchmarking_program.Configurations.Databases.DatabaseApis.SQL
                 var deleteQueryText = deleteModel.GetDeleteString(model);
                 var asBsonDoc = BsonSerializer.Deserialize<BsonDocument>(deleteQueryText);
 
-                _database.GetCollection<M>(model.GetCollectionName())
+                _database.GetCollection<M>(nameof(M))
                          .DeleteOne(asBsonDoc);
             }
         }
 
+        public void TruncateAll()
+        {
+            _database.ListCollectionNames()
+                     .ForEachAsync(c => _database.DropCollection(c)); // In mongoDB a collection gets dropped anyway if it has no documents.
+        }
+
+
+        private IEnumerable<M> GetResults<M>(string bsonFilterAndProjection) where M : IModel, new()
+        {
+            var results = new List<M>();
+
+            var separateFilterAndProjection = this.GetSeparateFilterAndProjection(bsonFilterAndProjection);
+
+            var cursor = _database.GetCollection<M>(nameof(M))
+                .Find(separateFilterAndProjection.Filter)
+                .Project(separateFilterAndProjection.Projection)
+                .ToCursor();
+
+            while (cursor.MoveNext())
+            {
+                var currentBatchOfDocuments = cursor.Current;
+                foreach (var document in currentBatchOfDocuments)
+                {
+                    document.Remove("_id");
+                    results.Add(BsonSerializer.Deserialize<M>(document));
+                }
+            }
+            return results;
+        }
 
         private FilterAndProjection GetSeparateFilterAndProjection(string queryWithFilterAndProjectionJson)
         {

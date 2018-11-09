@@ -37,9 +37,6 @@ sleep 40
 docker-machine ssh cassandra -- 'docker exec cassandrascaled-node1 bash -c "echo \"CREATE KEYSPACE benchmarkdb WITH REPLICATION = { '"'"'class'"'"' : '"'"'SimpleStrategy'"'"', '"'"'replication_factor'"'"' : 1 };\" > createKeyspace.cql";'
 docker-machine ssh cassandra -- 'docker exec cassandrascaled-node1 bash -c "cqlsh -f createKeyspace.cql"'
 
-read -p "Check that keyspace exists"
-
-
 # Creating benchmark db keyspace:
 # cqlsh -e "CREATE KEYSPACE benchmarkdb WITH REPLICATION = { 'class' : 'SimpleStrategy', 'replication_factor' : 1 };"
 # cqlsh -e "CREATE TABLE benchmarkdb.test ( id UUID PRIMARY KEY );"

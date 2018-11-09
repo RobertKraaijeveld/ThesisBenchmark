@@ -12,7 +12,7 @@ namespace Benchmarking_program.Configurations.Databases.DatabaseApis.SQL
             // Creating SQL statement text
             var modelColumnsAndValuesDict = model.GetFieldsWithValues();
 
-            string sqlStr = $"INSERT INTO {model.GetCollectionName()} ";
+            string sqlStr = $"INSERT INTO {model.GetType().Name.ToLower()} "; 
             string columnNamesStr = "(";
             string valuesStr = " VALUES (";
 
