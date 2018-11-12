@@ -9,14 +9,14 @@ using Npgsql;
 
 namespace Benchmarking_program.Configurations.Databases.DatabaseApis
 {
-    public class DatabaseConnectionStringFactory
+    public static class DatabaseConnectionStringFactory
     {
-        private Dictionary<string, string> connectionStringPerDatabase;
+        public static readonly Dictionary<string, string> ConnectionStringPerDatabase;
 
-        public DatabaseConnectionStringFactory()
+        static DatabaseConnectionStringFactory()
         {
-            connectionStringPerDatabase = 
-                File.ReadAllLines("db.config")
+            ConnectionStringPerDatabase = 
+                File.ReadAllLines(GetConfigFileName()) 
                     .Where(l => !l.StartsWith("//")) // ignoring commented-out lines
                     .ToDictionary(key =>
                     {
@@ -46,19 +46,24 @@ namespace Benchmarking_program.Configurations.Databases.DatabaseApis
                     });
         }
 
-
-        public string GetDatabaseConnectionString(EDatabaseType databaseType)
+        public static string GetDatabaseConnectionString(EDatabaseType databaseType)
         {
             var databaseTypeStr = databaseType.ToString();
 
-            if (connectionStringPerDatabase.ContainsKey(databaseTypeStr))
+            if (ConnectionStringPerDatabase.ContainsKey(databaseTypeStr))
             {
-                return connectionStringPerDatabase[databaseTypeStr];
+                return ConnectionStringPerDatabase[databaseTypeStr];
             }
             else
             {
                 throw new Exception("Database type does not have implementation yet");
             }
+        }
+
+        private static string GetConfigFileName()
+        {
+            return File.ReadAllLines("C:\\Projects\\Afstudeerexperimenten\\Benchmarking Console App\\Benchmarking Console App\\configFileToUse.config")
+                       .First();
         }
     }
 }

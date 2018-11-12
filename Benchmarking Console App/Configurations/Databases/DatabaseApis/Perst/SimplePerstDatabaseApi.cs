@@ -99,10 +99,7 @@ namespace Benchmarking_program.Configurations.Databases.DatabaseApis.SQL
 
         public int Amount<M>() where M : IModel, new()
         {
-            return ExecuteDatabaseCommandsWithinTransaction<int>(() =>
-            {
-                return _database.CountRecords(typeof(M));
-            });
+            return ExecuteDatabaseCommandsWithinTransaction<int>(() => _database.CountRecords(typeof(M)));
         }
 
         public void Create<M>(IEnumerable<M> newModels) where M : IModel, new()

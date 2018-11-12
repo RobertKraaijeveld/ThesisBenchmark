@@ -11,11 +11,6 @@ elif [ $1 == "create" ]; then
   docker-machine create redis-manager1
   docker-machine create redis-worker1
   docker-machine create redis-worker2
-
-  # Creating persistence volumnes
-  docker-machine ssh redis-manager1 -- "docker volume create --name redis-manager1-volume"
-  docker-machine ssh redis-worker1 -- "docker volume create --name redis-worker1-volume"
-  docker-machine ssh redis-worker2 -- "docker volume create --name redis-worker2-volume"
 elif [ $1 == "start" ]; then
   docker-machine start redis-manager1
   docker-machine start redis-worker1
@@ -49,13 +44,6 @@ docker-machine ssh redis-manager1 -- "docker node promote redis-worker2"
 # Creating network
 docker-machine ssh redis-manager1 -- 'docker network create --driver overlay redis_network'
 
-
-####################################
-# Restoring backups to the volumes #
-####################################
-./docker-redis-restore-backup.sh scaled
-
-
 ############################
 # Creating master services #
 ############################
@@ -63,7 +51,6 @@ docker-machine ssh redis-manager1 -- "
     echo creating service 'redis-cluster-m-7002';
     docker service create --constraint 'node.hostname == redis-manager1'\
       --name 'redis-cluster-m-7002'\
-      --mount type=volume,src=redis-manager1-volume,dst=/redis/data/ \
       --network redis_network\
       --publish 7002:7002/tcp\
       --restart-condition any\
@@ -75,7 +62,6 @@ docker-machine ssh redis-manager1 -- "
           --cluster-enabled yes\
           --cluster-node-timeout 60000\
           --cluster-require-full-coverage no\
-          --logfile redis-cluster-m-7002.log\
           --port 7002\
           --protected-mode no\
           --repl-diskless-sync yes\
@@ -86,7 +72,6 @@ docker-machine ssh redis-manager1 -- "
     echo creating service 'redis-cluster-m-7003';
     docker service create --constraint 'node.hostname == redis-worker1'\
       --name 'redis-cluster-m-7003'\
-      --mount type=volume,src=redis-worker1-volume,dst=/redis/data/ \
       --network redis_network\
       --publish 7003:7003/tcp\
       --restart-condition any\
@@ -98,7 +83,6 @@ docker-machine ssh redis-manager1 -- "
           --cluster-enabled yes\
           --cluster-node-timeout 60000\
           --cluster-require-full-coverage no\
-          --logfile redis-cluster-m-7003.log\
           --port 7003\
           --protected-mode no\
           --repl-diskless-sync yes\
@@ -108,7 +92,6 @@ docker-machine ssh redis-manager1 -- "
     echo creating service 'redis-cluster-m-7001';
     docker service create --constraint 'node.hostname == redis-worker2'\
       --name 'redis-cluster-m-7001'\
-      --mount type=volume,src=redis-worker2-volume,dst=/redis/data/ \
       --network redis_network\
       --publish 7001:7001/tcp\
       --restart-condition any\
@@ -120,7 +103,6 @@ docker-machine ssh redis-manager1 -- "
           --cluster-enabled yes\
           --cluster-node-timeout 60000\
           --cluster-require-full-coverage no\
-          --logfile redis-cluster-m-7001.log\
           --port 7001\
           --protected-mode no\
           --repl-diskless-sync yes\

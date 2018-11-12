@@ -11,7 +11,6 @@ C:\Projects\Afstudeerexperimenten\Benchmarking Console App\Benchmarking Console 
 C:\Projects\Afstudeerexperimenten\Benchmarking Console App\Benchmarking Console App\bin\Debug\MongoDB.Bson.dll
 C:\Projects\Afstudeerexperimenten\Benchmarking Console App\Benchmarking Console App\bin\Debug\MongoDB.Driver.Core.dll
 C:\Projects\Afstudeerexperimenten\Benchmarking Console App\Benchmarking Console App\bin\Debug\MongoDB.Driver.dll
-C:\Projects\Afstudeerexperimenten\Benchmarking Console App\Benchmarking Console App\bin\Debug\MySqlConnector.dll
 C:\Projects\Afstudeerexperimenten\Benchmarking Console App\Benchmarking Console App\bin\Debug\Newtonsoft.Json.dll
 C:\Projects\Afstudeerexperimenten\Benchmarking Console App\Benchmarking Console App\bin\Debug\Npgsql.dll
 C:\Projects\Afstudeerexperimenten\Benchmarking Console App\Benchmarking Console App\bin\Debug\PerstNet40.dll
@@ -42,5 +41,18 @@ C:\Projects\Afstudeerexperimenten\Benchmarking Console App\Benchmarking Console 
 C:\Projects\Afstudeerexperimenten\Benchmarking Console App\Benchmarking Console App\obj\Debug\Benchmarking Console App.csproj.CopyComplete
 C:\Projects\Afstudeerexperimenten\Benchmarking Console App\Benchmarking Console App\obj\Debug\Benchmarking Console App.exe
 C:\Projects\Afstudeerexperimenten\Benchmarking Console App\Benchmarking Console App\obj\Debug\Benchmarking Console App.pdb
-C:\Projects\Afstudeerexperimenten\Benchmarking Console App\Benchmarking Console App\bin\Debug\db.config
 C:\Projects\Afstudeerexperimenten\Benchmarking Console App\Benchmarking Console App\obj\Debug\Benchmarking Console App.csprojResolveAssemblyReference.cache
+C:\Projects\Afstudeerexperimenten\Benchmarking Console App\Benchmarking Console App\bin\Debug\scaled.config
+C:\Projects\Afstudeerexperimenten\Benchmarking Console App\Benchmarking Console App\bin\Debug\unscaled.config
+C:\Projects\Afstudeerexperimenten\Benchmarking Console App\Benchmarking Console App\bin\Debug\EntityFramework.dll
+C:\Projects\Afstudeerexperimenten\Benchmarking Console App\Benchmarking Console App\bin\Debug\EntityFramework.SqlServer.dll
+C:\Projects\Afstudeerexperimenten\Benchmarking Console App\Benchmarking Console App\bin\Debug\EntityFramework6.Npgsql.dll
+C:\Projects\Afstudeerexperimenten\Benchmarking Console App\Benchmarking Console App\bin\Debug\EntityFramework.xml
+C:\Projects\Afstudeerexperimenten\Benchmarking Console App\Benchmarking Console App\bin\Debug\EntityFramework.SqlServer.xml
+C:\Projects\Afstudeerexperimenten\Benchmarking Console App\Benchmarking Console App\bin\Debug\EntityFramework6.Npgsql.xml
+C:\Projects\Afstudeerexperimenten\Benchmarking Console App\Benchmarking Console App\bin\Debug\database_for_orm.config
+C:\Projects\Afstudeerexperimenten\Benchmarking Console App\Benchmarking Console App\bin\Debug\configFileToUse.config
+C:\Projects\Afstudeerexperimenten\Benchmarking Console App\Benchmarking Console App\bin\Debug\MySql.Data.Entity.EF6.dll
+C:\Projects\Afstudeerexperimenten\Benchmarking Console App\Benchmarking Console App\bin\Debug\MySql.Data.dll
+C:\Projects\Afstudeerexperimenten\Benchmarking Console App\Benchmarking Console App\obj\Debug\Benchmarking_Console_App.Migrations.Initial.resources
+C:\Projects\Afstudeerexperimenten\Benchmarking Console App\Benchmarking Console App\obj\Debug\Benchmarking Console App.csproj.GenerateResource.cache

@@ -25,9 +25,9 @@ namespace Benchmarking_Console_App.Configurations.Databases.DatabaseApis.SQL
 
         public string GetCreateCollectionText()
         {
-            var modelFieldsNamesAndTypes = this.GetNamesAndTypesOfModelFields<M>();
+            var modelFieldsNamesAndTypes = this.GetNamesAndTypesOfModelProperties<M>();
 
-            string sqlStr = $"CREATE TABLE \"{typeof(M).Name.ToLower()}\" (";
+            string sqlStr = $"CREATE TABLE {typeof(M).Name.ToLower()} (";
             foreach(var fieldNameAndType in modelFieldsNamesAndTypes)
             {
                 var columnName = fieldNameAndType.Key;
@@ -35,7 +35,7 @@ namespace Benchmarking_Console_App.Configurations.Databases.DatabaseApis.SQL
 
                 var sqlStringForColumnType = this._typesToSqlType[columnType];
 
-                sqlStr += $"\"{columnName.ToLower()}\" {sqlStringForColumnType} NOT NULL,";
+                sqlStr += $"{columnName.ToLower()} {sqlStringForColumnType} NOT NULL,";
 
             }
 
@@ -51,15 +51,15 @@ namespace Benchmarking_Console_App.Configurations.Databases.DatabaseApis.SQL
                 var firstFieldNameAndType = modelFieldsNamesAndTypes.First();
                 primaryKeyName = firstFieldNameAndType.Key;
             }
-            sqlStr += $"\"{primaryKeyName.ToLower()}\"";
+            sqlStr += $"{primaryKeyName.ToLower()}";
 
             return sqlStr += "));";
         }
 
-        private Dictionary<string, Type> GetNamesAndTypesOfModelFields<M>() where M: IModel, new()
+        private Dictionary<string, Type> GetNamesAndTypesOfModelProperties<M>() where M: IModel, new()
         {
-            return typeof(M).GetFields(BindingFlags.Instance | BindingFlags.Public)
-                            .ToDictionary(k => k.Name, v => v.FieldType);
+            return typeof(M).GetProperties(BindingFlags.Instance | BindingFlags.Public)
+                            .ToDictionary(k => k.Name, v => v.PropertyType);
         }
 
         private bool HasPrimaryKeySpecified<M>() where M : IModel, new()
@@ -69,7 +69,7 @@ namespace Benchmarking_Console_App.Configurations.Databases.DatabaseApis.SQL
 
         private string GetPrimaryKeyNameFromType<M>() where M : IModel, new()
         {
-            return typeof(M).GetFields(BindingFlags.Instance | BindingFlags.Public)
+            return typeof(M).GetProperties(BindingFlags.Instance | BindingFlags.Public)
                             .Where(p => p.CustomAttributes.Any(x => x.AttributeType == typeof(IsPrimaryKey)))
                             .Select(x => x.Name)
                             .Single();

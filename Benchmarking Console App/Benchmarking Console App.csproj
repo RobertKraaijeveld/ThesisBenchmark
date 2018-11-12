@@ -40,6 +40,15 @@
     <Reference Include="DnsClient, Version=1.0.7.0, Culture=neutral, PublicKeyToken=4574bb5573c51424, processorArchitecture=MSIL">
       <HintPath>..\packages\DnsClient.1.0.7\lib\net45\DnsClient.dll</HintPath>
     </Reference>
+    <Reference Include="EntityFramework, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
+      <HintPath>..\packages\EntityFramework.6.2.0\lib\net45\EntityFramework.dll</HintPath>
+    </Reference>
+    <Reference Include="EntityFramework.SqlServer, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
+      <HintPath>..\packages\EntityFramework.6.2.0\lib\net45\EntityFramework.SqlServer.dll</HintPath>
+    </Reference>
+    <Reference Include="EntityFramework6.Npgsql, Version=3.2.0.0, Culture=neutral, PublicKeyToken=5d8b90d52f46fda7, processorArchitecture=MSIL">
+      <HintPath>..\packages\EntityFramework6.Npgsql.3.2.0\lib\net45\EntityFramework6.Npgsql.dll</HintPath>
+    </Reference>
     <Reference Include="LZ4, Version=1.0.10.93, Culture=neutral, PublicKeyToken=62e1b5ec1eec9bdd, processorArchitecture=MSIL">
       <HintPath>..\packages\lz4net.1.0.10.93\lib\net4-client\LZ4.dll</HintPath>
     </Reference>
@@ -61,8 +70,11 @@
     <Reference Include="MongoDB.Driver.Core, Version=2.7.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\MongoDB.Driver.Core.2.7.0\lib\net45\MongoDB.Driver.Core.dll</HintPath>
     </Reference>
-    <Reference Include="MySqlConnector, Version=0.47.1.0, Culture=neutral, PublicKeyToken=d33d3e53aa5f8c92, processorArchitecture=MSIL">
-      <HintPath>..\packages\MySqlConnector.0.47.1\lib\net45\MySqlConnector.dll</HintPath>
+    <Reference Include="MySql.Data, Version=6.9.12.0, Culture=neutral, PublicKeyToken=c5687fc88969c44d, processorArchitecture=MSIL">
+      <HintPath>..\packages\MySql.Data.6.9.12\lib\net45\MySql.Data.dll</HintPath>
+    </Reference>
+    <Reference Include="MySql.Data.Entity.EF6, Version=6.9.12.0, Culture=neutral, PublicKeyToken=c5687fc88969c44d, processorArchitecture=MSIL">
+      <HintPath>..\packages\MySql.Data.Entity.6.9.12\lib\net45\MySql.Data.Entity.EF6.dll</HintPath>
     </Reference>
     <Reference Include="Newtonsoft.Json, Version=11.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <HintPath>..\packages\Newtonsoft.Json.11.0.2\lib\net45\Newtonsoft.Json.dll</HintPath>
@@ -81,6 +93,8 @@
     <Reference Include="System.Buffers, Version=4.0.2.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
       <HintPath>..\packages\System.Buffers.4.4.0\lib\netstandard1.1\System.Buffers.dll</HintPath>
     </Reference>
+    <Reference Include="System.ComponentModel.DataAnnotations" />
+    <Reference Include="System.Configuration" />
     <Reference Include="System.Core" />
     <Reference Include="System.IO.Compression" />
     <Reference Include="System.Memory, Version=4.0.1.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
@@ -148,16 +162,37 @@
     <Compile Include="Configurations\Databases\Interfaces\IObjectOrientedDatabaseApi.cs" />
     <Compile Include="Configurations\Databases\Interfaces\ISearchModel.cs" />
     <Compile Include="Configurations\Databases\Interfaces\IUpdateModel.cs" />
+    <Compile Include="Configurations\ORMs\EntityFramework\BenchmarkDbContext.cs" />
+    <Compile Include="Configurations\ORMs\EntityFramework\BenchmarkDbPostgreSQLContextFactory.cs" />
+    <Compile Include="Configurations\ORMs\EntityFramework\BenchmarkDbMySqlContextFactory.cs" />
+    <Compile Include="Configurations\ORMs\EntityFramework\DbTypeConfiguration.cs" />
+    <Compile Include="Migrations\201811121556460_Initial.cs" />
+    <Compile Include="Migrations\201811121556460_Initial.Designer.cs">
+      <DependentUpon>201811121556460_Initial.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\DatabaseModels\AbstractModel.cs" />
     <Compile Include="Models\DatabaseModels\IModel.cs" />
     <Compile Include="Models\DatabaseModels\MinuteAveragesRow.cs" />
-    <Compile Include="Models\DatabaseModels\SensorValue.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />
-    <None Include="db.config">
+    <None Include="database_for_orm.config">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Docker\Container Initializations\create_all_machines.sh" />
+    <None Include="Docker\Container Initializations\Redis\docker-redis-stop.sh" />
+    <None Include="Docker\Container Initializations\stop_all.sh" />
+    <None Include="scaled.config">
+      <SubType>Designer</SubType>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="configFileToUse.config">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="unscaled.config">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       <SubType>Designer</SubType>
     </None>
@@ -179,7 +214,6 @@
     <None Include="Docker\Container Initializations\PostgreSQL\docker-postgres-unscaled-start.sh" />
     <None Include="Docker\Container Initializations\PostgreSQL\docker-postgres-unscaled-stop.sh" />
     <None Include="Docker\Container Initializations\Redis\docker-redis-scaled-start.sh" />
-    <None Include="Docker\Container Initializations\Redis\docker-redis-stop.sh" />
     <None Include="Docker\Container Initializations\Redis\docker-redis-unscaled-start.sh" />
     <None Include="Docker\Container Initializations\scaled_startall.sh" />
     <None Include="Docker\Container Initializations\unscaled_startall.sh" />
@@ -187,6 +221,11 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="PerstNet40.dll" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Migrations\201811121556460_Initial.resx">
+      <DependentUpon>201811121556460_Initial.cs</DependentUpon>
+    </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

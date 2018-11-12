@@ -50,7 +50,7 @@ namespace Benchmarking_program.Configurations.Databases.DatabaseApis.SQL
             using (var conn = new ConnectionType() {ConnectionString = _connectionString})
             {
                 conn.Open();
-                using (var cmd = new CommandType() { CommandText = $"SELECT COUNT(*) FROM {typeof(M).Name};",
+                using (var cmd = new CommandType() { CommandText = $"SELECT COUNT(*) FROM {typeof(M).Name.ToLower()};",
                                                      Connection = conn })
                 {
                     // scalar == retrieve first row, first column only.
@@ -63,6 +63,7 @@ namespace Benchmarking_program.Configurations.Databases.DatabaseApis.SQL
         {
             try
             {
+                //Trying to get the amount of models of this type. Will throw an exception if the table doesn't exist
                 var amountOfModelsOfType = this.Amount<M>();
             }
             catch (Exception e) // table does not exist so we create it
@@ -144,13 +145,13 @@ namespace Benchmarking_program.Configurations.Databases.DatabaseApis.SQL
         }
 
         // TODO: Temporary fix for SQL Truncation problem of not knowing table names in advance
-        public void Truncate(string tableName)
+        public void Truncate<M>() where M: IModel, new()
         {
             using (var conn = new ConnectionType() {ConnectionString = _connectionString})
             {
                 conn.Open();
 
-                var cmd = new CommandType() {CommandText = $"TRUNCATE {tableName};", Connection = conn};
+                var cmd = new CommandType() {CommandText = $"TRUNCATE {typeof(M).Name.ToLower()};", Connection = conn};
                 cmd.ExecuteNonQuery();
 
                 cmd.Dispose();

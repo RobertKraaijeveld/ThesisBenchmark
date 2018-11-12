@@ -7,7 +7,7 @@ using Benchmarking_program.Models.DatabaseModels;
 
 namespace Benchmarking_Console_App.Configurations.Databases.Attributes
 {
-    [System.AttributeUsage(AttributeTargets.Field)
+    [System.AttributeUsage(AttributeTargets.Property | AttributeTargets.Field)
     ]
     public class IsPrimaryKey : System.Attribute
     {

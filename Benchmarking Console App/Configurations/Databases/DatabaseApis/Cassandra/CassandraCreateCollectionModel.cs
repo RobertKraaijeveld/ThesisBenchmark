@@ -63,18 +63,13 @@ namespace Benchmarking_Console_App.Configurations.Databases.DatabaseApis.Cassand
 
         private Dictionary<string, Type> GetNamesAndTypesOfModelFields<M>() where M : IModel, new()
         {
-            return typeof(M).GetFields(BindingFlags.Instance | BindingFlags.Public)
-                            .ToDictionary(k => k.Name, v => v.FieldType);
-        }
-
-        private bool HasPrimaryKeySpecified<M>() where M : IModel, new()
-        {
-            return typeof(M).CustomAttributes.Any(x => x.AttributeType == typeof(IsPrimaryKey));
+            return typeof(M).GetProperties(BindingFlags.Instance | BindingFlags.Public)
+                            .ToDictionary(k => k.Name, v => v.PropertyType);
         }
 
         private string GetPrimaryKeyNameFromType<M>() where M : IModel, new()
         {
-            return typeof(M).GetFields(BindingFlags.Instance | BindingFlags.Public)
+            return typeof(M).GetProperties(BindingFlags.Instance | BindingFlags.Public)
                             .Where(p => p.CustomAttributes.Any(x => x.AttributeType == typeof(IsPrimaryKey)))
                             .Select(x => x.Name)
                             .Single();

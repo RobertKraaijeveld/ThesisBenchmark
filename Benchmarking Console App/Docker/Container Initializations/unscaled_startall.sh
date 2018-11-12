@@ -5,5 +5,5 @@ cd "/c/Projects/Afstudeerexperimenten/Benchmarking Console App/Benchmarking Cons
 ./PostgreSQL/docker-postgres-unscaled-start.sh
 ./Redis/docker-redis-unscaled-start.sh start
 ./Cassandra/docker-cassandra-unscaled-start.sh
-./MongoDB/docker-mongodb-unscaled-start.sh
+./MongoDB/docker-mongodb-unscaled-start.sh start
 

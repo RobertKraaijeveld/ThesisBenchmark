@@ -97,8 +97,8 @@ namespace Benchmarking_program.Configurations.Databases.DatabaseApis.SQL
 
         public void TruncateAll()
         {
-            _database.ListCollectionNames()
-                     .ForEachAsync(c => _database.DropCollection(c)); // In mongoDB a collection gets dropped anyway if it has no documents.
+            //_database.ListCollectionNames()
+            //         .ForEachAsync(c => _database.DropCollection(c)); // In mongoDB a collection gets dropped anyway if it has no documents.
         }
 
 

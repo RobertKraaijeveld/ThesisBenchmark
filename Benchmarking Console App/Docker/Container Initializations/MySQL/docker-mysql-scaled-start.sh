@@ -4,7 +4,6 @@ docker-machine start mysql
 docker-machine regenerate-certs mysql -f
 
 docker-machine ssh mysql -- 'docker rm mysqlscaled -f';
-docker-machine ssh mysql -- 'docker volume create mysqlscaled-volume;'
 
 #  Creating the mariadb container 
 docker-machine ssh mysql -- "docker run -d \

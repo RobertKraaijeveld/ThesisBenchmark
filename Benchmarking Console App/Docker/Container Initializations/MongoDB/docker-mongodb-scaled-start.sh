@@ -106,6 +106,8 @@ docker-machine ssh mongodb-worker1 -- $'docker exec  $(docker ps --format {{.Nam
                                           rs.initiate({   _id: "sh_replicaset",  members: [{ _id : 0, host : "mongosh1" }, { _id : 1, host : "mongosh2" }] });
                                         \''
 
+sleep 15
+
 # Enabling sharding and adding shards using mongo CLI running in mongoS container.
 docker-machine ssh mongodb-manager1 -- $'docker exec  $(docker ps --format {{.Names}} | grep mongos) mongo --eval \
                                         \'

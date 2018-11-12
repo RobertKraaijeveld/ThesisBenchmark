@@ -13,21 +13,13 @@ namespace Benchmarking_program.Models.DatabaseModels
 
         public string GetPrimaryKeyFieldName()
         {
-            var publicFields = typeof(T).GetFields(BindingFlags.Instance | BindingFlags.Public);
-
-            if ()
+            var publicProperties = typeof(T).GetProperties(BindingFlags.Instance | BindingFlags.Public);
+            if (publicProperties.Any(pf => Attribute.IsDefined(pf, typeof(IsPrimaryKey))))
             {
-
+                // Returning the name of the property which has the 'IsPrimaryKey' attribute
+                return publicProperties.Single(pf => Attribute.IsDefined(pf, typeof(IsPrimaryKey))).Name;
             }
-
-
-            throw new Exception("Model must have primary key, using [IsPrimaryKey] attribute!");
-
-            // The primary key field is the one which has the 'IsPrimaryKey' attribute.
-            return 
-                            .Where(p => p.CustomAttributes.Any(x => x.AttributeType == typeof(IsPrimaryKey)))
-                            .Select(x => x.Name)
-                            .First();
+            else throw new Exception("Model must have primary key, using [IsPrimaryKey] attribute!");
         }
 
         // Is used to map the variable names (column names in the DB) to the appropriate variable values within the class.
@@ -35,9 +27,9 @@ namespace Benchmarking_program.Models.DatabaseModels
         public Dictionary<string, object> GetFieldsWithValues()
         {
             var type = this.GetType();
-            var fieldsOfThisModel = type.GetFields(BindingFlags.Public | BindingFlags.Instance);
+            var propertiesOfThisModel = type.GetProperties(BindingFlags.Public | BindingFlags.Instance);
 
-            var ret = fieldsOfThisModel.ToDictionary(key => key.Name, value => value.GetValue(this));
+            var ret = propertiesOfThisModel.ToDictionary(key => key.Name, value => value.GetValue(this));
             return ret;
         }
     }
