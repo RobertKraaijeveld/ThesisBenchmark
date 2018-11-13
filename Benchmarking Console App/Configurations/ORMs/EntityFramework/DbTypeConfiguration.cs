@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Data.Entity;
-using System.Data.Entity.Infrastructure;
 using System.Data.Entity.SqlServer;
 using System.IO;
 using System.Linq;
@@ -14,7 +13,7 @@ namespace Benchmarking_Console_App.Configurations.ORMs.EntityFramework
 {
     public class DbTypeConfiguration : DbConfiguration
     {
-        private readonly string DatabaseForOrmConfigFileLocation = "C:\\Projects\\Afstudeerexperimenten\\Benchmarking Console App\\Benchmarking Console App\\configFileToUse.config";
+        private readonly string DatabaseForOrmConfigFileLocation = "C:\\Projects\\Afstudeerexperimenten\\Benchmarking Console App\\Benchmarking Console App\\database_for_orm.config";
 
         public DbTypeConfiguration()
         {

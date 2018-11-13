@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using Benchmarking_Console_App.Configurations.Databases.Interfaces;
-using Benchmarking_program.Configurations.Databases.Interfaces;
 using Benchmarking_program.Models.DatabaseModels;
 using Perst;
 
@@ -121,8 +120,8 @@ namespace Benchmarking_program.Configurations.Databases.DatabaseApis.SQL
 
                 foreach (var model in newModels)
                 {
-                    _database.AddRecord(modelType, model);
                     multiDimensionalIndexForModelType.Add(model);
+                    _database.AddRecord(modelType, model);
                 }
 
                 //return null; // Have to return 'something' from func 
@@ -138,7 +137,7 @@ namespace Benchmarking_program.Configurations.Databases.DatabaseApis.SQL
         {
             var modelType = typeof(M);
 
-            // Then, adding the new models to the DB and updating their index.
+            // Adding the new models to the DB and updating their index. The new models will simply replace the old.
             ExecuteDatabaseCommandsWithinTransaction<object>(() =>
             {
                 var multiDimensionalIndexForModelType = _multiDimensionalIndexesPerType[modelType];
@@ -159,11 +158,9 @@ namespace Benchmarking_program.Configurations.Databases.DatabaseApis.SQL
             ExecuteDatabaseCommandsWithinTransaction<object>(() =>
             {
                 var modelType = typeof(M);
-                var multiDimensionalIndexForModelType = _multiDimensionalIndexesPerType[modelType];
 
                 foreach (var model in modelsToDelete)
                 {
-                    multiDimensionalIndexForModelType.Remove(model);
                     _database.DeleteRecord(modelType, model);
                 }
                 return null;
@@ -174,10 +171,10 @@ namespace Benchmarking_program.Configurations.Databases.DatabaseApis.SQL
         {
             ExecuteDatabaseCommandsWithinTransaction<object>(() =>
             {
-                foreach (var type in _multiDimensionalIndexesPerType.Keys)
+                var types = _multiDimensionalIndexesPerType.Keys.ToList();
+                foreach (var type in types)
                 {
                     _database.DropTable(type);
-                    _multiDimensionalIndexesPerType[type].Clear();
                     _multiDimensionalIndexesPerType.Remove(type);
                 }
                 return null;

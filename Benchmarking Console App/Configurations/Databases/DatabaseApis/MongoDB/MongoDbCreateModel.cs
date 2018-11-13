@@ -1,7 +1,6 @@
 ﻿using Benchmarking_program.Configurations.Databases.DatabaseApis.MongoDB;
 using Benchmarking_program.Configurations.Databases.Interfaces;
 using Benchmarking_program.Models.DatabaseModels;
-using Newtonsoft.Json;
 
 namespace Benchmarking_program.Configurations.Databases.DatabaseApis.SQL
 {

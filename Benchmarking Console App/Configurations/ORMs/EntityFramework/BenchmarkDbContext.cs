@@ -1,11 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Data.Entity;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Data.Entity;
 using Benchmarking_Console_App.Models.DatabaseModels;
-using Benchmarking_program.Models.DatabaseModels;
 
 namespace Benchmarking_Console_App.Configurations.ORMs.EntityFramework
 {

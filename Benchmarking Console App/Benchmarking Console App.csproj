@@ -145,6 +145,7 @@
     <Compile Include="Configurations\Databases\DatabaseApis\Redis\RedisSearchModel.cs" />
     <Compile Include="Configurations\Databases\DatabaseApis\Redis\RedisUpdateModel.cs" />
     <Compile Include="Configurations\Databases\DatabaseApis\Redis\SimpleRedisDatabaseApi.cs" />
+    <Compile Include="Configurations\Databases\DatabaseApis\SQL\AbstractSqlOperationModel.cs" />
     <Compile Include="Configurations\Databases\DatabaseApis\SQL\SimpleSQLDatabaseApi.cs" />
     <Compile Include="Configurations\Databases\DatabaseApis\SQL\SqlCreateCollectionModel.cs" />
     <Compile Include="Configurations\Databases\DatabaseApis\SQL\SqlCreateModel.cs" />
@@ -154,6 +155,13 @@
     <Compile Include="Configurations\Databases\DatabaseApis\SQL\SqlUpdateModel.cs" />
     <Compile Include="Configurations\Databases\DatabaseTypes\DatabaseTypeSettingConstant.cs" />
     <Compile Include="Configurations\Databases\DatabaseTypes\EDatabaseType.cs" />
+    <Compile Include="Configurations\Databases\DatabaseTypes\IDatabaseType.cs" />
+    <Compile Include="Configurations\Databases\DatabaseTypes\PerstDatabaseType.cs" />
+    <Compile Include="Configurations\Databases\DatabaseTypes\MongoDbDatabaseType.cs" />
+    <Compile Include="Configurations\Databases\DatabaseTypes\CassandraDatabaseType.cs" />
+    <Compile Include="Configurations\Databases\DatabaseTypes\RedisDatabaseType.cs" />
+    <Compile Include="Configurations\Databases\DatabaseTypes\PostgreSQLDatabaseType.cs" />
+    <Compile Include="Configurations\Databases\DatabaseTypes\MySQLDatabaseType.cs" />
     <Compile Include="Configurations\Databases\Interfaces\ICreateModel.cs" />
     <Compile Include="Configurations\Databases\Interfaces\ICreateCollectionModel.cs" />
     <Compile Include="Configurations\Databases\Interfaces\IDatabaseApi.cs" />
@@ -176,6 +184,9 @@
     <Compile Include="Models\DatabaseModels\MinuteAveragesRow.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Tests\Simple\DbWithSimpleDriverTest.cs" />
+    <Compile Include="Tests\IPerformanceTest.cs" />
+    <Compile Include="Tests\TestReport.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />
@@ -226,6 +237,10 @@
     <EmbeddedResource Include="Migrations\201811121556460_Initial.resx">
       <DependentUpon>201811121556460_Initial.cs</DependentUpon>
     </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Tests\CQRS\" />
+    <Folder Include="Tests\ORM\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

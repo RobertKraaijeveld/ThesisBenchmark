@@ -1,4 +1,5 @@
-﻿using Benchmarking_program.Models.DatabaseModels;
+﻿using System.Collections.Generic;
+using Benchmarking_program.Models.DatabaseModels;
 
 namespace Benchmarking_program.Configurations.Databases.Interfaces
 {
@@ -10,5 +11,7 @@ namespace Benchmarking_program.Configurations.Databases.Interfaces
     public interface ISearchModel<M> where M: IModel, new()
     {
         string GetSearchString<M>();
+
+        Dictionary<string, object> IdentifiersAndValuesToSearchFor { get; set; }
     }
 }

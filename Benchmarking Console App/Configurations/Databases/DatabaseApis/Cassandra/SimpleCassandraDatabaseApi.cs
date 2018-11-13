@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using Benchmarking_Console_App.Configurations.Databases.Interfaces;
@@ -102,6 +101,11 @@ namespace Benchmarking_program.Configurations.Databases.DatabaseApis.SQL
             {
                 _cassandraMapper.Execute($"TRUNCATE {this.KEYSPACE_NAME}.{table}");
             }
+        }
+
+        public void Truncate<M>() where M : IModel, new()
+        {
+            _cassandraMapper.Execute($"TRUNCATE {this.KEYSPACE_NAME}.{typeof(M).Name}");
         }
 
         public IEnumerable<string> GetAllTableNames()

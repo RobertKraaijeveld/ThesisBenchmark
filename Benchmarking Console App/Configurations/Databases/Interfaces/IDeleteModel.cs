@@ -10,7 +10,8 @@ namespace Benchmarking_program.Configurations.Databases.Interfaces
     /// </summary>
     public interface IDeleteModel
     {
-        Dictionary<string, object> identifiersAndValuesToDeleteOn { get; set; }
+        string[] IdentifiersToDeleteOn { get; set; }
+
         string GetDeleteString(IModel model);
     }
 }

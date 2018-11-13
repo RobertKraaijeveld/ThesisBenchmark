@@ -46,7 +46,7 @@ namespace Benchmarking_program.Configurations.Databases.DatabaseApis.SQL
             var db = _connection.GetDatabase();
 
             var resultJson = db.StringGet(searchCommandText);
-            return JsonConvert.DeserializeObject<IEnumerable<M>>(resultJson);
+            return new List<M>() { JsonConvert.DeserializeObject<M>(resultJson) };
         }
 
         public int Amount<M>() where M : IModel, new()
@@ -101,6 +101,11 @@ namespace Benchmarking_program.Configurations.Databases.DatabaseApis.SQL
         {
             var db = _connection.GetDatabase();
             db.Execute("FLUSHDB");
+        }
+
+        public void Truncate<M>() where M : IModel, new()
+        {
+            this.TruncateAll(); // Dangerous behavior, need to fix this
         }
 
 

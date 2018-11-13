@@ -11,5 +11,6 @@ namespace Benchmarking_program.Models.DatabaseModels
 
         void Randomize(int amountOfExistingModels, Random randomGenerator);
 
+        void RandomizeValuesExceptPrimaryKey(Random randomGenerator);
     }
 }

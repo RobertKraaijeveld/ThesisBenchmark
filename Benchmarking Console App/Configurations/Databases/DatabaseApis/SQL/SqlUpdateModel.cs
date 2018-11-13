@@ -1,17 +1,19 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
+using Benchmarking_Console_App.Configurations.Databases.DatabaseApis.SQL;
 using Benchmarking_program.Configurations.Databases.Interfaces;
 using Benchmarking_program.Models.DatabaseModels;
 
 namespace Benchmarking_program.Configurations.Databases.DatabaseApis.SQL
 {
-    public class SqlUpdateModel : IUpdateModel
+    public class SqlUpdateModel : AbstractSqlOperationModel, IUpdateModel
     {
-        private readonly Dictionary<string, object> identifiersAndValuesToFilterOn;
+        public string[] IdentifiersToFilterOn { get; set; }
 
-        public SqlUpdateModel(Dictionary<string, object> identifiersAndValuesToFilterOn)
+        public SqlUpdateModel() { }
+
+        public SqlUpdateModel(string[] IdentifiersAndValuesToFilterOn)
         {
-            this.identifiersAndValuesToFilterOn = identifiersAndValuesToFilterOn;
+            this.IdentifiersToFilterOn = IdentifiersAndValuesToFilterOn;
         }
 
 
@@ -20,22 +22,27 @@ namespace Benchmarking_program.Configurations.Databases.DatabaseApis.SQL
             var updateText = $"UPDATE {newModel.GetType().Name.ToLower()} SET ";
             var whereClause = " WHERE ";
 
-            // Creating update clause TODO: Check for nulls
+            // Creating update clause 
+            var modelPrimaryKeyIdentifierName = newModel.GetPrimaryKeyFieldName();
             foreach (var identifierAndValueToUpdateTo in newModel.GetFieldsWithValues())
             {
                 var identifierToUpdate = identifierAndValueToUpdateTo.Key;
                 var valueToUpdateTo = identifierAndValueToUpdateTo.Value;
 
-                updateText += $"{identifierToUpdate} = {valueToUpdateTo},";
+                if (identifierToUpdate.Equals(modelPrimaryKeyIdentifierName))
+                {
+                    updateText += $"{identifierToUpdate} = {base.ValueToString(valueToUpdateTo)},";
+                }
             }
 
             // Creating where clause
-            foreach (var identifierAndValueToFilterOn in identifiersAndValuesToFilterOn)
+            var newModelsIdentifiersAndValues = newModel.GetFieldsWithValues();
+            foreach (var identifierToFilterOn in IdentifiersToFilterOn)
             {
-                var identifier = identifierAndValueToFilterOn.Key;
-                var valueToFilterOn = identifierAndValueToFilterOn.Value;
+                var identifier = identifierToFilterOn;
+                var valueToFilterOn = newModelsIdentifiersAndValues[identifierToFilterOn];
 
-                whereClause += $"{identifier} = {valueToFilterOn} AND";
+                whereClause += $"{identifier} = {base.ValueToString(valueToFilterOn)} AND";
             }
 
             // Removing ',' and 'AND' from last item in 'SET' and 'WHERE' portion of the query text.
@@ -45,11 +52,6 @@ namespace Benchmarking_program.Configurations.Databases.DatabaseApis.SQL
 
             // Combining update text and where clause, then executing query 
             return updateText += whereClause += ";"; 
-        }
-
-        public Dictionary<string, object> GetIdentifiersAndValuesToFilterOn()
-        {
-            return this.identifiersAndValuesToFilterOn;
         }
     }
 }

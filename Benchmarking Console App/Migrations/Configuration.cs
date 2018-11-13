@@ -1,9 +1,6 @@
 namespace Benchmarking_Console_App.Migrations
 {
-    using System;
-    using System.Data.Entity;
     using System.Data.Entity.Migrations;
-    using System.Linq;
 
     internal sealed class Configuration : DbMigrationsConfiguration<Benchmarking_Console_App.Configurations.ORMs.EntityFramework.BenchmarkDbContext>
     {

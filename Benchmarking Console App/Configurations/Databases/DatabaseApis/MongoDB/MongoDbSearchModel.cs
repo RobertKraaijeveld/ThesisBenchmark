@@ -7,14 +7,14 @@ namespace Benchmarking_program.Configurations.Databases.DatabaseApis.SQL
 {
     public class MongoDbSearchModel<M> : AbstractMongoDbOperationModel, ISearchModel<M> where M : IModel, new()
     {
-        public List<string> identifiersToRetrieve { get; set; }
-        public Dictionary<string, object> identifiersAndValuesToSearchFor { get; set; }
+        public Dictionary<string, object> IdentifiersAndValuesToSearchFor { get; set; }
+
+        public MongoDbSearchModel() { }
 
         public MongoDbSearchModel(Dictionary<string, object> identifiersAndValuesToSearchFor, 
                                   List<string> identifiersToRetrieve)
         {
-            this.identifiersAndValuesToSearchFor = identifiersAndValuesToSearchFor;
-            this.identifiersToRetrieve = identifiersToRetrieve;
+            this.IdentifiersAndValuesToSearchFor = identifiersAndValuesToSearchFor;
         }
 
         /// <summary>
@@ -23,8 +23,8 @@ namespace Benchmarking_program.Configurations.Databases.DatabaseApis.SQL
         /// </summary>
         public string GetSearchString<M>() 
         {
-            return $"{{{base.GetQueryText(identifiersAndValuesToSearchFor)}," +
-                   $"{base.GetProjectionText(identifiersToRetrieve)}}}";
+            return $"{{{base.GetQueryText(IdentifiersAndValuesToSearchFor)}," +
+                   $"{{ }} }}"; // Empty projection == SELECT *
         }
     }
 }

@@ -1,37 +1,47 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
+using Benchmarking_Console_App.Configurations.Databases.DatabaseApis.SQL;
 using Benchmarking_program.Configurations.Databases.Interfaces;
 using Benchmarking_program.Models.DatabaseModels;
 
 namespace Benchmarking_program.Configurations.Databases.DatabaseApis.SQL
 {
-    public class SqlDeleteModel : IDeleteModel
+    public class SqlDeleteModel : AbstractSqlOperationModel, IDeleteModel
     {
-        public Dictionary<string, object> identifiersAndValuesToDeleteOn { get; set; }
+        public string[] IdentifiersToDeleteOn { get; set; }
 
-        public SqlDeleteModel(Dictionary<string, object> identifiersAndValuesToDeleteOn)
+        public SqlDeleteModel() { }
+
+        public SqlDeleteModel(string[] identifiersToDeleteOn)
         {
-            this.identifiersAndValuesToDeleteOn = identifiersAndValuesToDeleteOn;
+            this.IdentifiersToDeleteOn = identifiersToDeleteOn;
         }
 
         public string GetDeleteString(IModel model)
         {
-            var propertiesAndValuesOfModel = model.GetFieldsWithValues();
+            var identifierAndValuesOfModel = model.GetFieldsWithValues();
 
             var deleteText = $"DELETE FROM {model.GetType().Name.ToLower()}";
-            var whereClause = " WHERE ";
 
-            foreach (var identifierAndValueKv in identifiersAndValuesToDeleteOn)
+            if (this.IdentifiersToDeleteOn.Any())
             {
-                if (propertiesAndValuesOfModel.ContainsKey(identifierAndValueKv.Key))
+                var whereClause = " WHERE ";
+                foreach (var identifier in IdentifiersToDeleteOn)
                 {
-                    whereClause += $"{identifierAndValueKv.Key} = {identifierAndValueKv.Value} AND";
+                    if (identifierAndValuesOfModel.ContainsKey(identifier))
+                    {
+                        var modelsValueForIdentifier = identifierAndValuesOfModel[identifier];
+                        whereClause += $"{identifier} = {base.ValueToString(modelsValueForIdentifier)} AND";
+                    }
+                    else throw new Exception("Cannot delete using a property that model does not have.");
                 }
-                else throw new Exception("Cannot delete using a property that model does not have.");
+
+                whereClause = whereClause.Remove(whereClause.Length - 4, 4);
+                deleteText += whereClause += ";";
             }
 
-            whereClause = whereClause.Remove(whereClause.Length - 4, 4); 
-            return deleteText += whereClause += ";"; 
+            return deleteText;
         }
     }
 }

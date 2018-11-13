@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using Benchmarking_program.Configurations.Databases.DatabaseApis.MongoDB;
 using Benchmarking_program.Configurations.Databases.Interfaces;
 using Benchmarking_program.Models.DatabaseModels;
@@ -10,11 +11,13 @@ namespace Benchmarking_program.Configurations.Databases.DatabaseApis.SQL
     /// </summary>
     public class MongoDbDeleteModel : AbstractMongoDbOperationModel, IDeleteModel
     {
-        public Dictionary<string, object> identifiersAndValuesToDeleteOn { get; set; }
+        public string[] IdentifiersToDeleteOn { get; set; }
 
-        public MongoDbDeleteModel(Dictionary<string, object> identifiersAndValuesToDeleteOn)
+        public MongoDbDeleteModel() { }
+
+        public MongoDbDeleteModel(string[] IdentifiersToDeleteOn)
         {
-            this.identifiersAndValuesToDeleteOn = identifiersAndValuesToDeleteOn;
+            this.IdentifiersToDeleteOn = IdentifiersToDeleteOn;
         }
 
         public string GetDeleteString(IModel model)
@@ -23,21 +26,21 @@ namespace Benchmarking_program.Configurations.Databases.DatabaseApis.SQL
 
             // If current identifier is the same as the model's primary key,
             // we exclusively filter on that property (renamed to '_id' in mongodb), for performance reasons.
+            var modelsIdentifiersAndValues = model.GetFieldsWithValues();
             var modelPrimaryKeyPropertyName = model.GetPrimaryKeyFieldName();
-            if (identifiersAndValuesToDeleteOn.ContainsKey(modelPrimaryKeyPropertyName))
+
+            if (IdentifiersToDeleteOn.ToList().Contains(modelPrimaryKeyPropertyName))
             {
-                var primaryKeyValue = identifiersAndValuesToDeleteOn[modelPrimaryKeyPropertyName];
+                var primaryKeyValue = modelsIdentifiersAndValues[modelPrimaryKeyPropertyName];
 
                 deleteCmdText += $"_id: {base.ValueToString(primaryKeyValue)}";
 
                 return deleteCmdText += "}"; 
             }
 
-            foreach (var identifierAndValue in identifiersAndValuesToDeleteOn)
+            foreach (var identifier in IdentifiersToDeleteOn)
             {
-                var identifier = identifierAndValue.Key;
-                var valueToDeleteOn = identifierAndValue.Value;
-
+                var valueToDeleteOn = modelsIdentifiersAndValues[identifier];
                 deleteCmdText += $"{identifier}: {base.ValueToString(valueToDeleteOn)},";
             }
 

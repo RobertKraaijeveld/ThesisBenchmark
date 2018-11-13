@@ -2,13 +2,9 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
 using Benchmarking_Console_App.Configurations.Databases.Attributes;
-using Benchmarking_Console_App.Configurations.Databases.DatabaseApis.SQL;
 using Benchmarking_Console_App.Configurations.Databases.Interfaces;
 using Benchmarking_program.Models.DatabaseModels;
-using Cassandra;
 
 namespace Benchmarking_Console_App.Configurations.Databases.DatabaseApis.Cassandra
 {

@@ -10,16 +10,23 @@ namespace Benchmarking_program.Models.DatabaseModels
     {
         public abstract void Randomize(int amountOfExistingModels, Random randomGenerator);
 
+        public abstract void RandomizeValuesExceptPrimaryKey(Random randomGenerator);
+
 
         public string GetPrimaryKeyFieldName()
         {
             var publicProperties = typeof(T).GetProperties(BindingFlags.Instance | BindingFlags.Public);
-            if (publicProperties.Any(pf => Attribute.IsDefined(pf, typeof(IsPrimaryKey))))
+            var publicFields = typeof(T).GetFields(BindingFlags.Instance | BindingFlags.Public);
+
+            if (publicProperties.Any(p => Attribute.IsDefined(p, typeof(IsPrimaryKey))))
             {
-                // Returning the name of the property which has the 'IsPrimaryKey' attribute
-                return publicProperties.Single(pf => Attribute.IsDefined(pf, typeof(IsPrimaryKey))).Name;
+                return publicProperties.Single(p=> Attribute.IsDefined(p, typeof(IsPrimaryKey))).Name;
             }
-            else throw new Exception("Model must have primary key, using [IsPrimaryKey] attribute!");
+            else if (publicFields.Any(pf => Attribute.IsDefined(pf, typeof(IsPrimaryKey))))
+            {
+                return publicFields.Single(pf => Attribute.IsDefined(pf, typeof(IsPrimaryKey))).Name;
+            }
+            else throw new Exception("Model must have primary key, using [IsPrimaryKey] attribute");
         }
 
         // Is used to map the variable names (column names in the DB) to the appropriate variable values within the class.

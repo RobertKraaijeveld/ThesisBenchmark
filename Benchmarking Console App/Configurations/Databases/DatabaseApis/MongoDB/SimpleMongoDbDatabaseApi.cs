@@ -1,13 +1,10 @@
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using Benchmarking_Console_App.Configurations.Databases.Interfaces;
-using Benchmarking_program.Configurations.Databases.DatabaseApis.MongoDB;
 using Benchmarking_program.Configurations.Databases.Interfaces;
 using Benchmarking_program.Models.DatabaseModels;
 using MongoDB.Bson;
 using MongoDB.Bson.Serialization;
-using MongoDB.Bson.Serialization.Serializers;
 using MongoDB.Driver;
 
 
@@ -59,24 +56,24 @@ namespace Benchmarking_program.Configurations.Databases.DatabaseApis.SQL
                 var createQueryText = createModel.GetCreateString(model);
 
                 _database.GetCollection<M>(nameof(M))
-                         .InsertOne(BsonSerializer.Deserialize<M>(createQueryText));
+                    .InsertOne(BsonSerializer.Deserialize<M>(createQueryText));
             }
         }
 
         public int Amount<M>() where M : IModel, new()
         {
             return (int) _database.GetCollection<M>(nameof(M))
-                                  .CountDocuments(FilterDefinition<M>.Empty);
+                .CountDocuments(FilterDefinition<M>.Empty);
         }
 
         public void Update<M>(IEnumerable<M> modelsWithNewValues, IUpdateModel updateModel) where M : IModel, new()
         {
             var createModel = new MongoDbCreateModel();
-            var deleteModel = new MongoDbDeleteModel(updateModel.GetIdentifiersAndValuesToFilterOn());
+            var deleteModel = new MongoDbDeleteModel(updateModel.IdentifiersToFilterOn);
 
             foreach (var model in modelsWithNewValues)
             {
-                var modelAsList = new List<M> { model };
+                var modelAsList = new List<M> {model};
 
                 this.Delete(modelAsList, deleteModel);
                 this.Create(modelAsList, createModel);
@@ -91,14 +88,19 @@ namespace Benchmarking_program.Configurations.Databases.DatabaseApis.SQL
                 var asBsonDoc = BsonSerializer.Deserialize<BsonDocument>(deleteQueryText);
 
                 _database.GetCollection<M>(nameof(M))
-                         .DeleteOne(asBsonDoc);
+                    .DeleteOne(asBsonDoc);
             }
         }
 
         public void TruncateAll()
         {
-            //_database.ListCollectionNames()
-            //         .ForEachAsync(c => _database.DropCollection(c)); // In mongoDB a collection gets dropped anyway if it has no documents.
+            _database.ListCollectionNames()
+                     .ForEachAsync(c => _database.DropCollection(c)); 
+        }
+
+        public void Truncate<M>() where M: IModel, new()
+        {
+            _database.DropCollection(typeof(M).Name);
         }
 
 

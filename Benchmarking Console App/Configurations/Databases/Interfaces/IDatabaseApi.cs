@@ -22,5 +22,7 @@ namespace Benchmarking_program.Configurations.Databases.DatabaseApis
         void Delete<M>(IEnumerable<M> modelsToDelete, IDeleteModel deleteModel) where M : IModel, new();
 
         void TruncateAll();
-    } 
+
+        void Truncate<M>() where M : IModel, new();
+    }
 }

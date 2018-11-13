@@ -2,10 +2,7 @@ using System;
 using System.IO;
 using System.Linq;
 using System.Collections.Generic;
-using Benchmarking_program.Configurations.Databases.DatabaseApis.SQL;
 using Benchmarking_program.Configurations.Databases.DatabaseTypes;
-using MySql.Data.MySqlClient;
-using Npgsql;
 
 namespace Benchmarking_program.Configurations.Databases.DatabaseApis
 {

@@ -1,11 +1,12 @@
 ﻿using System;
 using System.Linq;
+using Benchmarking_Console_App.Configurations.Databases.DatabaseApis.SQL;
 using Benchmarking_program.Configurations.Databases.Interfaces;
 using Benchmarking_program.Models.DatabaseModels;
 
 namespace Benchmarking_program.Configurations.Databases.DatabaseApis.SQL
 {
-    public class SqlCreateModel : ICreateModel
+    public class SqlCreateModel : AbstractSqlOperationModel, ICreateModel 
     {
         public string GetCreateString(IModel model)
         {
@@ -21,14 +22,8 @@ namespace Benchmarking_program.Configurations.Databases.DatabaseApis.SQL
                 // Constructing columns/values part of SQL
                 columnNamesStr += $"{modelColumnsAndValuesDict.Keys.ElementAt(i)}";
 
-
-                // Making sure that string values are quoted
                 object parameterValue = modelColumnsAndValuesDict.Values.ElementAt(i);
-                var type = parameterValue.GetType();
-
-                if (type == typeof(String)) valuesStr += $"'{parameterValue}'";
-                else valuesStr += parameterValue;
-
+                valuesStr += $"{base.ValueToString(parameterValue)}";
 
                 columnNamesStr += ",";
                 valuesStr += ",";
