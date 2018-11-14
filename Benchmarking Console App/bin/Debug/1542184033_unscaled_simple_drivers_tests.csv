@@ -1,0 +1,7 @@
+DatabaseTypeUsed,ModelTypeUsed,AmountOfModelsInserted,TimeSpentInsertingModels,TimeSpentRetrievingAllModels,AmountOfModelsRetrievedByPrimaryKey,TimeSpentRetrievingModelsByPrimaryKey,AmountOfModelsRetrievedByContent,TimeSpentRetrievingModelsByContent,AmountOfModelsUpdated,FieldsUpdatedPerModel,TimeSpentUpdatingModels,TimeSpentDeletingAllModels
+MySQL,Benchmarking_Console_App.Models.DatabaseModels.MinuteAveragesRow,100,485,323,100,120,100,0,100,0,55,457
+PostgreSQL,Benchmarking_Console_App.Models.DatabaseModels.MinuteAveragesRow,100,197,10,100,55,100,0,100,0,44,205
+Redis,Benchmarking_Console_App.Models.DatabaseModels.MinuteAveragesRow,100,42,4374,100,44,100,0,100,0,35,24
+Cassandra,Benchmarking_Console_App.Models.DatabaseModels.MinuteAveragesRow,100,680,84,100,913,100,0,100,0,714,572
+MongoDB,Benchmarking_Console_App.Models.DatabaseModels.MinuteAveragesRow,100,271,93,100,99,100,0,100,0,114,67
+Perst,Benchmarking_Console_App.Models.DatabaseModels.MinuteAveragesRowForPerst,100,39,5,100,27,100,0,100,0,3,6

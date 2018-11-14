@@ -29,27 +29,38 @@ namespace Benchmarking_Console_App.Tests.TestReport
         public double TimeSpentDeletingAllModels;
 
 
-        public void ToCsvFile(string fileName)
+        public static void CombineTestReportsIntoCsvFile(List<TestReport> testReports, string fileNameWithoutExtension)
         {
-            using (var fs = File.CreateText(fileName))
-            {
-                var fieldNamesAndValues = this.GetType()
-                                              .GetFields()
-                                              .Select(x => new KeyValuePair<string, object>(x.Name, x.GetValue(this)))
-                                              .ToArray();
+            var currentUnixTime = (Int32) (DateTime.UtcNow.Subtract(new DateTime(1970, 1, 1))).TotalSeconds;
+            var fullFileName = $"{currentUnixTime}_{fileNameWithoutExtension}.csv";
 
-                for (int i = 0; i < fieldNamesAndValues.Count() * 2; i++)
+            using (var fStream = File.CreateText(GetPathToCsvOutputs() + fullFileName))
+            {
+                for (int i = 0; i < testReports.Count; i++)
                 {
-                    if (i <= fieldNamesAndValues.Count())
+                    var fieldNamesAndValues = testReports[i].GetType()
+                                        .GetFields()
+                                        .Select(x => new KeyValuePair<string, object>(x.Name, x.GetValue(testReports[i])))
+                                        .ToList();
+
+                    // Creating CSV header values 
+                    if (i == 0)
                     {
-                        fs.Write(fieldNamesAndValues[i].Key);
+                        var headerLine = string.Join(",", fieldNamesAndValues.Select(x => x.Key));
+                        fStream.WriteLine(headerLine);
                     }
-                    else // Done writing names into first line, now writing values into second line
-                    {
-                        fs.Write(fieldNamesAndValues[i].Value);
-                    }
+
+                    // Writing values of fields to CSV as new line
+                    var valuesLine = string.Join(",", fieldNamesAndValues.Select(x => x.Value));
+                    fStream.WriteLine(valuesLine);
                 }
             }
+        }
+
+        public static string GetPathToCsvOutputs()
+        {
+            var pathToProject = Path.GetDirectoryName(Path.GetDirectoryName(System.IO.Directory.GetCurrentDirectory()));
+            return pathToProject + "\\Output\\";
         }
     }
 }

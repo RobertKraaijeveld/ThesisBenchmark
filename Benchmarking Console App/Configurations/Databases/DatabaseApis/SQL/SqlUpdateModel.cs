@@ -29,7 +29,8 @@ namespace Benchmarking_program.Configurations.Databases.DatabaseApis.SQL
                 var identifierToUpdate = identifierAndValueToUpdateTo.Key;
                 var valueToUpdateTo = identifierAndValueToUpdateTo.Value;
 
-                if (identifierToUpdate.Equals(modelPrimaryKeyIdentifierName))
+                // Not allowing PK's to be updated since some SQL-based DB's (*cough* cassandra *cough*) crash when doing this.
+                if (identifierToUpdate.Equals(modelPrimaryKeyIdentifierName) == false)
                 {
                     updateText += $"{identifierToUpdate} = {base.ValueToString(valueToUpdateTo)},";
                 }

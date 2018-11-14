@@ -196,6 +196,7 @@
     <None Include="Docker\Container Initializations\create_all_machines.sh" />
     <None Include="Docker\Container Initializations\Redis\docker-redis-stop.sh" />
     <None Include="Docker\Container Initializations\stop_all.sh" />
+    <Compile Include="Libraries\RScriptRunner.cs" />
     <None Include="scaled.config">
       <SubType>Designer</SubType>
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>

@@ -30,6 +30,8 @@ namespace Benchmarking_program.Configurations.Databases.DatabaseApis.SQL
         public SimpleSQLDatabaseApi(string connectionString)
         {
             _connectionString = connectionString;
+
+            CreateDatabase();
         }
 
         public IEnumerable<M> GetAll<M>(IGetAllModel<M> getAllModel) where M : IModel, new()
@@ -57,6 +59,7 @@ namespace Benchmarking_program.Configurations.Databases.DatabaseApis.SQL
                 }
             }
         }
+
 
         public void CreateCollectionIfNotExists<M>(ICreateCollectionModel<M> createCollectionModel) where M : IModel, new()
         {
@@ -156,6 +159,32 @@ namespace Benchmarking_program.Configurations.Databases.DatabaseApis.SQL
                 cmd.Dispose();
             }
         }
+
+
+
+        private void CreateDatabase()
+        {
+            var connectionStringWithoutDatabasePortion = _connectionString.Replace("Database=benchmarkdb;", "");
+
+            using (var conn = new ConnectionType() {ConnectionString = connectionStringWithoutDatabasePortion})
+            {
+                try
+                {
+                    conn.Open();
+
+                    var createDbCmd = new CommandType() { CommandText = "CREATE DATABASE benchmarkdb;", Connection = conn };
+                    createDbCmd.ExecuteNonQuery();
+
+                    createDbCmd.Dispose();
+                    conn.Close();
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine("Simple SQL API: Tried to create database benchmarkdb more than once. No further action necessary.");
+                }
+            }
+        }
+
 
         private IEnumerable<M> GetResults<M>(string query) where M: IModel, new()
         {
