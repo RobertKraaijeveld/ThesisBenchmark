@@ -3,8 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using Benchmarking_Console_App.Configurations.Databases.DatabaseTypes;
-using Benchmarking_Console_App.Tests.TestReport;
+using Benchmarking_Console_App.Tests;
 using Benchmarking_program.Configurations.Databases.DatabaseTypes;
+using Benchmarking_program.Models.DatabaseModels;
 
 namespace Benchmarking_Console_App.Testing
 {
@@ -16,12 +17,12 @@ namespace Benchmarking_Console_App.Testing
                    amountOfModelsToRetrieveByContent, amountOfModelsToUpdate)
         { }
 
-        public override TestReport Test<M>(IDatabaseType databaseType)
+        public override TestReport Test<M>(IDatabaseType databaseType, bool scaled) 
         {
             double timeSpentInsertingModels = 0;
             double timeSpentGettingAllModels = 0;
             double timeSpentGettingModelsByPk = 0;
-            double timeSpentGettingModelsByContent = 0;
+            //double timeSpentGettingModelsByContent = 0;
             double timeSpentUpdatingModels = 0;
             double timeSpentDeletingModels = 0;
 
@@ -32,7 +33,7 @@ namespace Benchmarking_Console_App.Testing
             // Perst is OO-DB so we use the OO-api. 
             if (databaseType.ToEnum().Equals(EDatabaseType.Perst))
             {
-                var ooDatabaseApi = databaseType.GetDatabaseApi().ObjectOrientedDatabaseApi;
+                var ooDatabaseApi = databaseType.GetDatabaseApis().ObjectOrientedDatabaseApi;
 
 
                 // Truncating all first in order to start fresh
@@ -110,7 +111,7 @@ namespace Benchmarking_Console_App.Testing
             else
             {
                 var crudModelsForDatabaseType = databaseType.GetCrudModelsForDatabaseType<M>();
-                var apiForDatabaseType = databaseType.GetDatabaseApi().NormalDatabaseApi;
+                var apiForDatabaseType = databaseType.GetDatabaseApis().NormalDatabaseApi;
 
                 var currentModelTypePrimaryKeyName = randomModelsToInsert.First().GetPrimaryKeyFieldName();
 
@@ -171,6 +172,10 @@ namespace Benchmarking_Console_App.Testing
                 });
 
 
+                // Re-inserting the old models so we can test updating.
+                apiForDatabaseType.Create(randomModelsToInsert, crudModelsForDatabaseType.CreateModel);
+
+
                 // Testing updating 
                 var columnsToUpdateOn = columnsToDeleteOn;
                 crudModelsForDatabaseType.UpdateModel.IdentifiersToFilterOn = columnsToUpdateOn;
@@ -190,15 +195,17 @@ namespace Benchmarking_Console_App.Testing
                 });
             }
 
+            // TODO: DUPLICATION WITH ORM TEST
+            var scaledOrNotStr = scaled ? "(scaled)" : "(unscaled)";
             return new TestReport()
             {
-                DatabaseTypeUsed = databaseType.ToEnum(),
-                ModelTypeUsed = typeof(M),
+                DatabaseTypeUsed = databaseType.ToEnum() + scaledOrNotStr,
+                ModelTypeName = typeof(M).Name,
 
                 TimeSpentDeletingAllModels = timeSpentDeletingModels,
                 TimeSpentInsertingModels = timeSpentInsertingModels,
                 TimeSpentRetrievingAllModels = timeSpentGettingAllModels,
-                TimeSpentRetrievingModelsByContent = timeSpentGettingModelsByContent,
+                //TimeSpentRetrievingModelsByContent = timeSpentGettingModelsByContent,
                 TimeSpentRetrievingModelsByPrimaryKey = timeSpentGettingModelsByPk,
                 TimeSpentUpdatingModels = timeSpentUpdatingModels,
 

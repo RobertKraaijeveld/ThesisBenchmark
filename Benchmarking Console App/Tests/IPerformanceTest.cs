@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using Benchmarking_Console_App.Configurations.Databases.DatabaseTypes;
-using Benchmarking_Console_App.Tests.TestReport;
+using Benchmarking_Console_App.Tests;
 using Benchmarking_program.Models.DatabaseModels;
 
 namespace Benchmarking_Console_App.Testing
@@ -24,7 +24,7 @@ namespace Benchmarking_Console_App.Testing
         }
 
 
-        public abstract TestReport Test<M>(IDatabaseType databaseType) where M : IModel, new();
+        public abstract TestReport Test<M>(IDatabaseType databaseType, bool scaled) where M : class, IModel, new();
 
 
         protected IEnumerable<M> GetRandomModels<M>(int amountToCreate) where M : IModel, new()

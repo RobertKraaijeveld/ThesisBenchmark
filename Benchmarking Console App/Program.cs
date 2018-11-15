@@ -10,7 +10,8 @@ using Benchmarking_Console_App.Configurations.Databases.Interfaces;
 using Benchmarking_Console_App.Configurations.ORMs.EntityFramework;
 using Benchmarking_Console_App.Models.DatabaseModels;
 using Benchmarking_Console_App.Testing;
-using Benchmarking_Console_App.Tests.TestReport;
+using Benchmarking_Console_App.Tests;
+using Benchmarking_Console_App.Tests.ORM;
 using Benchmarking_program.Configurations.Databases.DatabaseApis;
 using Benchmarking_program.Configurations.Databases.DatabaseApis.SQL;
 using Benchmarking_program.Configurations.Databases.DatabaseTypes;
@@ -31,41 +32,47 @@ namespace Benchmarking_program
 
         private static void RunSimpleDriversTests(bool hasScalingBeenEnabled)
         {
-            //CreateSqlCollections();
+            CreateSqlCollections();
 
-            //List<TestReport> allSimpleDriverTestReports = new List<TestReport>();
-            //int[] modelAmounts = new int[] { 1, 10, 100, 500, 1000, 5000 };
+            List<TestReport> allTestReports = new List<TestReport>();
+            int[] modelAmounts = new int[] { 500 };
 
-            //foreach (var amount in modelAmounts)
-            //{
-            //    var simpleDriverTest = new DbWithSimpleDriverTest(amount, amount, amount, amount);
+            foreach (var amount in modelAmounts)
+            {
+                var simpleDriverTest = new DbWithSimpleDriverTest(amount, amount, amount, amount);
 
-            //    var perstTestReport = simpleDriverTest.Test<MinuteAveragesRowForPerst>(databaseType: new PerstDatabaseType());
-            //    var mySqlTestReport = simpleDriverTest.Test<MinuteAveragesRow>(databaseType: new MySQLDatabaseType());
-            //    var postgreSqlTestReport = simpleDriverTest.Test<MinuteAveragesRow>(databaseType: new PostgreSQLDatabaseType());
-            //    var redisTestReport = simpleDriverTest.Test<MinuteAveragesRow>(databaseType: new RedisDatabaseType());
-            //    var cassandraTestReport = simpleDriverTest.Test<MinuteAveragesRow>(databaseType: new CassandraDatabaseType());
-            //    var mongoTestReport = simpleDriverTest.Test<MinuteAveragesRow>(databaseType: new MongoDbDatabaseType());
+                // Simple driver tests
+                var perstSimpleDriverTestReport = simpleDriverTest.Test<MinuteAveragesRowForPerst>(databaseType: new PerstDatabaseType(), scaled: hasScalingBeenEnabled);
+                var mySqlSimpleDriverTestReport = simpleDriverTest.Test<MinuteAveragesRow>(databaseType: new MySQLDatabaseType(), scaled: hasScalingBeenEnabled);
+                var postgreSqlSimpleDriverTestReport = simpleDriverTest.Test<MinuteAveragesRow>(databaseType: new PostgreSQLDatabaseType(), scaled: hasScalingBeenEnabled);
+                var redisSimpleDriverTestReport = simpleDriverTest.Test<MinuteAveragesRow>(databaseType: new RedisDatabaseType(), scaled: hasScalingBeenEnabled);
+                var cassandraSimpleDriverTestReport = simpleDriverTest.Test<MinuteAveragesRow>(databaseType: new CassandraDatabaseType(), scaled: hasScalingBeenEnabled);
+                var mongoSimpleDriverTestReport = simpleDriverTest.Test<MinuteAveragesRow>(databaseType: new MongoDbDatabaseType(), scaled: hasScalingBeenEnabled);
 
-            //    allSimpleDriverTestReports.Add(mySqlTestReport);
-            //    allSimpleDriverTestReports.Add(postgreSqlTestReport);
-            //    allSimpleDriverTestReports.Add(cassandraTestReport);
-            //    allSimpleDriverTestReports.Add(mongoTestReport);
-            //    allSimpleDriverTestReports.Add(redisTestReport);
-            //    allSimpleDriverTestReports.Add(perstTestReport);
-            //}
+                allTestReports.Add(mySqlSimpleDriverTestReport);
+                allTestReports.Add(postgreSqlSimpleDriverTestReport);
+                allTestReports.Add(cassandraSimpleDriverTestReport);
+                allTestReports.Add(mongoSimpleDriverTestReport);
+                allTestReports.Add(redisSimpleDriverTestReport);
+                allTestReports.Add(perstSimpleDriverTestReport);
 
-            //string reportName = hasScalingBeenEnabled ? "scaled_simple_drivers_tests" : "unscaled_simple_drivers_tests";
-            //TestReport.CombineTestReportsIntoCsvFile(allSimpleDriverTestReports, reportName);
+                // ORM tests
+                var ormTest = new DbWithOrmTest(amount, amount, amount, amount);
 
-            // TODO: FIXME
-            var pathToVisualisationScript = TestReport.GetPathToCsvOutputs() + "\\visualize_test_report.R";
-            RScriptRunner.RunFromCmd(pathToVisualisationScript, "C:\\Program Files\\R\\R-3.5.1\\bin\\Rscript.exe", TestReport.GetPathToCsvOutputs().Replace('\\', '/'));
+                var mysqlOrmTestReport = ormTest.Test<MinuteAveragesRow>(databaseType: new MySQLDatabaseType(), scaled: hasScalingBeenEnabled);
+                var postgreSqlOrmTestReport = ormTest.Test<MinuteAveragesRow>(databaseType: new PostgreSQLDatabaseType(), scaled: hasScalingBeenEnabled);
+
+                allTestReports.Add(mySqlSimpleDriverTestReport);
+                allTestReports.Add(postgreSqlOrmTestReport);
+            }
+
+            string reportName = hasScalingBeenEnabled ? "scaled_simple_drivers_tests" : "unscaled_simple_drivers_tests";
+            TestReport.CombineTestReportsIntoCsvFile(allTestReports, reportName);
         }
 
         private static void CreateSqlCollections()
         {
-            // Creating collections in case they dont exist yet. Only applies to fixed-schema, SQL-like databases.
+            // Creating collections in case they don't exist yet. Only applies to fixed-schema, SQL-like databases.
             var mysqlConnString = DatabaseConnectionStringFactory.GetDatabaseConnectionString(EDatabaseType.MySQL);
             var mysqlApi = new SimpleSQLDatabaseApi<MySqlCommand, MySqlConnection>(mysqlConnString);
 

@@ -14,12 +14,19 @@ plot_result_per_db("1542187174_unscaled_simple_drivers_tests.csv",
                    "Amount of created models", "Time (ms)", 45000, 
                    "AmountOfModelsInserted", "TimeSpentInsertingModels")
 
-# Getting all models - visualisation
+# Getting models by pk - visualisation
+plot_result_per_db("1542187174_unscaled_simple_drivers_tests.csv",
+                   "getting_by_pk_visualization.png",
+                   "Time spent retrieving models (by primary key) per database",
+                   "Amount of retrieved models", "Time (ms)", 50000, 
+                   "AmountOfModelsRetrievedByPrimaryKey", "TimeSpentRetrievingModelsByPrimaryKey")
+
+# Getting all models
 plot_result_per_db("1542187174_unscaled_simple_drivers_tests.csv",
                    "getting_all_unscaled_visualization.png",
                    "Time spent retrieving all models per database",
-                   "Amount of retrieved models", "Time (ms)", 50000, 
-                   "AmountOfModelsRetrievedByPrimaryKey", "TimeSpentRetrievingModelsByPrimaryKey")
+                   "Amount of retrieved models", "Time (ms)", 7000, 
+                   "AmountOfModelsRetrievedByPrimaryKey", "TimeSpentRetrievingAllModels")
 
 # Deleting all models - visualisation
 plot_result_per_db("1542187174_unscaled_simple_drivers_tests.csv",
@@ -58,7 +65,7 @@ plot_result_per_db <- function(filename, outfilename, visualizationtitle,
                                xaxisName, yAxisName, yAxisMax, 
                                csvColumnToPlotOnXAxis, csvColumnToPlotOnYAxis)
 {
-  # Creating png with cairo driver so that anti-aliasing is used
+  # Creating png with 'cairo' driver so that anti-aliasing is used
   png(outfilename, 800, 800, type='cairo')
   
 
@@ -76,9 +83,7 @@ plot_result_per_db <- function(filename, outfilename, visualizationtitle,
   csvColumnOnXAxisLabels <- unique(TestReport[,csvColumnToPlotOnXAxis])
   csvColumnOnXAxisLength <- length(unique(TestReport[,csvColumnToPlotOnXAxis]))
   amountOfDbs <- length(unique(TestReport$DatabaseTypeUsed))
-  
-    #xFactorLabels # TODO!
-  
+
   # Preparing colors
   colors = c(t_col("black", perc = 15, name = "lt.black"), t_col("blue", perc = 15, name = "lt.blue"),
               t_col("red", perc = 15, name = "lt.red"), t_col("green", perc = 15, name = "lt.green"),

@@ -27,7 +27,7 @@ namespace Benchmarking_Console_App.Configurations.Databases.DatabaseTypes
             };
         }
 
-        public DatabaseApis GetDatabaseApi()
+        public DatabaseApis GetDatabaseApis()
         {
             var connString = DatabaseConnectionStringFactory.GetDatabaseConnectionString(EDatabaseType.PostgreSQL);
 

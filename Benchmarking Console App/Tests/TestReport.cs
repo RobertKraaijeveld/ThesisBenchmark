@@ -4,12 +4,12 @@ using System.IO;
 using System.Linq;
 using Benchmarking_program.Configurations.Databases.DatabaseTypes;
 
-namespace Benchmarking_Console_App.Tests.TestReport
+namespace Benchmarking_Console_App.Tests
 {
     public class TestReport
     {
-        public EDatabaseType DatabaseTypeUsed;
-        public Type ModelTypeUsed;
+        public string DatabaseTypeUsed;
+        public string ModelTypeName;
 
         public int AmountOfModelsInserted;
         public double TimeSpentInsertingModels;

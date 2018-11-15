@@ -9,7 +9,7 @@ namespace Benchmarking_Console_App.Configurations.Databases.DatabaseTypes
     public interface IDatabaseType
     {
         EDatabaseType ToEnum();
-        DatabaseApis GetDatabaseApi();
+        DatabaseApis GetDatabaseApis();
         CrudModels<M> GetCrudModelsForDatabaseType<M>() where M : IModel, new();
     }
 

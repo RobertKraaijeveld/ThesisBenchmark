@@ -20,7 +20,7 @@ namespace Benchmarking_Console_App.Configurations.Databases.DatabaseTypes
             return new CrudModels<M>();
         }
 
-        public DatabaseApis GetDatabaseApi()
+        public DatabaseApis GetDatabaseApis()
         {
             var connString = DatabaseConnectionStringFactory.GetDatabaseConnectionString(EDatabaseType.Perst);
 
