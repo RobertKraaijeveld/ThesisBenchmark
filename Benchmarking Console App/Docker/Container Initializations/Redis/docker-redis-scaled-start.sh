@@ -52,7 +52,8 @@ docker-machine ssh redis-manager1 -- "
       --name 'redis-cluster-m-7002'\
       --mount type=volume,src=redis-manager1-volume,dst=/redis/data/ \
       --network redis_network\
-      --publish 7002:7002/tcp\
+      --endpoint-mode dnsrr \
+      --publish published=7002,mode=host,target=7002\
       --restart-condition any\
       --stop-grace-period 60s\
         comodal/alpine-redis\
@@ -73,7 +74,8 @@ docker-machine ssh redis-manager1 -- "
       --name 'redis-cluster-m-7003'\
       --mount type=volume,src=redis-worker1-volume,dst=/redis/data/ \
       --network redis_network\
-      --publish 7003:7003/tcp\
+      --endpoint-mode dnsrr \
+      --publish published=7003,mode=host,target=7003 \
       --restart-condition any\
       --stop-grace-period 60s\
         comodal/alpine-redis\
@@ -94,7 +96,8 @@ docker-machine ssh redis-manager1 -- "
       --name 'redis-cluster-m-7001'\
       --mount type=volume,src=redis-worker2-volume,dst=/redis/data/ \
       --network redis_network\
-      --publish 7001:7001/tcp\
+      --endpoint-mode dnsrr \
+      --publish published=7001,mode=host,target=7001 \
       --restart-condition any\
       --stop-grace-period 60s\
         comodal/alpine-redis\
