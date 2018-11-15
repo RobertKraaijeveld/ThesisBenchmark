@@ -1,46 +1,43 @@
 # setting wd
-filename = "visualize_test_report.R"
-filepath = file.choose()  # browse and select your_file.R in the window
-dir = substr(filepath, 1, nchar(filepath)-nchar(filename))
-setwd(dir)
+setwd("C:/Projects/Afstudeerexperimenten/Benchmarking Console App/Benchmarking Console App/Output")
 
 library(plotrix)
 
 
 # Creating all models - visualisation
-plot_result_per_db("1542187174_unscaled_simple_drivers_tests.csv",
+plot_result_per_db("1542284973_unscaled_simple_drivers_tests.csv",
                    "creating_all_unscaled_visualization.png",
                    "Time spent creating all models per database",
-                   "Amount of created models", "Time (ms)", 45000, 
+                   "Amount of created models", "Time (ms)", 5000, 
                    "AmountOfModelsInserted", "TimeSpentInsertingModels")
 
 # Getting models by pk - visualisation
-plot_result_per_db("1542187174_unscaled_simple_drivers_tests.csv",
+plot_result_per_db("1542284973_unscaled_simple_drivers_tests.csv",
                    "getting_by_pk_visualization.png",
                    "Time spent retrieving models (by primary key) per database",
-                   "Amount of retrieved models", "Time (ms)", 50000, 
+                   "Amount of retrieved models", "Time (ms)", 5000, 
                    "AmountOfModelsRetrievedByPrimaryKey", "TimeSpentRetrievingModelsByPrimaryKey")
 
 # Getting all models
-plot_result_per_db("1542187174_unscaled_simple_drivers_tests.csv",
+plot_result_per_db("1542284973_unscaled_simple_drivers_tests.csv",
                    "getting_all_unscaled_visualization.png",
                    "Time spent retrieving all models per database",
-                   "Amount of retrieved models", "Time (ms)", 7000, 
+                   "Amount of retrieved models", "Time (ms)", 5000, 
                    "AmountOfModelsRetrievedByPrimaryKey", "TimeSpentRetrievingAllModels")
 
 # Deleting all models - visualisation
-plot_result_per_db("1542187174_unscaled_simple_drivers_tests.csv",
+plot_result_per_db("1542284973_unscaled_simple_drivers_tests.csv",
                    "deleting_all_unscaled_visualization.png",
                    "Time spent deleting all models per database",
-                   "Amount of deleted models", "Time (ms)", 25000, 
+                   "Amount of deleted models", "Time (ms)", 5000, 
                    "AmountOfModelsRetrievedByPrimaryKey", "TimeSpentDeletingAllModels")
-
+ 
 
 # Updating all models - visualisation
-plot_result_per_db("1542187174_unscaled_simple_drivers_tests.csv",
+plot_result_per_db("1542284973_unscaled_simple_drivers_tests.csv",
                    "updating_all_unscaled_visualization.png",
                    "Time spent updating all models per database",
-                   "Amount of updated models", "Time (ms)", 25000, 
+                   "Amount of updated models", "Time (ms)", 5000, 
                    "AmountOfModelsUpdated", "TimeSpentUpdatingModels")
 
 
@@ -84,10 +81,11 @@ plot_result_per_db <- function(filename, outfilename, visualizationtitle,
   csvColumnOnXAxisLength <- length(unique(TestReport[,csvColumnToPlotOnXAxis]))
   amountOfDbs <- length(unique(TestReport$DatabaseTypeUsed))
 
-  # Preparing colors
+  # Preparing colors TODO: NEEDS TO BE DYNAMIC LADS
   colors = c(t_col("black", perc = 15, name = "lt.black"), t_col("blue", perc = 15, name = "lt.blue"),
               t_col("red", perc = 15, name = "lt.red"), t_col("green", perc = 15, name = "lt.green"),
-              t_col("pink", perc = 15, name = "lt.pink"), t_col("orange", perc = 15, name = "lt.orange")) 
+              t_col("pink", perc = 15, name = "lt.pink"), t_col("orange", perc = 15, name = "lt.orange"),
+              t_col("yellow", perc = 15, name = "lt.yellow")) 
   
   # Looping through the unique DB types, getting the value for them and 
   # plotting + adding legend.

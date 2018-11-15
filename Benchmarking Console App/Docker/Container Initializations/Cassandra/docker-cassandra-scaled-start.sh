@@ -24,10 +24,10 @@ docker-machine ssh cassandra -- "docker run -d \
                                       --volume cassandrascaled-node2-volume:/dump/ \
                                       -p 9043:9042 \
                                       -p 9162:9160 \
-                                      -e CASSANDRA_SEEDS="$(docker inspect --format='{{ .NetworkSettings.IPAddress }}' cassandrascaled-node1)" \
                                       --name=cassandrascaled-node2 \
                                       --cpus=0.5 \
                                       --memory='2gb' \
+                                      --link cassandrascaled-node1:cassandra \
                                       cassandra:latest;"
 
 echo "Sleeping for 40s to avoid accessing DB during intialization..."

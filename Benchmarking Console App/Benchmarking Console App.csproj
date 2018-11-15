@@ -37,6 +37,9 @@
     <Reference Include="Cassandra, Version=3.99.0.0, Culture=neutral, PublicKeyToken=10b231fbfc8c4b4d, processorArchitecture=MSIL">
       <HintPath>..\packages\CassandraCSharpDriver.3.6.0\lib\net45\Cassandra.dll</HintPath>
     </Reference>
+    <Reference Include="Dapper, Version=1.40.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Dapper.1.42\lib\net45\Dapper.dll</HintPath>
+    </Reference>
     <Reference Include="DnsClient, Version=1.0.7.0, Culture=neutral, PublicKeyToken=4574bb5573c51424, processorArchitecture=MSIL">
       <HintPath>..\packages\DnsClient.1.0.7\lib\net45\DnsClient.dll</HintPath>
     </Reference>
@@ -151,14 +154,16 @@
     <Compile Include="Configurations\Databases\DatabaseApis\SQL\SimpleSQLDatabaseApi.cs" />
     <Compile Include="Configurations\Databases\DatabaseApis\SQL\SqlCreateCollectionModel.cs" />
     <Compile Include="Configurations\Databases\DatabaseApis\SQL\SqlCreateModel.cs" />
+    <Compile Include="Configurations\Databases\DatabaseApis\SQL\SqlDapperOrmDatabaseApi.cs" />
     <Compile Include="Configurations\Databases\DatabaseApis\SQL\SqlDeleteModel.cs" />
     <Compile Include="Configurations\Databases\DatabaseApis\SQL\SqlGetAllModel.cs" />
-    <Compile Include="Configurations\Databases\DatabaseApis\SQL\SqlOrmDatabaseApi.cs" />
+    <Compile Include="Configurations\Databases\DatabaseApis\SQL\SqlEntityFrameworkOrmDatabaseApi.cs" />
     <Compile Include="Configurations\Databases\DatabaseApis\SQL\SqlSearchModel.cs" />
     <Compile Include="Configurations\Databases\DatabaseApis\SQL\SqlUpdateModel.cs" />
     <Compile Include="Configurations\Databases\DatabaseTypes\DatabaseTypeSettingConstant.cs" />
     <Compile Include="Configurations\Databases\DatabaseTypes\EDatabaseType.cs" />
     <Compile Include="Configurations\Databases\DatabaseTypes\IDatabaseType.cs" />
+    <Compile Include="Configurations\Databases\DatabaseTypes\MySqlWithDapperDatabaseType.cs" />
     <Compile Include="Configurations\Databases\DatabaseTypes\PerstDatabaseType.cs" />
     <Compile Include="Configurations\Databases\DatabaseTypes\MongoDbDatabaseType.cs" />
     <Compile Include="Configurations\Databases\DatabaseTypes\CassandraDatabaseType.cs" />
@@ -177,10 +182,6 @@
     <Compile Include="Configurations\ORMs\EntityFramework\BenchmarkDbPostgreSQLContextFactory.cs" />
     <Compile Include="Configurations\ORMs\EntityFramework\BenchmarkDbMySqlContextFactory.cs" />
     <Compile Include="Configurations\ORMs\EntityFramework\DbTypeConfiguration.cs" />
-    <Compile Include="Migrations\201811121556460_Initial.cs" />
-    <Compile Include="Migrations\201811121556460_Initial.Designer.cs">
-      <DependentUpon>201811121556460_Initial.cs</DependentUpon>
-    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\DatabaseModels\AbstractModel.cs" />
     <Compile Include="Models\DatabaseModels\IModel.cs" />
@@ -189,7 +190,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Tests\ORM\DbWithOrmTest.cs" />
     <Compile Include="Tests\Simple\DbWithSimpleDriverTest.cs" />
-    <Compile Include="Tests\IPerformanceTest.cs" />
+    <Compile Include="Tests\AbstractPerformanceTest.cs" />
     <Compile Include="Tests\TestReport.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -236,11 +237,6 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="PerstNet40.dll" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="Migrations\201811121556460_Initial.resx">
-      <DependentUpon>201811121556460_Initial.cs</DependentUpon>
-    </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Tests\CQRS\" />

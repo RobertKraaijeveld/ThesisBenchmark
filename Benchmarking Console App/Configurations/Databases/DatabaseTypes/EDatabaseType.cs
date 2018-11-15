@@ -7,6 +7,7 @@ namespace Benchmarking_program.Configurations.Databases.DatabaseTypes
     public enum EDatabaseType
     {
         MySQL,
+        MySQLWithDapper,
         PostgreSQL,
         Perst,
         Redis,

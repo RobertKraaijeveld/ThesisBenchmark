@@ -44,7 +44,6 @@ docker-machine ssh mongodb-manager1 -- "docker network create --driver overlay m
 echo "Creating mongocfg service..."
 docker-machine ssh mongodb-manager1 -- 'docker volume create --name=mongodb-manager1-db-data' # creating volume which will contain dir that mongodb data files will be written to. 
 docker-machine ssh mongodb-manager1 -- "docker service create --constraint 'node.hostname==mongodb-manager1' \
-                                    --mount type=volume,src=mongodb-manager1-db-data,dst=/dump/ \
                                     --network mongoshard \
                                     --name mongocfg1 \
                                     --endpoint-mode dnsrr \
@@ -61,7 +60,7 @@ docker-machine ssh mongodb-manager1 -- 'docker service create --constraint "node
                                 --name mongos1 \
                                 --restart-condition on-failure \
                                 --restart-max-attempts 5 \
-                                -p 27018:27017 \
+                                 --publish published=27017,mode=host,target=27017 \
                                 crimsonglory/mongos32 \
                                 --configdb mongocfg1;' 
 
@@ -72,7 +71,6 @@ docker-machine ssh mongodb-manager1 -- "docker service create --constraint 'node
                                     --name mongosh1 \
                                     --restart-condition on-failure \
                                     --restart-max-attempts 5 \
-                                    --mount type=volume,src=mongodb-worker1-db-shard,dst=/dump/ \
                                     --endpoint-mode dnsrr \
                                     mongo:3.2 \
                                     --bind_ip 0.0.0.0 \
@@ -87,7 +85,6 @@ docker-machine ssh mongodb-manager1 -- "docker service create --constraint 'node
                                     --name mongosh2 \
                                     --restart-condition on-failure \
                                     --restart-max-attempts 5 \
-                                    --mount type=volume,src=mongodb-worker2-db-shard,dst=/dump/ \
                                     --endpoint-mode dnsrr \
                                     mongo:3.2 \
                                     --bind_ip 0.0.0.0 \
@@ -117,7 +114,7 @@ docker-machine ssh mongodb-manager1 -- $'docker exec  $(docker ps --format {{.Na
 
 
 # If first-time create, creating DB and setting sharding key
-if [ $1 == "create" ]; then
+#if [ $1 == "create" ]; then
   # Create database in one of the shards
   docker-machine ssh mongodb-worker1 -- $'docker exec $(docker ps --format {{.Names}} | grep mongosh) bash -c "echo '\''use BenchmarkDB;'\'' | mongo"'
 
@@ -127,7 +124,7 @@ if [ $1 == "create" ]; then
                                           db.runCommand({\"enablesharding\": \"BenchmarkDB\"});
                                           db.runCommand({\"shardCollection\": \"BenchmarkDB.fs.chunks\", \"key\": {\"files_id\": 1, \"n\": 1}, \"numInitialChunks\": 1000});
                                           \''
-fi
+#fi
 
 ##################################################
 # TODO: Create benchmark DB + schema here IF START
@@ -135,38 +132,38 @@ fi
 
 
 
-# Stopping the MongoS service, leaving the shards running
-docker-machine ssh mongodb-manager1 -- 'docker service rm mongos1'
+# # Stopping the MongoS service, leaving the shards running
+# docker-machine ssh mongodb-manager1 -- 'docker service rm mongos1'
 
-declare -a volumes=(mongodb-manager1-db-data mongodb-worker1-db-shard mongodb-worker2-db-shard)
-declare -a machines=(mongodb-manager1 mongodb-worker1 mongodb-worker2)
-declare -a servicenames=(mongocfg mongosh1 mongosh2)
+# declare -a volumes=(mongodb-manager1-db-data mongodb-worker1-db-shard mongodb-worker2-db-shard)
+# declare -a machines=(mongodb-manager1 mongodb-worker1 mongodb-worker2)
+# declare -a servicenames=(mongocfg mongosh1 mongosh2)
 
-for (( index=0; index<3; index++ )) do
-    # rm'ing possible dangling volumecopier container
-    docker-machine ssh ${machines[$index]} -- 'docker rm volumecopier -f'
+# for (( index=0; index<3; index++ )) do
+#     # rm'ing possible dangling volumecopier container
+#     docker-machine ssh ${machines[$index]} -- 'docker rm volumecopier -f'
 
-    # creating a container that uses the current volume
-    docker-machine ssh ${machines[$index]} -- 'docker container run --name volumecopier --volume '"${volumes[$index]}"':/dump/ -d centos:latest sleep infinity'
+#     # creating a container that uses the current volume
+#     docker-machine ssh ${machines[$index]} -- 'docker container run --name volumecopier --volume '"${volumes[$index]}"':/dump/ -d centos:latest sleep infinity'
 
-    # then, copying from our local backup dir into that container's dir that is mounted to the volume, so that the volume is populated.
-    docker-machine ssh ${machines[$index]} -- 'docker cp /c/Users/kraaijeveld/DockerBackup/'"${volumes[$index]}"'/. volumecopier:/dump/' 
+#     # then, copying from our local backup dir into that container's dir that is mounted to the volume, so that the volume is populated.
+#     docker-machine ssh ${machines[$index]} -- 'docker cp /c/Users/kraaijeveld/DockerBackup/'"${volumes[$index]}"'/. volumecopier:/dump/' 
 
-    # removing the volume carrying container now that it's work is done
-    docker-machine ssh ${machines[$index]} -- 'docker rm volumecopier -f'
+#     # removing the volume carrying container now that it's work is done
+#     docker-machine ssh ${machines[$index]} -- 'docker rm volumecopier -f'
 
-    # using mongorestore, restoring the dump that we just received from our local disk to the mongoDB instance.
-    docker-machine ssh ${machines[$index]} -- 'docker exec \
-                                              $(docker ps --format "{{.Names}}" | grep '"${servicenames[$index]}"') \
-                                              mongorestore --dir=/dump/ --oplogReplay'
-done
+#     # using mongorestore, restoring the dump that we just received from our local disk to the mongoDB instance.
+#     docker-machine ssh ${machines[$index]} -- 'docker exec \
+#                                               $(docker ps --format "{{.Names}}" | grep '"${servicenames[$index]}"') \
+#                                               mongorestore --dir=/dump/ --oplogReplay'
+# done
 
-# Finally, restarting the mongoS service
-docker-machine ssh mongodb-manager1 -- 'docker service create --constraint "node.hostname==mongodb-manager1" \
-                                --network mongoshard \
-                                --name mongos1 \
-                                --restart-condition on-failure \
-                                --restart-max-attempts 5 \
-                                -p 27018:27017 \
-                                crimsonglory/mongos32 \
-                                --configdb mongocfg1;' 
+# # Finally, restarting the mongoS service
+# docker-machine ssh mongodb-manager1 -- 'docker service create --constraint "node.hostname==mongodb-manager1" \
+#                                 --network mongoshard \
+#                                 --name mongos1 \
+#                                 --restart-condition on-failure \
+#                                 --restart-max-attempts 5 \
+#                                 -p 27018:27017 \
+#                                 crimsonglory/mongos32 \
+#                                 --configdb mongocfg1;' 

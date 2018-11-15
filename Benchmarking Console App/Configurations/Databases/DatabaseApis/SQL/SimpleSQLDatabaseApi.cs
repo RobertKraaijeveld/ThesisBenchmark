@@ -12,15 +12,9 @@ using Newtonsoft.Json;
 
 namespace Benchmarking_program.Configurations.Databases.DatabaseApis.SQL
 {
-    /// <summary>
-    /// Provides basic CRUD functionality for SQL databases.
-    /// A connection string must be provided, as well as two type parameters:
-    /// - CommandType: A concrete implementation of the ADO.NET DbCommand class.
-    /// - ConnectionType: A concrete implementation of the ADO.NET DbConnection class. 
-    /// </summary>
     public class SimpleSQLDatabaseApi<CommandType, ConnectionType> : IDatabaseApi
-                                                               where CommandType: DbCommand, new()
-                                                               where ConnectionType: DbConnection, new()
+                                                                     where CommandType: DbCommand, new()
+                                                                     where ConnectionType: DbConnection, new()
     {
         // Used to store table names that have been filled, these tablenames are used when calling TruncateAll().
         // Weak solution since tables might be filled without being touched by this API.
@@ -130,23 +124,6 @@ namespace Benchmarking_program.Configurations.Databases.DatabaseApis.SQL
             }
         }
 
-        public void TruncateAll()
-        {
-            using (var conn = new ConnectionType() {ConnectionString = _connectionString})
-            {
-                conn.Open();
-
-                foreach (var table in NamesOfFilledTables)
-                {
-                    var cmd = new CommandType() { CommandText = $"TRUNCATE {table};", Connection = conn };
-                    cmd.ExecuteNonQuery();
-
-                    cmd.Dispose();
-                }
-            }
-        }
-
-        // TODO: Temporary fix for SQL Truncation problem of not knowing table names in advance
         public void Truncate<M>() where M: IModel, new()
         {
             using (var conn = new ConnectionType() {ConnectionString = _connectionString})
@@ -186,7 +163,7 @@ namespace Benchmarking_program.Configurations.Databases.DatabaseApis.SQL
         }
 
 
-        private IEnumerable<M> GetResults<M>(string query) where M: IModel, new()
+        private IEnumerable<M> GetResults<M>(string query) where M: IModel, new() // TODO: CAN BE OPTIMIZED
         {
             var resultingModels = new List<M>();
 

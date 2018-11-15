@@ -35,19 +35,23 @@ namespace Benchmarking_program
             CreateSqlCollections();
 
             List<TestReport> allTestReports = new List<TestReport>();
-            int[] modelAmounts = new int[] { 500 };
+            int[] modelAmounts = new[] { 10, 100, 250, 500, 1000, 1500, 2000, 2500, 3000 };
 
             foreach (var amount in modelAmounts)
             {
                 var simpleDriverTest = new DbWithSimpleDriverTest(amount, amount, amount, amount);
 
                 // Simple driver tests
-                var perstSimpleDriverTestReport = simpleDriverTest.Test<MinuteAveragesRowForPerst>(databaseType: new PerstDatabaseType(), scaled: hasScalingBeenEnabled);
-                var mySqlSimpleDriverTestReport = simpleDriverTest.Test<MinuteAveragesRow>(databaseType: new MySQLDatabaseType(), scaled: hasScalingBeenEnabled);
-                var postgreSqlSimpleDriverTestReport = simpleDriverTest.Test<MinuteAveragesRow>(databaseType: new PostgreSQLDatabaseType(), scaled: hasScalingBeenEnabled);
-                var redisSimpleDriverTestReport = simpleDriverTest.Test<MinuteAveragesRow>(databaseType: new RedisDatabaseType(), scaled: hasScalingBeenEnabled);
-                var cassandraSimpleDriverTestReport = simpleDriverTest.Test<MinuteAveragesRow>(databaseType: new CassandraDatabaseType(), scaled: hasScalingBeenEnabled);
-                var mongoSimpleDriverTestReport = simpleDriverTest.Test<MinuteAveragesRow>(databaseType: new MongoDbDatabaseType(), scaled: hasScalingBeenEnabled);
+                var perstSimpleDriverTestReport = simpleDriverTest.GetTestReport<MinuteAveragesRowForPerst>(databaseType: new PerstDatabaseType(), scaled: hasScalingBeenEnabled);
+                var mySqlSimpleDriverTestReport = simpleDriverTest.GetTestReport<MinuteAveragesRow>(databaseType: new MySQLDatabaseType(), scaled: hasScalingBeenEnabled);
+                var postgreSqlSimpleDriverTestReport = simpleDriverTest.GetTestReport<MinuteAveragesRow>(databaseType: new PostgreSQLDatabaseType(), scaled: hasScalingBeenEnabled);
+                var redisSimpleDriverTestReport = simpleDriverTest.GetTestReport<MinuteAveragesRow>(databaseType: new RedisDatabaseType(), scaled: hasScalingBeenEnabled);
+                var cassandraSimpleDriverTestReport = simpleDriverTest.GetTestReport<MinuteAveragesRow>(databaseType: new CassandraDatabaseType(), scaled: hasScalingBeenEnabled);
+                var mongoSimpleDriverTestReport = simpleDriverTest.GetTestReport<MinuteAveragesRow>(databaseType: new MongoDbDatabaseType(), scaled: hasScalingBeenEnabled);
+
+                // Dapper is technically an ORM, but it's such a thin layer over standard ADO.net that we decided 
+                // to re-use the simpleDriverTest for it. The SqlDapperOrmDatabaseApi implements IDatabaseApi anyhow so it's okay
+                var mySqlDapperTestReport = simpleDriverTest.GetTestReport<MinuteAveragesRow>(databaseType: new MySqlWithDapperDatabaseType(), scaled: hasScalingBeenEnabled);
 
                 allTestReports.Add(mySqlSimpleDriverTestReport);
                 allTestReports.Add(postgreSqlSimpleDriverTestReport);
@@ -55,15 +59,16 @@ namespace Benchmarking_program
                 allTestReports.Add(mongoSimpleDriverTestReport);
                 allTestReports.Add(redisSimpleDriverTestReport);
                 allTestReports.Add(perstSimpleDriverTestReport);
+                allTestReports.Add(mySqlDapperTestReport);
 
                 // ORM tests
-                var ormTest = new DbWithOrmTest(amount, amount, amount, amount);
+                //var ormTest = new DbWithOrmTest(amount, amount, amount, amount);
 
-                var mysqlOrmTestReport = ormTest.Test<MinuteAveragesRow>(databaseType: new MySQLDatabaseType(), scaled: hasScalingBeenEnabled);
-                var postgreSqlOrmTestReport = ormTest.Test<MinuteAveragesRow>(databaseType: new PostgreSQLDatabaseType(), scaled: hasScalingBeenEnabled);
+                //var mysqlOrmTestReport = ormTest.GetTestReport<MinuteAveragesRow>(databaseType: new MySQLDatabaseType(), scaled: hasScalingBeenEnabled);
+                //var postgreSqlOrmTestReport = ormTest.GetTestReport<MinuteAveragesRow>(databaseType: new PostgreSQLDatabaseType(), scaled: hasScalingBeenEnabled);
 
-                allTestReports.Add(mySqlSimpleDriverTestReport);
-                allTestReports.Add(postgreSqlOrmTestReport);
+                //allTestReports.Add(mysqlOrmTestReport);
+                //allTestReports.Add(postgreSqlOrmTestReport);
             }
 
             string reportName = hasScalingBeenEnabled ? "scaled_simple_drivers_tests" : "unscaled_simple_drivers_tests";
@@ -91,7 +96,7 @@ namespace Benchmarking_program
         private static void TestSqlDatabasesUsingHeavyOrm()
         {
             // Still WIP testing work, to be made into full tests.
-            var postgresqlConnString = DatabaseConnectionStringFactory.GetDatabaseConnectionString(EDatabaseType.PostgreSQL);
+            var postgresqlConnString = DatabaseConnectionStringFactory.GetDatabaseConnectionString(EDatabaseType.MySQL);
             using (var benchmarkContext = new BenchmarkDbContext(postgresqlConnString))
             {
                 var minuteAverageRows = benchmarkContext.MinuteAveragesRows.Take(10);

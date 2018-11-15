@@ -17,41 +17,28 @@ namespace Benchmarking_Console_App.Testing
                    amountOfModelsToRetrieveByContent, amountOfModelsToUpdate)
         { }
 
-        public override TestReport Test<M>(IDatabaseType databaseType, bool scaled) 
+        public override TestReport GetTestReport<M>(IDatabaseType databaseType, bool scaled) 
         {
-            double timeSpentInsertingModels = 0;
-            double timeSpentGettingAllModels = 0;
-            double timeSpentGettingModelsByPk = 0;
-            //double timeSpentGettingModelsByContent = 0;
-            double timeSpentUpdatingModels = 0;
-            double timeSpentDeletingModels = 0;
-
-
             var randomModelsToInsert = base.GetRandomModels<M>(amountOfModelsToCreate)
                                            .ToList();
 
-            // Perst is OO-DB so we use the OO-api. 
-            if (databaseType.ToEnum().Equals(EDatabaseType.Perst))
+            Action createAction;
+            Action deleteAction;
+            Action getAllAction;
+            Action getByPkAction;
+            Action updateAction;
+            Action truncateAction;
+
+            
+            if (databaseType.ToEnum().Equals(EDatabaseType.Perst)) // Perst is an OO-DB so we use the OO-api. 
             {
                 var ooDatabaseApi = databaseType.GetDatabaseApis().ObjectOrientedDatabaseApi;
 
+                truncateAction = () => ooDatabaseApi.DeleteAll();
+                createAction = () => ooDatabaseApi.Create(randomModelsToInsert);
+                getAllAction = () => ooDatabaseApi.GetAll<M>();
+                deleteAction = () => ooDatabaseApi.Delete(randomModelsToInsert);
 
-                // Truncating all first in order to start fresh
-                ooDatabaseApi.DeleteAll();
-
-
-                // Testing inserting
-                timeSpentInsertingModels = base.GetTimeSpentOnActionMs(() =>
-                {
-                    ooDatabaseApi.Create(randomModelsToInsert);
-                });
-
-
-                // Testing getting all
-                timeSpentGettingAllModels = base.GetTimeSpentOnActionMs(() => { ooDatabaseApi.GetAll<M>(); });
-
-
-                // Testing getting by pk
                 var modelsToRetrieveByPk = randomModelsToInsert.Take(this.amountOfModelsToRetrieveByPrimaryKey)
                     .Select(m =>
                     {
@@ -71,42 +58,22 @@ namespace Benchmarking_Console_App.Testing
                     })
                     .ToList();
 
-                timeSpentGettingModelsByPk = base.GetTimeSpentOnActionMs(() =>
+                getByPkAction = () =>
                 {
                     foreach (var model in modelsToRetrieveByPk)
                     {
                         ooDatabaseApi.GetByComparison<M>(model);
                     }
-                });
+                };
 
-
-                // Testing getting by content ??
-                // ohgodno
-
-
-                // Testing deleting all. This is done BEFORE updating etc 
-                // so we wont have to keep track of changes to the original models
-                timeSpentDeletingModels = base.GetTimeSpentOnActionMs(() =>
-                {
-                    ooDatabaseApi.Delete(randomModelsToInsert);
-                });
-
-
-                // Re-inserting the old models so we can test updating.
-                ooDatabaseApi.Create(randomModelsToInsert);
-
-
-                // Testing updating
+                // Re-randomizing the random models so the update action can use them
                 var modelsWithUpdatedValues = randomModelsToInsert.Take(this.amountOfModelsToUpdate)
-                                                                   .ToList();
+                                                                  .ToList();
 
                 var random = new Random();
                 modelsWithUpdatedValues.ForEach(x => x.RandomizeValuesExceptPrimaryKey(random));
 
-                timeSpentUpdatingModels = base.GetTimeSpentOnActionMs(() =>
-                {
-                    ooDatabaseApi.Update(modelsWithUpdatedValues);
-                });
+                updateAction = () => ooDatabaseApi.Update(modelsWithUpdatedValues);
             }
             else
             {
@@ -115,31 +82,21 @@ namespace Benchmarking_Console_App.Testing
 
                 var currentModelTypePrimaryKeyName = randomModelsToInsert.First().GetPrimaryKeyFieldName();
 
+                truncateAction = () => apiForDatabaseType.Truncate<M>();
+                createAction = () => apiForDatabaseType.Create(randomModelsToInsert, crudModelsForDatabaseType.CreateModel);
+                getAllAction = () => apiForDatabaseType.GetAll(crudModelsForDatabaseType.GetAllModel);
 
 
-                // Truncating all first in order to start fresh
-                apiForDatabaseType.Truncate<M>();
+                var columnsToDeleteOn = new string[] { currentModelTypePrimaryKeyName };
+                crudModelsForDatabaseType.DeleteModel.IdentifiersToDeleteOn = columnsToDeleteOn;
+
+                deleteAction = () => apiForDatabaseType.Delete(randomModelsToInsert, 
+                                                            crudModelsForDatabaseType.DeleteModel);
 
 
-                // Testing inserting
-                timeSpentInsertingModels = base.GetTimeSpentOnActionMs(() =>
-                {
-                    apiForDatabaseType.Create(randomModelsToInsert, crudModelsForDatabaseType.CreateModel);
-                });
-
-
-                // Testing getting all
-                timeSpentGettingAllModels = base.GetTimeSpentOnActionMs(() =>
-                {
-                    apiForDatabaseType.GetAll(crudModelsForDatabaseType.GetAllModel);
-                });
-
-
-                // Testing getting by primary key
                 var modelsToSearchForByPk = randomModelsToInsert.Take(amountOfModelsToRetrieveByPrimaryKey)
                                                                 .ToList();
-
-                timeSpentGettingModelsByPk = base.GetTimeSpentOnActionMs(() =>
+                getByPkAction = () =>
                 {
                     // Each model has it's own combo of Primary Key: Value.
                     // So we update the ISearchModel for each model, then search for that specific model. 
@@ -152,31 +109,13 @@ namespace Benchmarking_Console_App.Testing
 
                         columnsAndValuesToSearchFor.Add(primaryKeyName, primaryKeyValue);
 
-                        crudModelsForDatabaseType.SearchModel.IdentifiersAndValuesToSearchFor = columnsAndValuesToSearchFor;
+                        crudModelsForDatabaseType.SearchModel.IdentifiersAndValuesToSearchFor =
+                            columnsAndValuesToSearchFor;
                         apiForDatabaseType.Search(crudModelsForDatabaseType.SearchModel);
                     }
-                });
+                };
 
 
-                // Testing getting by content TODO:
-
-
-                // Testing deleting all. This is done BEFORE updating etc 
-                // so we wont have to keep track of changes to the original models
-                var columnsToDeleteOn = new string[] { currentModelTypePrimaryKeyName };
-                crudModelsForDatabaseType.DeleteModel.IdentifiersToDeleteOn = columnsToDeleteOn;
-
-                timeSpentDeletingModels = base.GetTimeSpentOnActionMs(() =>
-                {
-                    apiForDatabaseType.Delete(randomModelsToInsert, crudModelsForDatabaseType.DeleteModel);
-                });
-
-
-                // Re-inserting the old models so we can test updating.
-                apiForDatabaseType.Create(randomModelsToInsert, crudModelsForDatabaseType.CreateModel);
-
-
-                // Testing updating 
                 var columnsToUpdateOn = columnsToDeleteOn;
                 crudModelsForDatabaseType.UpdateModel.IdentifiersToFilterOn = columnsToUpdateOn;
 
@@ -189,13 +128,14 @@ namespace Benchmarking_Console_App.Testing
                                                                   })
                                                                   .ToList();
 
-                timeSpentUpdatingModels = base.GetTimeSpentOnActionMs(() =>
-                {
-                    apiForDatabaseType.Update(modelsWithUpdatedValues, crudModelsForDatabaseType.UpdateModel);
-                });
+                updateAction = () => apiForDatabaseType.Update(modelsWithUpdatedValues, crudModelsForDatabaseType.UpdateModel);
             }
 
-            // TODO: DUPLICATION WITH ORM TEST
+
+            base.MeasureCRUDTimes(createAction, deleteAction, getAllAction,
+                                  getByPkAction, updateAction, truncateAction);
+
+
             var scaledOrNotStr = scaled ? "(scaled)" : "(unscaled)";
             return new TestReport()
             {
@@ -206,7 +146,7 @@ namespace Benchmarking_Console_App.Testing
                 TimeSpentInsertingModels = timeSpentInsertingModels,
                 TimeSpentRetrievingAllModels = timeSpentGettingAllModels,
                 //TimeSpentRetrievingModelsByContent = timeSpentGettingModelsByContent,
-                TimeSpentRetrievingModelsByPrimaryKey = timeSpentGettingModelsByPk,
+                TimeSpentRetrievingModelsByPrimaryKey = timeSpentGettingModelsByPrimaryKey,
                 TimeSpentUpdatingModels = timeSpentUpdatingModels,
 
                 AmountOfModelsInserted = amountOfModelsToCreate,

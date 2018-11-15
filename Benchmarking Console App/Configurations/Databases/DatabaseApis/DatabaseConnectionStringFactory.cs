@@ -45,8 +45,8 @@ namespace Benchmarking_program.Configurations.Databases.DatabaseApis
 
         public static bool IsConfigFileForScaledServersUsed()
         {
-            return !File.ReadAllLines(GetConfigFileName())
-                        .Contains("unscaled.config");
+            var configFileToUse = GetConfigFileName();
+            return configFileToUse.Contains("unscaled.config") == false;
         }
 
         public static string GetDatabaseConnectionString(EDatabaseType databaseType)

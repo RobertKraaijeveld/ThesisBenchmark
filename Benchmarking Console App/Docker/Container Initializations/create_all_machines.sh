@@ -1,4 +1,5 @@
 ﻿docker-machine create cassandra
+docker-machine create cassandra
 
 docker-machine create mysql
 

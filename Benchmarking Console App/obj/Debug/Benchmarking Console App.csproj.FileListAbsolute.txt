@@ -54,5 +54,6 @@ C:\Projects\Afstudeerexperimenten\Benchmarking Console App\Benchmarking Console 
 C:\Projects\Afstudeerexperimenten\Benchmarking Console App\Benchmarking Console App\bin\Debug\configFileToUse.config
 C:\Projects\Afstudeerexperimenten\Benchmarking Console App\Benchmarking Console App\bin\Debug\MySql.Data.Entity.EF6.dll
 C:\Projects\Afstudeerexperimenten\Benchmarking Console App\Benchmarking Console App\bin\Debug\MySql.Data.dll
-C:\Projects\Afstudeerexperimenten\Benchmarking Console App\Benchmarking Console App\obj\Debug\Benchmarking_Console_App.Migrations.Initial.resources
-C:\Projects\Afstudeerexperimenten\Benchmarking Console App\Benchmarking Console App\obj\Debug\Benchmarking Console App.csproj.GenerateResource.cache
+C:\Projects\Afstudeerexperimenten\Benchmarking Console App\Benchmarking Console App\bin\Debug\Dapper.dll
+C:\Projects\Afstudeerexperimenten\Benchmarking Console App\Benchmarking Console App\bin\Debug\Dapper.pdb
+C:\Projects\Afstudeerexperimenten\Benchmarking Console App\Benchmarking Console App\bin\Debug\Dapper.xml
