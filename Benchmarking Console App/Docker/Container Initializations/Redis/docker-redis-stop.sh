@@ -13,6 +13,6 @@ elif [ $1 == "scaled" ]; then
 fi
 
 for (( index=0; index<$nodesCount; index++ )) do
-    echo "Going to back-up service ${servicenames[$index]}"
-    docker-machine stop ${machines[$index]}
+    echo "Going to stop service ${servicenames[$index]}"
+    docker-machine ssh ${machines[$index]} -- 'docker service rm '${servicenames[$index]}''
 done
