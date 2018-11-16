@@ -188,7 +188,7 @@
     <Compile Include="Models\DatabaseModels\MinuteAveragesRow.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Tests\ORM\DbWithOrmTest.cs" />
+    <Compile Include="Tests\ORM\DbWithEntityFrameworkTest.cs" />
     <Compile Include="Tests\Simple\DbWithSimpleDriverTest.cs" />
     <Compile Include="Tests\AbstractPerformanceTest.cs" />
     <Compile Include="Tests\TestReport.cs" />
@@ -207,6 +207,7 @@
     </None>
     <None Include="configFileToUse.config">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      <SubType>Designer</SubType>
     </None>
     <None Include="unscaled.config">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>

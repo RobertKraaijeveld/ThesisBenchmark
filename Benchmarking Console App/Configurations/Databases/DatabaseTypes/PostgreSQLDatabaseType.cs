@@ -15,6 +15,11 @@ namespace Benchmarking_Console_App.Configurations.Databases.DatabaseTypes
             return EDatabaseType.PostgreSQL;
         }
 
+        public string GetName()
+        {
+            return "PostgreSQL";
+        }
+
         public CrudModels<M> GetCrudModelsForDatabaseType<M>() where M : IModel, new()
         {
             return new CrudModels<M>()

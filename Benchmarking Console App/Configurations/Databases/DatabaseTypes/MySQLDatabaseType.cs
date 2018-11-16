@@ -14,6 +14,11 @@ namespace Benchmarking_Console_App.Configurations.Databases.DatabaseTypes
             return EDatabaseType.MySQL;
         }
 
+        public string GetName()
+        {
+            return "MySQL";
+        }
+
         public CrudModels<M> GetCrudModelsForDatabaseType<M>() where M : IModel, new()
         {
             return new CrudModels<M>()

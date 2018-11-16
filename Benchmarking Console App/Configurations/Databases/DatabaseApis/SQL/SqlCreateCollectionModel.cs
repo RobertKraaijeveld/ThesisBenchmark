@@ -31,7 +31,7 @@ namespace Benchmarking_Console_App.Configurations.Databases.DatabaseApis.SQL
 
                 var sqlStringForColumnType = this._typesToSqlType[columnType];
 
-                sqlStr += $"{columnName.ToLower()} {sqlStringForColumnType} NOT NULL,";
+                sqlStr += $"{columnName} {sqlStringForColumnType} NOT NULL,";
 
             }
 
@@ -47,7 +47,7 @@ namespace Benchmarking_Console_App.Configurations.Databases.DatabaseApis.SQL
                 var firstFieldNameAndType = modelFieldsNamesAndTypes.First();
                 primaryKeyName = firstFieldNameAndType.Key;
             }
-            sqlStr += $"{primaryKeyName.ToLower()}";
+            sqlStr += $"{primaryKeyName}";
 
             return sqlStr += "));";
         }

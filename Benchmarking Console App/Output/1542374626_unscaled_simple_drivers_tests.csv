@@ -1,0 +1,49 @@
+DatabaseTypeUsed,ModelTypeName,AmountOfModelsInserted,TimeSpentInsertingModels,TimeSpentRetrievingAllModels,AmountOfModelsRetrievedByPrimaryKey,TimeSpentRetrievingModelsByPrimaryKey,AmountOfModelsRetrievedByContent,TimeSpentRetrievingModelsByContent,AmountOfModelsUpdated,FieldsUpdatedPerModel,TimeSpentUpdatingModels,TimeSpentDeletingAllModels
+MySQL(unscaled),MinuteAveragesRow,1,22,321,1,4,1,0,1,0,3,14
+PostgreSQL(unscaled),MinuteAveragesRow,1,5,9,1,1,1,0,1,0,0,4
+Cassandra(unscaled),MinuteAveragesRow,1,67,68,1,16,1,0,1,0,13,5
+MongoDB(unscaled),MinuteAveragesRow,1,223,389,1,15,1,0,1,0,3,14
+Redis(unscaled),MinuteAveragesRow,1,15,103,1,21,1,0,1,0,1,2
+Perst(unscaled),MinuteAveragesRowForPerst,1,35,7,1,9,1,0,1,0,2,6
+MySQLWithDapper(unscaled),MinuteAveragesRow,1,7,42,1,4,1,0,1,0,2,14
+MySQL(unscaled),MinuteAveragesRow,1,352,15,1,0,1,0,1,0,0,50
+Entity Framework MySQL(unscaled),MinuteAveragesRow,10,67,4,10,15,10,0,10,0,6,43
+PostgreSQL(unscaled),MinuteAveragesRow,10,28,1,10,6,10,0,10,0,4,18
+Cassandra(unscaled),MinuteAveragesRow,10,24,3,10,30,10,0,10,0,25,31
+MongoDB(unscaled),MinuteAveragesRow,10,5,255,10,127,10,0,10,0,10,5
+Redis(unscaled),MinuteAveragesRow,10,4,452,10,3,10,0,10,0,2,2
+Perst(unscaled),MinuteAveragesRowForPerst,10,0,0,10,0,10,0,10,0,0,0
+MySQLWithDapper(unscaled),MinuteAveragesRow,10,44,0,10,23,10,0,10,0,10,49
+Entity Framework MySQL(unscaled),MinuteAveragesRow,10,59,1,10,0,10,0,10,0,0,14
+MySQL(unscaled),MinuteAveragesRow,100,489,3,100,112,100,0,100,0,52,420
+PostgreSQL(unscaled),MinuteAveragesRow,100,228,2,100,59,100,0,100,0,41,206
+Cassandra(unscaled),MinuteAveragesRow,100,468,3,100,717,100,0,100,0,670,502
+MongoDB(unscaled),MinuteAveragesRow,100,64,271,100,1275,100,0,100,0,118,54
+Redis(unscaled),MinuteAveragesRow,100,30,4448,100,28,100,0,100,0,27,23
+Perst(unscaled),MinuteAveragesRowForPerst,100,2,0,100,3,100,0,100,0,1,1
+MySQLWithDapper(unscaled),MinuteAveragesRow,100,493,1,100,243,100,0,100,0,57,441
+Entity Framework MySQL(unscaled),MinuteAveragesRow,100,684,2,100,0,100,0,100,0,0,69
+MySQL(unscaled),MinuteAveragesRow,250,1235,7,250,255,250,0,250,0,112,1043
+PostgreSQL(unscaled),MinuteAveragesRow,250,562,4,250,139,250,0,250,0,113,579
+Cassandra(unscaled),MinuteAveragesRow,250,1092,8,250,931,250,0,250,0,1116,684
+MongoDB(unscaled),MinuteAveragesRow,250,131,269,250,3123,250,0,250,0,273,131
+Redis(unscaled),MinuteAveragesRow,250,78,11239,250,80,250,0,250,0,76,59
+Perst(unscaled),MinuteAveragesRowForPerst,250,6,0,250,13,250,0,250,0,17,2
+MySQLWithDapper(unscaled),MinuteAveragesRow,250,1227,2,250,483,250,0,250,0,118,1076
+Entity Framework MySQL(unscaled),MinuteAveragesRow,250,1648,3,250,0,250,0,250,0,0,176
+MySQL(unscaled),MinuteAveragesRow,500,2350,12,500,552,500,0,500,0,283,2258
+PostgreSQL(unscaled),MinuteAveragesRow,500,1125,10,500,373,500,0,500,0,263,1073
+Cassandra(unscaled),MinuteAveragesRow,500,2099,9,500,2723,500,0,500,0,2143,1320
+MongoDB(unscaled),MinuteAveragesRow,500,300,279,500,6513,500,0,500,0,592,258
+Redis(unscaled),MinuteAveragesRow,500,156,22591,500,168,500,0,500,0,158,124
+Perst(unscaled),MinuteAveragesRowForPerst,500,15,0,500,31,500,0,500,0,14,6
+MySQLWithDapper(unscaled),MinuteAveragesRow,500,2363,2,500,1123,500,0,500,0,256,2068
+Entity Framework MySQL(unscaled),MinuteAveragesRow,500,3911,9,500,0,500,0,500,0,0,501
+MySQL(unscaled),MinuteAveragesRow,1000,4854,21,1000,961,1000,0,1000,0,482,4487
+PostgreSQL(unscaled),MinuteAveragesRow,1000,2248,19,1000,1154,1000,0,1000,0,527,2180
+Cassandra(unscaled),MinuteAveragesRow,1000,4229,19,1000,5560,1000,0,1000,0,4510,3891
+MongoDB(unscaled),MinuteAveragesRow,1000,693,299,1000,13057,1000,0,1000,0,1299,590
+Redis(unscaled),MinuteAveragesRow,1000,294,45239,1000,291,1000,0,1000,0,313,244
+Perst(unscaled),MinuteAveragesRowForPerst,1000,46,0,1000,112,1000,0,1000,0,40,19
+MySQLWithDapper(unscaled),MinuteAveragesRow,1000,4872,4,1000,2145,1000,0,1000,0,503,4554
+Entity Framework MySQL(unscaled),MinuteAveragesRow,1000,7453,15,1000,0,1000,0,1000,0,0,1126

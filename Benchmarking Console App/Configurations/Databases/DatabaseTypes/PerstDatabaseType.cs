@@ -14,9 +14,14 @@ namespace Benchmarking_Console_App.Configurations.Databases.DatabaseTypes
             return EDatabaseType.Perst;
         }
 
+        public string GetName()
+        {
+            return "Perst";
+        }
+
         public CrudModels<M> GetCrudModelsForDatabaseType<M>() where M : IModel, new()
         {
-            // Perst needs no CRUD models, for it is an Object-Oriented DB: Tremble, mortals!
+            // Perst has no need for your puny CRUD models, for it is an Object-Oriented DB: Tremble, mortals!
             return new CrudModels<M>();
         }
 

@@ -1,4 +1,6 @@
 ﻿using System;
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Reflection;
 using Benchmarking_Console_App.Configurations.Databases.Attributes;
@@ -8,7 +10,8 @@ namespace Benchmarking_Console_App.Models.DatabaseModels
 {
     public class MinuteAveragesRow : AbstractModel<MinuteAveragesRow>
     {
-        [IsPrimaryKey] public long MinuteAveragesRowId { get; set; }
+        [IsPrimaryKey]
+        public long MinuteAveragesRowId { get; set; }
 
         public double startid { get; set; }
         //public double endid { get; set; }
@@ -148,7 +151,7 @@ namespace Benchmarking_Console_App.Models.DatabaseModels
 
             foreach (var decimalProp in decimalProps)
             {
-                decimalProp.SetValue(this, randomGenerator.NextDouble());
+                decimalProp.SetValue(this, randomGenerator.NextDouble() * 1000);
             }
         }
     }

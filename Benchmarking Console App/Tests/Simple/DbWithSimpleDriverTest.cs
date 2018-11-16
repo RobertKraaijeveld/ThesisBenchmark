@@ -17,19 +17,18 @@ namespace Benchmarking_Console_App.Testing
                    amountOfModelsToRetrieveByContent, amountOfModelsToUpdate)
         { }
 
-        public override TestReport GetTestReport<M>(IDatabaseType databaseType, bool scaled) 
+        protected override ActionsToMeasure GetActionsToMeasure<M>(IDatabaseType databaseType) 
         {
             var randomModelsToInsert = base.GetRandomModels<M>(amountOfModelsToCreate)
                                            .ToList();
-
             Action createAction;
             Action deleteAction;
             Action getAllAction;
             Action getByPkAction;
             Action updateAction;
+            Action randomizeAction;
             Action truncateAction;
 
-            
             if (databaseType.ToEnum().Equals(EDatabaseType.Perst)) // Perst is an OO-DB so we use the OO-api. 
             {
                 var ooDatabaseApi = databaseType.GetDatabaseApis().ObjectOrientedDatabaseApi;
@@ -66,12 +65,15 @@ namespace Benchmarking_Console_App.Testing
                     }
                 };
 
-                // Re-randomizing the random models so the update action can use them
+
                 var modelsWithUpdatedValues = randomModelsToInsert.Take(this.amountOfModelsToUpdate)
                                                                   .ToList();
 
-                var random = new Random();
-                modelsWithUpdatedValues.ForEach(x => x.RandomizeValuesExceptPrimaryKey(random));
+                randomizeAction = new Action(() =>
+                {
+                    var random = new Random();
+                    modelsWithUpdatedValues.ForEach(x => x.RandomizeValuesExceptPrimaryKey(random));
+                });
 
                 updateAction = () => ooDatabaseApi.Update(modelsWithUpdatedValues);
             }
@@ -90,7 +92,7 @@ namespace Benchmarking_Console_App.Testing
                 var columnsToDeleteOn = new string[] { currentModelTypePrimaryKeyName };
                 crudModelsForDatabaseType.DeleteModel.IdentifiersToDeleteOn = columnsToDeleteOn;
 
-                deleteAction = () => apiForDatabaseType.Delete(randomModelsToInsert, 
+                deleteAction = () => apiForDatabaseType.Delete(randomModelsToInsert,
                                                             crudModelsForDatabaseType.DeleteModel);
 
 
@@ -116,43 +118,37 @@ namespace Benchmarking_Console_App.Testing
                 };
 
 
+                var modelsWithUpdatedValues = randomModelsToInsert.Take(this.amountOfModelsToUpdate);
+
+                randomizeAction = () =>
+                {
+                    var random = new Random();
+
+                    modelsWithUpdatedValues
+                        .Select(m =>
+                        {
+                            m.RandomizeValuesExceptPrimaryKey(random);
+                            return m;
+                        })
+                        .ToList();
+                };
+
+
                 var columnsToUpdateOn = columnsToDeleteOn;
                 crudModelsForDatabaseType.UpdateModel.IdentifiersToFilterOn = columnsToUpdateOn;
-
-                var random = new Random();
-                var modelsWithUpdatedValues = randomModelsToInsert.Take(this.amountOfModelsToUpdate)
-                                                                  .Select(m =>
-                                                                  {
-                                                                      m.RandomizeValuesExceptPrimaryKey(random);
-                                                                      return m;
-                                                                  })
-                                                                  .ToList();
 
                 updateAction = () => apiForDatabaseType.Update(modelsWithUpdatedValues, crudModelsForDatabaseType.UpdateModel);
             }
 
-
-            base.MeasureCRUDTimes(createAction, deleteAction, getAllAction,
-                                  getByPkAction, updateAction, truncateAction);
-
-
-            var scaledOrNotStr = scaled ? "(scaled)" : "(unscaled)";
-            return new TestReport()
+            return new ActionsToMeasure()
             {
-                DatabaseTypeUsed = databaseType.ToEnum() + scaledOrNotStr,
-                ModelTypeName = typeof(M).Name,
-
-                TimeSpentDeletingAllModels = timeSpentDeletingModels,
-                TimeSpentInsertingModels = timeSpentInsertingModels,
-                TimeSpentRetrievingAllModels = timeSpentGettingAllModels,
-                //TimeSpentRetrievingModelsByContent = timeSpentGettingModelsByContent,
-                TimeSpentRetrievingModelsByPrimaryKey = timeSpentGettingModelsByPrimaryKey,
-                TimeSpentUpdatingModels = timeSpentUpdatingModels,
-
-                AmountOfModelsInserted = amountOfModelsToCreate,
-                AmountOfModelsRetrievedByContent = amountOfModelsToRetrieveByContent,
-                AmountOfModelsRetrievedByPrimaryKey = amountOfModelsToRetrieveByPrimaryKey,
-                AmountOfModelsUpdated = amountOfModelsToUpdate
+                createAction = createAction,
+                deleteAction = deleteAction,
+                getByPkAction = getByPkAction,
+                randomizeAction = randomizeAction,
+                updateAction = updateAction,
+                getAllAction = getAllAction,
+                truncateAction = truncateAction
             };
         }
     }

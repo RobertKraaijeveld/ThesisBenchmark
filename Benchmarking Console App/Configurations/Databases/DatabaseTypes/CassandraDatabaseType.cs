@@ -15,6 +15,11 @@ namespace Benchmarking_Console_App.Configurations.Databases.DatabaseTypes
             return EDatabaseType.Cassandra;
         }
 
+        public string GetName()
+        {
+            return "Cassandra";
+        }
+
         public CrudModels<M> GetCrudModelsForDatabaseType<M>() where M : IModel, new()
         {
             return new CrudModels<M>()

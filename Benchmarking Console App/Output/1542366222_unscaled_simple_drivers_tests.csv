@@ -1,0 +1,8 @@
+DatabaseTypeUsed,ModelTypeName,AmountOfModelsInserted,TimeSpentInsertingModels,TimeSpentRetrievingAllModels,AmountOfModelsRetrievedByPrimaryKey,TimeSpentRetrievingModelsByPrimaryKey,AmountOfModelsRetrievedByContent,TimeSpentRetrievingModelsByContent,AmountOfModelsUpdated,FieldsUpdatedPerModel,TimeSpentUpdatingModels,TimeSpentDeletingAllModels
+MySQL(unscaled),MinuteAveragesRow,10,57,292,10,113,10,0,10,0,10,54
+PostgreSQL(unscaled),MinuteAveragesRow,10,22,8,10,5,10,0,10,0,4,18
+Cassandra(unscaled),MinuteAveragesRow,10,168,29,10,148,10,0,10,0,104,96
+MongoDB(unscaled),MinuteAveragesRow,10,203,77,10,7,10,0,10,0,13,17
+Redis(unscaled),MinuteAveragesRow,10,17,28,10,16,10,0,10,0,3,3
+Perst(unscaled),MinuteAveragesRowForPerst,10,31,4,10,5,10,0,10,0,1,4
+MySQLWithDapper(unscaled),MinuteAveragesRow,10,52,42,10,27,10,0,10,0,10,55

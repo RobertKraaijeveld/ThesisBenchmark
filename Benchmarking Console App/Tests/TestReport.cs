@@ -8,7 +8,7 @@ namespace Benchmarking_Console_App.Tests
 {
     public class TestReport
     {
-        public string DatabaseTypeUsed;
+        public string DatabaseTypeUsedStr;
         public string ModelTypeName;
 
         public int AmountOfModelsInserted;

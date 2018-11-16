@@ -11,6 +11,8 @@ namespace Benchmarking_Console_App.Configurations.Databases.DatabaseTypes
         EDatabaseType ToEnum();
         DatabaseApis GetDatabaseApis();
         CrudModels<M> GetCrudModelsForDatabaseType<M>() where M : IModel, new();
+
+        string GetName();
     }
 
     public struct DatabaseApis

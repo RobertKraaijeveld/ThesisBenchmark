@@ -16,6 +16,11 @@ namespace Benchmarking_Console_App.Configurations.Databases.DatabaseTypes
             return EDatabaseType.Redis;
         }
 
+        public string GetName()
+        {
+            return "Redis";
+        }
+
         public CrudModels<M> GetCrudModelsForDatabaseType<M>() where M : IModel, new()
         {
             return new CrudModels<M>()

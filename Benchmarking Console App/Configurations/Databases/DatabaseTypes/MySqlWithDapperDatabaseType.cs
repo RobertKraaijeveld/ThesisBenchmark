@@ -19,6 +19,11 @@ namespace Benchmarking_Console_App.Configurations.Databases.DatabaseTypes
             return EDatabaseType.MySQLWithDapper;
         }
 
+        public string GetName()
+        {
+            return "Dapper MySQL";
+        }
+
         public CrudModels<M> GetCrudModelsForDatabaseType<M>() where M : IModel, new()
         {
             return new CrudModels<M>()

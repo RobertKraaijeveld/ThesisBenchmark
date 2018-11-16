@@ -26,17 +26,23 @@ namespace Benchmarking_Console_App.Configurations.Databases.DatabaseApis.SQL
             }
         }
 
-        //public IEnumerable<M> Search<M>()
-        //{
-
-        //}
+        public IEnumerable<M> Search<M>(Func<M, bool> predicate) where M : class, IModel, new()
+        {
+            using (var dbContext = new BenchmarkDbContext(_connectionString))
+            {
+                return dbContext.Set<M>().Where(predicate).ToList();
+            }
+        }
 
         public void Create<M>(IEnumerable<M> modelsToCreate) where M : class, IModel, new()
         {
             using (var dbContext = new BenchmarkDbContext(_connectionString))
             {
-                dbContext.Set<M>().AddRange(modelsToCreate);
-                dbContext.SaveChanges();
+                foreach (var model in modelsToCreate)
+                {
+                    dbContext.Set<M>().Add(model);
+                    dbContext.SaveChanges();
+                }
             }
         }
 
@@ -44,6 +50,7 @@ namespace Benchmarking_Console_App.Configurations.Databases.DatabaseApis.SQL
         {
             using (var dbContext = new BenchmarkDbContext(_connectionString))
             {
+                modelsToDelete.ToList().ForEach(x => dbContext.Set<M>().Attach(x));
                 dbContext.Set<M>().RemoveRange(modelsToDelete);
                 dbContext.SaveChanges();
             }
@@ -65,7 +72,9 @@ namespace Benchmarking_Console_App.Configurations.Databases.DatabaseApis.SQL
             {
                 var set = dbContext.Set<M>();
                 var allEntitiesOfSet = set.ToList();
+
                 set.RemoveRange(allEntitiesOfSet);
+                dbContext.SaveChanges();
             }
         }
     }
