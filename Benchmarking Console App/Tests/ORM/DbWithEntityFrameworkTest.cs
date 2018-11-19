@@ -21,7 +21,7 @@ namespace Benchmarking_Console_App.Tests.ORM
         {
         }
 
-        protected override ActionsToMeasure GetActionsToMeasure<M>(IDatabaseType databaseType) 
+        protected override ActionsToMeasure GetActionsToMeasure<M>(IDatabaseType databaseType, bool wipeExistingDatabase) 
         {
             var databaseTypeEnum = databaseType.ToEnum();
             if (!(databaseTypeEnum.Equals(EDatabaseType.PostgreSQL) || databaseTypeEnum.Equals(EDatabaseType.MySQL)))
@@ -56,13 +56,15 @@ namespace Benchmarking_Console_App.Tests.ORM
 
             return new ActionsToMeasure()
             {
-                createAction = createAction,
-                deleteAction = deleteAllAction,
-                getByPkAction = getByPkAction,
-                randomizeAction = randomizeAction,
-                updateAction = updateAction,
-                getAllAction = getAllAction,
-                truncateAction = truncateAction
+                CreateAction = createAction,
+                DeleteAction = deleteAllAction,
+                GetByPkAction = getByPkAction,
+                RandomizeAction = randomizeAction,
+                UpdateAction = updateAction,
+                GetAllAction = getAllAction,
+                TruncateAction = truncateAction,
+
+                WipeExistingDatabase = wipeExistingDatabase
             };
         }
     }

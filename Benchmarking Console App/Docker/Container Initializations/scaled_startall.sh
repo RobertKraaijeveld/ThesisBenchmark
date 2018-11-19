@@ -3,6 +3,6 @@ cd "/c/Projects/Afstudeerexperimenten/Benchmarking Console App/Benchmarking Cons
 
 ./MySQL/docker-mysql-scaled-start.sh
 ./PostgreSQL/docker-postgres-scaled-start.sh
-./Redis/docker-redis-scaled-start.sh start
-./MongoDB/docker-mongodb-scaled-start.sh
+./Redis/docker-redis-scaled-start-new.sh 
+./MongoDB/docker-mongodb-scaled-start.sh start
 ./Cassandra/docker-cassandra-scaled-start.sh

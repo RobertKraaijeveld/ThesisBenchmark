@@ -33,12 +33,7 @@ namespace Benchmarking_Console_App.Testing
 
         public TestReport GetTestReport<M>(IDatabaseType databaseType, bool scaled, bool wipeExistingDatabase) where M : class, IModel, new()
         {
-            var actions = GetActionsToMeasure<M>(databaseType);
-
-            if (wipeExistingDatabase) 
-            {
-                actions.truncateAction.Invoke();
-            }
+            var actions = GetActionsToMeasure<M>(databaseType, wipeExistingDatabase);
 
             this.MeasureCRUDTimes(actions);
 
@@ -62,7 +57,7 @@ namespace Benchmarking_Console_App.Testing
             };
         }
 
-        protected abstract ActionsToMeasure GetActionsToMeasure<M>(IDatabaseType databaseType) where M: class, IModel, new();
+        protected abstract ActionsToMeasure GetActionsToMeasure<M>(IDatabaseType databaseType, bool wipeExistingDatabase) where M: class, IModel, new();
 
 
         protected IEnumerable<M> GetRandomModels<M>(int amountToCreate) where M : IModel, new()
@@ -91,27 +86,34 @@ namespace Benchmarking_Console_App.Testing
 
         protected struct ActionsToMeasure
         {
-            public Action createAction;
-            public Action deleteAction;
-            public Action getAllAction;
-            public Action getByPkAction;
-            public Action updateAction;
-            public Action truncateAction;
-            public Action randomizeAction;
+            public Action CreateAction;
+            public Action DeleteAction;
+            public Action GetAllAction;
+            public Action GetByPkAction;
+            public Action UpdateAction;
+            public Action TruncateAction;
+            public Action RandomizeAction;
+
+            public bool WipeExistingDatabase; 
         }
 
         private void MeasureCRUDTimes(ActionsToMeasure actions)
         {
-            this.timeSpentInsertingModels = GetTimeSpentOnActionMs(actions.createAction);
-            this.timeSpentGettingAllModels = GetTimeSpentOnActionMs(actions.getAllAction);
-            this.timeSpentGettingModelsByPrimaryKey = GetTimeSpentOnActionMs(actions.getByPkAction);
+            if (actions.WipeExistingDatabase)
+            {
+                actions.TruncateAction.Invoke();
+                this.timeSpentInsertingModels = GetTimeSpentOnActionMs(actions.CreateAction);
+            }
+
+            this.timeSpentGettingAllModels = GetTimeSpentOnActionMs(actions.GetAllAction);
+            this.timeSpentGettingModelsByPrimaryKey = GetTimeSpentOnActionMs(actions.GetByPkAction);
 
             // Doing deleting before updating so we wont have to keep track of changes to the original models
-            this.timeSpentDeletingModels = GetTimeSpentOnActionMs(actions.deleteAction);
+            this.timeSpentDeletingModels = GetTimeSpentOnActionMs(actions.DeleteAction);
 
             // Re-randomizing models before updating so some actual changes are made.
-            actions.randomizeAction.Invoke();
-            this.timeSpentUpdatingModels = GetTimeSpentOnActionMs(actions.updateAction);
+            actions.RandomizeAction.Invoke();
+            this.timeSpentUpdatingModels = GetTimeSpentOnActionMs(actions.UpdateAction);
 
             // Forcing garbage collection to ensure old models are not retained in memory.
             // This would skew the performance (especially memory) measurements.

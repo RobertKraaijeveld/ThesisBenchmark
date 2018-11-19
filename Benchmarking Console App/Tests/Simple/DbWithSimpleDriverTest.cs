@@ -17,7 +17,7 @@ namespace Benchmarking_Console_App.Testing
                    amountOfModelsToRetrieveByContent, amountOfModelsToUpdate)
         { }
 
-        protected override ActionsToMeasure GetActionsToMeasure<M>(IDatabaseType databaseType) 
+        protected override ActionsToMeasure GetActionsToMeasure<M>(IDatabaseType databaseType, bool wipeExistingDatabase) 
         {
             var randomModelsToInsert = base.GetRandomModels<M>(amountOfModelsToCreate)
                                            .ToList();
@@ -142,13 +142,15 @@ namespace Benchmarking_Console_App.Testing
 
             return new ActionsToMeasure()
             {
-                createAction = createAction,
-                deleteAction = deleteAction,
-                getByPkAction = getByPkAction,
-                randomizeAction = randomizeAction,
-                updateAction = updateAction,
-                getAllAction = getAllAction,
-                truncateAction = truncateAction
+                CreateAction = createAction,
+                DeleteAction = deleteAction,
+                GetByPkAction = getByPkAction,
+                RandomizeAction = randomizeAction,
+                UpdateAction = updateAction,
+                GetAllAction = getAllAction,
+                TruncateAction = truncateAction,
+                
+                WipeExistingDatabase = wipeExistingDatabase
             };
         }
     }

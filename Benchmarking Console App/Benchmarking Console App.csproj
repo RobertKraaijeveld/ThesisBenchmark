@@ -199,7 +199,7 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Include="Docker\Container Initializations\create_all_machines.sh" />
-    <None Include="Docker\Container Initializations\Redis\docker-redis-stop.sh" />
+    <None Include="Docker\Container Initializations\Redis\docker-redis-scaled-start-new.sh" />
     <None Include="Docker\Container Initializations\stop_all.sh" />
     <None Include="scaled.config">
       <SubType>Designer</SubType>
@@ -230,7 +230,6 @@
     <None Include="Docker\Container Initializations\PostgreSQL\docker-postgres-scaled-stop.sh" />
     <None Include="Docker\Container Initializations\PostgreSQL\docker-postgres-unscaled-start.sh" />
     <None Include="Docker\Container Initializations\PostgreSQL\docker-postgres-unscaled-stop.sh" />
-    <None Include="Docker\Container Initializations\Redis\docker-redis-scaled-start.sh" />
     <None Include="Docker\Container Initializations\Redis\docker-redis-unscaled-start.sh" />
     <None Include="Docker\Container Initializations\scaled_startall.sh" />
     <None Include="Docker\Container Initializations\unscaled_startall.sh" />

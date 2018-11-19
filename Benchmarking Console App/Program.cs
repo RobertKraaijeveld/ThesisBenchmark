@@ -20,15 +20,15 @@ namespace Benchmarking_program
         public static void Main(string[] args)
         {
             var hasScalingBeenEnabled = DatabaseConnectionStringFactory.IsConfigFileForScaledServersUsed();
-            RunSimpleDriversTests(hasScalingBeenEnabled);
+            RunSimpleDriversTests(hasScalingBeenEnabled, wipeExistingDatabase: true);
         }
 
-        private static void RunSimpleDriversTests(bool hasScalingBeenEnabled)
+        private static void RunSimpleDriversTests(bool hasScalingBeenEnabled, bool wipeExistingDatabase)
         {
             CreateSqlCollections();
 
             List<TestReport> allTestReports = new List<TestReport>();
-            int[] modelAmounts = new[] {1, 10, 100, 250, 500, 1000};// 1500, 2000, 2500, 3000 };
+            int[] modelAmounts = new[] {10, 100, 250, 500, 1000, 1500};// 2000, 2500, 3000 };
 
             foreach (var amount in modelAmounts)
             {
@@ -41,29 +41,29 @@ namespace Benchmarking_program
 
                 var mySqlSimpleDriverTestReport = simpleDriverTest.GetTestReport<MinuteAveragesRow>(databaseType: new MySQLDatabaseType(),
                                                                                                     scaled: hasScalingBeenEnabled, 
-                                                                                                    wipeExistingDatabase: true);
+                                                                                                    wipeExistingDatabase: wipeExistingDatabase);
 
                 var postgreSqlSimpleDriverTestReport = simpleDriverTest.GetTestReport<MinuteAveragesRow>(databaseType: new PostgreSQLDatabaseType(),
                                                                                                          scaled: hasScalingBeenEnabled, 
-                                                                                                         wipeExistingDatabase: true);
+                                                                                                         wipeExistingDatabase: wipeExistingDatabase);
 
                 var redisSimpleDriverTestReport = simpleDriverTest.GetTestReport<MinuteAveragesRow>(databaseType: new RedisDatabaseType(),
                                                                                                     scaled: hasScalingBeenEnabled, 
-                                                                                                    wipeExistingDatabase: true);
+                                                                                                    wipeExistingDatabase: wipeExistingDatabase);
 
                 var cassandraSimpleDriverTestReport = simpleDriverTest.GetTestReport<MinuteAveragesRow>(databaseType: new CassandraDatabaseType(),
                                                                                                         scaled: hasScalingBeenEnabled, 
-                                                                                                        wipeExistingDatabase: true);
+                                                                                                        wipeExistingDatabase: wipeExistingDatabase);
 
                 var mongoSimpleDriverTestReport = simpleDriverTest.GetTestReport<MinuteAveragesRow>(databaseType: new MongoDbDatabaseType(),
                                                                                                     scaled: hasScalingBeenEnabled, 
-                                                                                                    wipeExistingDatabase: true);
+                                                                                                    wipeExistingDatabase: wipeExistingDatabase);
 
                 // Dapper is technically an ORM, but it's such a thin layer over standard ADO.net that we decided 
                 // to re-use the simpleDriverTest for it. The SqlDapperOrmDatabaseApi implements IDatabaseApi anyway so it's okay.
                 var mySqlDapperTestReport = simpleDriverTest.GetTestReport<MinuteAveragesRow>(databaseType: new MySqlWithDapperDatabaseType(),
                                                                                               scaled: hasScalingBeenEnabled, 
-                                                                                              wipeExistingDatabase: true);
+                                                                                              wipeExistingDatabase: wipeExistingDatabase);
 
                 allTestReports.Add(mySqlSimpleDriverTestReport);
                 allTestReports.Add(postgreSqlSimpleDriverTestReport);
@@ -78,7 +78,7 @@ namespace Benchmarking_program
 
                 var mysqlOrmTestReport = entityFrameworkTest.GetTestReport<MinuteAveragesRow>(databaseType: new MySQLDatabaseType(),
                                                                                               scaled: hasScalingBeenEnabled,
-                                                                                              wipeExistingDatabase: true);
+                                                                                              wipeExistingDatabase: wipeExistingDatabase);
                 //var postgreSqlOrmTestReport = entityFrameworkTest.GetTestReport<MinuteAveragesRow>(databaseType: new PostgreSQLDatabaseType(),
                 //                                                                                   scaled: hasScalingBeenEnabled);
 

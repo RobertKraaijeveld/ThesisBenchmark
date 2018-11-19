@@ -16,6 +16,7 @@ namespace Benchmarking_program.Configurations.Databases.DatabaseApis.SQL
     /// </summary>
     public class SimpleRedisDatabaseApi : IDatabaseApi
     {
+        private bool _connectionIsClustered;
         private readonly string _connectionString;
         private readonly ConnectionMultiplexer _connection;
 
@@ -34,9 +35,25 @@ namespace Benchmarking_program.Configurations.Databases.DatabaseApis.SQL
 
             var db = _connection.GetDatabase();
             var allKeys = (RedisKey[]) db.Execute(cmdAndArgs.Item1, cmdAndArgs.Item2);
-            var allValues = db.StringGet(allKeys);
 
-            return this.SerializeRedisValues<M>(allValues);
+            // TODO: Execute these commands one-by-one if running on cluster. Improve temp fix.
+            try
+            {
+                return this.SerializeRedisValues<M>(db.StringGet(allKeys));
+            }
+            catch (Exception e)
+            {
+                // In cluster, so cant get all keys at once.
+                List<RedisValue> values = new List<RedisValue>();
+
+                foreach (var redisKey in allKeys)
+                {
+                    var val = db.StringGet(redisKey);
+                    values.Add(val);
+                }
+
+                return this.SerializeRedisValues<M>(values.ToArray());
+            }
         }
 
         public IEnumerable<M> Search<M>(ISearchModel<M> searchModel) where M : IModel, new()
