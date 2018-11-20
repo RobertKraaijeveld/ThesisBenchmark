@@ -5,28 +5,28 @@ setwd("C:/Projects/Afstudeerexperimenten/Benchmarking Console App/Benchmarking C
 
 
 # Creating all models - visualisation
-plot_result_per_db("1542381912_unscaled_simple_drivers_tests.csv",
+plot_result_per_db("1542700697_scaled_simple_drivers_tests.csv",
                    "creating_all_unscaled_visualization.png",
                    "Time spent creating all models per database",
                    "Amount of created models", "Time (ms)", 8000, 
                    "AmountOfModelsInserted", "TimeSpentInsertingModels")
 
 # Getting models by pk - visualisation
-plot_result_per_db("1542381912_unscaled_simple_drivers_tests.csv",
+plot_result_per_db("1542700697_scaled_simple_drivers_tests.csv",
                    "getting_by_pk_visualization.png",
                    "Time spent retrieving models (by primary key) per database",
                    "Amount of retrieved models", "Time (ms)", 5000, 
                    "AmountOfModelsRetrievedByPrimaryKey", "TimeSpentRetrievingModelsByPrimaryKey")
 
 # Getting all models
-plot_result_per_db("1542381912_unscaled_simple_drivers_tests.csv",
+plot_result_per_db("1542700697_scaled_simple_drivers_tests.csv",
                    "getting_all_unscaled_visualization.png",
                    "Time spent retrieving all models per database",
                    "Amount of retrieved models", "Time (ms)", 2500, 
                    "AmountOfModelsRetrievedByPrimaryKey", "TimeSpentRetrievingAllModels")
 
 # Deleting all models - visualisation
-plot_result_per_db("1542381912_unscaled_simple_drivers_tests.csv",
+plot_result_per_db("1542700697_scaled_simple_drivers_tests.csv",
                    "deleting_all_unscaled_visualization.png",
                    "Time spent deleting all models per database",
                    "Amount of deleted models", "Time (ms)", 5000, 
@@ -34,7 +34,7 @@ plot_result_per_db("1542381912_unscaled_simple_drivers_tests.csv",
  
 
 # Updating all models - visualisation
-plot_result_per_db("1542381912_unscaled_simple_drivers_tests.csv",
+plot_result_per_db("1542700697_scaled_simple_drivers_tests.csv",
                    "updating_all_unscaled_visualization.png",
                    "Time spent updating all models per database",
                    "Amount of updated models", "Time (ms)", 5000, 
@@ -78,7 +78,7 @@ plot_result_per_db <- function(filename, outfilename, visualizationtitle,
   csvColumnOnXAxisLength <- length(unique(TestReport[,csvColumnToPlotOnXAxis]))
   amountOfDbs <- length(unique(TestReport$DatabaseTypeUsedStr))
 
-  # Preparing colors TODO: NEEDS TO BE DYNAMIC LADS
+  # Preparing colors
   colors = c(t_col("black", perc = 15, name = "lt.black"), t_col("blue", perc = 15, name = "lt.blue"),
               t_col("red", perc = 15, name = "lt.red"), t_col("green", perc = 15, name = "lt.green"),
               t_col("pink", perc = 15, name = "lt.pink"), t_col("orange", perc = 15, name = "lt.orange"),

@@ -138,7 +138,6 @@ namespace Benchmarking_program.Configurations.Databases.DatabaseApis.SQL
         }
 
 
-
         private void CreateDatabase()
         {
             var connectionStringWithoutDatabasePortion = _connectionString.Replace("Database=benchmarkdb;", "");

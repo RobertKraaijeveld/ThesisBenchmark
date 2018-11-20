@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using Benchmarking_program.Models.DatabaseModels;
+﻿using Benchmarking_program.Models.DatabaseModels;
 
 namespace Benchmarking_program.Configurations.Databases.Interfaces
 {

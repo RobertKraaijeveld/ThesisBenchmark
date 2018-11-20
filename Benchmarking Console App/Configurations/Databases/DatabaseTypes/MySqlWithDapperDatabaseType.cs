@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using Benchmarking_Console_App.Configurations.Databases.DatabaseApis;
 using Benchmarking_Console_App.Configurations.Databases.DatabaseApis.SQL;
 using Benchmarking_program.Configurations.Databases.DatabaseApis;
 using Benchmarking_program.Configurations.Databases.DatabaseApis.SQL;
@@ -43,7 +39,7 @@ namespace Benchmarking_Console_App.Configurations.Databases.DatabaseTypes
 
             return new DatabaseApis()
             {
-                NormalDatabaseApi = new SimpleDapperOrmDatabaseApi<MySqlCommand, MySqlConnection>(connString),
+                NormalDatabaseApi = new SimpleDapperOrmDatabaseApi<MySqlConnection>(connString),
                 ObjectOrientedDatabaseApi = null
             };
         }

@@ -1,15 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Forms;
 using Benchmarking_Console_App.Configurations.ORMs.EntityFramework;
 using Benchmarking_program.Models.DatabaseModels;
 
 namespace Benchmarking_Console_App.Configurations.Databases.DatabaseApis.SQL
 {
-    public class SqlEntityFrameworkOrmDatabaseApi
+    public class SqlEntityFrameworkOrmDatabaseApi 
     {
         private readonly string _connectionString;
 
@@ -22,7 +19,7 @@ namespace Benchmarking_Console_App.Configurations.Databases.DatabaseApis.SQL
         {
             using (var dbContext = new BenchmarkDbContext(_connectionString))
             {
-                return dbContext.Set<M>().ToList();
+                return dbContext.Set<M>().AsNoTracking().ToList();
             }
         }
 
@@ -30,7 +27,7 @@ namespace Benchmarking_Console_App.Configurations.Databases.DatabaseApis.SQL
         {
             using (var dbContext = new BenchmarkDbContext(_connectionString))
             {
-                return dbContext.Set<M>().Where(predicate).ToList();
+                return dbContext.Set<M>().AsNoTracking().Where(predicate).ToList();
             }
         }
 
@@ -51,6 +48,7 @@ namespace Benchmarking_Console_App.Configurations.Databases.DatabaseApis.SQL
             using (var dbContext = new BenchmarkDbContext(_connectionString))
             {
                 modelsToDelete.ToList().ForEach(x => dbContext.Set<M>().Attach(x));
+
                 dbContext.Set<M>().RemoveRange(modelsToDelete);
                 dbContext.SaveChanges();
             }
@@ -60,8 +58,7 @@ namespace Benchmarking_Console_App.Configurations.Databases.DatabaseApis.SQL
         {
             using (var dbContext = new BenchmarkDbContext(_connectionString))
             {
-                // Changes to entities are detected and saved to the context automatically,
-                // so we only need to call dbContext.SaveChanges(); so that the changes are persisted.
+                existingModelsWithNewValues.ToList().ForEach(x => dbContext.Set<M>().Attach(x));
                 dbContext.SaveChanges();
             }
         }

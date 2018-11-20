@@ -1,21 +1,15 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Data.Common;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Dapper;
 using Benchmarking_Console_App.Configurations.Databases.Interfaces;
 using Benchmarking_program.Configurations.Databases.DatabaseApis;
-using Benchmarking_program.Configurations.Databases.DatabaseApis.SQL;
 using Benchmarking_program.Configurations.Databases.Interfaces;
 using Benchmarking_program.Models.DatabaseModels;
+using Dapper;
 
 namespace Benchmarking_Console_App.Configurations.Databases.DatabaseApis.SQL
 {
-    public class SimpleDapperOrmDatabaseApi<CommandType, ConnectionType> : IDatabaseApi
-                                                                           where CommandType : DbCommand, new()
-                                                                           where ConnectionType : DbConnection, new()
+    public class SimpleDapperOrmDatabaseApi<ConnectionType> : IDatabaseApi where ConnectionType : DbConnection, new()
     {
         private readonly string _connectionString;
 

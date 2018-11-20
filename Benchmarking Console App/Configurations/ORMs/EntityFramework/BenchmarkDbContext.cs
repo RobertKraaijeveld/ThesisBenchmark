@@ -24,8 +24,6 @@ namespace Benchmarking_Console_App.Configurations.ORMs.EntityFramework
 
         }
 
-
-
         public DbSet<MinuteAveragesRow> MinuteAveragesRows { get; set; }
     }
 }

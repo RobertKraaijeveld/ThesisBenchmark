@@ -1,0 +1,4 @@
+DatabaseTypeUsedStr,ModelTypeName,AmountOfModelsInserted,TimeSpentInsertingModels,TimeSpentRetrievingAllModels,AmountOfModelsRetrievedByPrimaryKey,TimeSpentRetrievingModelsByPrimaryKey,AmountOfModelsRetrievedByContent,TimeSpentRetrievingModelsByContent,AmountOfModelsUpdated,FieldsUpdatedPerModel,TimeSpentUpdatingModels,TimeSpentDeletingAllModels
+Cassandra (scaled),MinuteAveragesRow,3000,24374,389,1500,17749,1500,0,1500,0,10516,20925
+Redis (scaled),MinuteAveragesRow,3000,1945,52613,1500,516,1500,0,1500,0,846,1219
+Entity Framework MySQL (scaled),MinuteAveragesRow,3000,28237,31,1500,95,1500,0,1500,0,3119,4804

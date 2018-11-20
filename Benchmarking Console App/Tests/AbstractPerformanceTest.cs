@@ -40,7 +40,7 @@ namespace Benchmarking_Console_App.Testing
             var scaledOrNotStr = scaled ? "(scaled)" : "(unscaled)";
             return new TestReport()
             {
-                DatabaseTypeUsedStr = $"{databaseType.GetName()} {scaledOrNotStr}",
+                DatabaseTypeUsedStr = $"{GetDatabaseTypeString(databaseType)} {scaledOrNotStr}",
                 ModelTypeName = typeof(M).Name,
 
                 TimeSpentDeletingAllModels = timeSpentDeletingModels,
@@ -59,6 +59,7 @@ namespace Benchmarking_Console_App.Testing
 
         protected abstract ActionsToMeasure GetActionsToMeasure<M>(IDatabaseType databaseType, bool wipeExistingDatabase) where M: class, IModel, new();
 
+        protected abstract string GetDatabaseTypeString(IDatabaseType dbType);
 
         protected IEnumerable<M> GetRandomModels<M>(int amountToCreate) where M : IModel, new()
         {
@@ -108,12 +109,15 @@ namespace Benchmarking_Console_App.Testing
             this.timeSpentGettingAllModels = GetTimeSpentOnActionMs(actions.GetAllAction);
             this.timeSpentGettingModelsByPrimaryKey = GetTimeSpentOnActionMs(actions.GetByPkAction);
 
-            // Doing deleting before updating so we wont have to keep track of changes to the original models
-            this.timeSpentDeletingModels = GetTimeSpentOnActionMs(actions.DeleteAction);
+            if (actions.WipeExistingDatabase)
+            {
+                // Doing deleting before updating so we wont have to keep track of changes to the original models
+                this.timeSpentDeletingModels = GetTimeSpentOnActionMs(actions.DeleteAction);
+            }
 
-            // Re-randomizing models before updating so some actual changes are made.
+            // Re-randomizing models and re-inserting before updating so some actual changes are made.
             actions.RandomizeAction.Invoke();
-            this.timeSpentUpdatingModels = GetTimeSpentOnActionMs(actions.UpdateAction);
+            //this.timeSpentUpdatingModels = GetTimeSpentOnActionMs(actions.UpdateAction); TODO
 
             // Forcing garbage collection to ensure old models are not retained in memory.
             // This would skew the performance (especially memory) measurements.

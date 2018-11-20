@@ -60,7 +60,7 @@ docker-machine ssh mongodb-manager1 -- 'docker service create --constraint "node
                                 --name mongos1 \
                                 --restart-condition on-failure \
                                 --restart-max-attempts 5 \
-                                 --publish published=27017,mode=host,target=27017 \
+                                 --publish published=27018,mode=host,target=27017 \
                                 crimsonglory/mongos32 \
                                 --configdb mongocfg1;' 
 

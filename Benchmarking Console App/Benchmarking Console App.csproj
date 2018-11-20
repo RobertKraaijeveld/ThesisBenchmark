@@ -135,6 +135,7 @@
     <Compile Include="Configurations\Databases\DatabaseApis\Cassandra\CassandraSearchModel.cs" />
     <Compile Include="Configurations\Databases\DatabaseApis\Cassandra\CassandraUpdateModel.cs" />
     <Compile Include="Configurations\Databases\DatabaseApis\Cassandra\SimpleCassandraDatabaseApi.cs" />
+    <Compile Include="Configurations\Databases\DatabaseApis\CrudModels.cs" />
     <Compile Include="Configurations\Databases\DatabaseApis\DatabaseConnectionStringFactory.cs" />
     <Compile Include="Configurations\Databases\DatabaseApis\MongoDB\AbstractMongoDbOperationModel.cs" />
     <Compile Include="Configurations\Databases\DatabaseApis\MongoDB\MongoDbCreateModel.cs" />
@@ -188,6 +189,11 @@
     <Compile Include="Models\DatabaseModels\MinuteAveragesRow.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Tests\CQRS\CqrsEvent.cs" />
+    <Compile Include="Tests\CQRS\CqrsEventHandler.cs" />
+    <Compile Include="Tests\CQRS\CqrsReader.cs" />
+    <Compile Include="Tests\CQRS\CqrsWriter.cs" />
+    <Compile Include="Tests\CQRS\DbWithCqrsTest.cs" />
     <Compile Include="Tests\ORM\DbWithEntityFrameworkTest.cs" />
     <Compile Include="Tests\Simple\DbWithSimpleDriverTest.cs" />
     <Compile Include="Tests\AbstractPerformanceTest.cs" />
@@ -239,7 +245,7 @@
     <Content Include="PerstNet40.dll" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Tests\CQRS\" />
+    <Folder Include="Configurations\CQRS\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

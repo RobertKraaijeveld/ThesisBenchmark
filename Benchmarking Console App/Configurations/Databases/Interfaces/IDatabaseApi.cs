@@ -13,8 +13,6 @@ namespace Benchmarking_program.Configurations.Databases.DatabaseApis
 
         int Amount<M>() where M : IModel, new();
 
-        //void CreateCollectionIfNotExists<M>(ICreateCollectionModel<M> createCollectionModel) where M : IModel, new();
-
         void Create<M>(IEnumerable<M> newModels, ICreateModel createModel) where M : IModel, new();
 
         void Update<M>(IEnumerable<M> modelsWithNewValues, IUpdateModel updateModel) where M : IModel, new();

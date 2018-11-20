@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using Benchmarking_program.Configurations.Databases.DatabaseTypes;
 
 namespace Benchmarking_Console_App.Tests
 {

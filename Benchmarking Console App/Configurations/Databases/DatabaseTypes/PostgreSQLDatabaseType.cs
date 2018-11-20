@@ -1,9 +1,9 @@
-﻿using Benchmarking_Console_App.Configurations.Databases.DatabaseApis.SQL;
+﻿using Benchmarking_Console_App.Configurations.Databases.DatabaseApis;
+using Benchmarking_Console_App.Configurations.Databases.DatabaseApis.SQL;
 using Benchmarking_program.Configurations.Databases.DatabaseApis;
 using Benchmarking_program.Configurations.Databases.DatabaseApis.SQL;
 using Benchmarking_program.Configurations.Databases.DatabaseTypes;
 using Benchmarking_program.Models.DatabaseModels;
-using MySql.Data.MySqlClient;
 using Npgsql;
 
 namespace Benchmarking_Console_App.Configurations.Databases.DatabaseTypes
@@ -14,11 +14,7 @@ namespace Benchmarking_Console_App.Configurations.Databases.DatabaseTypes
         {
             return EDatabaseType.PostgreSQL;
         }
-
-        public string GetName()
-        {
-            return "PostgreSQL";
-        }
+        
 
         public CrudModels<M> GetCrudModelsForDatabaseType<M>() where M : IModel, new()
         {

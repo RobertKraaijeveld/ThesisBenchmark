@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using Benchmarking_Console_App.Configurations.Databases.DatabaseApis.SQL;
+﻿using Benchmarking_Console_App.Configurations.Databases.DatabaseApis.SQL;
 using Benchmarking_program.Configurations.Databases.Interfaces;
 using Benchmarking_program.Models.DatabaseModels;
 

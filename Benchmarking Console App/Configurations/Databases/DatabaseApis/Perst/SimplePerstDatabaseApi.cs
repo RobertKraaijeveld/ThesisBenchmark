@@ -51,20 +51,19 @@ namespace Benchmarking_program.Configurations.Databases.DatabaseApis.SQL
                 var results = new List<M>();
                 var typeOfModel = typeof(M);
 
-                if (_multiDimensionalIndexesPerType.ContainsKey(typeOfModel))
+                if (!_multiDimensionalIndexesPerType.ContainsKey(typeOfModel))
                 {
-                    var indexForType = _multiDimensionalIndexesPerType[typeOfModel];
-                    var objs = indexForType.QueryByExample(patternObject).ToList();
-                    foreach (var obj in objs)
-                    {
-                        results.Add((M)obj);
-                    }
-                    return results;
+                    // Adding a multi-dimensional index for this type if it doesn't yet exist.
+                    AddMultidimensionalIndexForType<M>();
                 }
-                else
+
+                var indexForType = _multiDimensionalIndexesPerType[typeOfModel];
+                var objs = indexForType.QueryByExample(patternObject).ToList();
+                foreach (var obj in objs)
                 {
-                    throw new Exception("Cannot do multidimensional index lookup on model which has no multidimensional index!");
+                    results.Add((M)obj);
                 }
+                return results;
             });
         }
 
@@ -76,18 +75,19 @@ namespace Benchmarking_program.Configurations.Databases.DatabaseApis.SQL
                 var results = new List<M>();
                 var typeOfModel = typeof(M);
 
-                if (_multiDimensionalIndexesPerType.ContainsKey(typeOfModel))
+                if (!_multiDimensionalIndexesPerType.ContainsKey(typeOfModel))
                 {
-                    var indexForType = _multiDimensionalIndexesPerType[typeOfModel];
-                    var objs = indexForType.QueryByExample(low, high).ToList();
-                    foreach (var obj in objs)
-                    {
-                        results.Add((M)obj);
-                    }
-                    return results;
+                    // Adding a multi-dimensional index for this type if it doesn't yet exist.
+                    AddMultidimensionalIndexForType<M>();
                 }
 
-                throw new Exception();
+                var indexForType = _multiDimensionalIndexesPerType[typeOfModel];
+                var objs = indexForType.QueryByExample(low, high).ToList();
+                foreach (var obj in objs)
+                {
+                    results.Add((M)obj);
+                }
+                return results;
             }
             catch (Exception e)
             {
@@ -103,19 +103,13 @@ namespace Benchmarking_program.Configurations.Databases.DatabaseApis.SQL
 
         public void Create<M>(IEnumerable<M> newModels) where M : IModel, new()
         {
-            // Creating a multi-dimensional index for this type if it doesn't yet exist.
-            var modelType = typeof(M);
-            if (!_multiDimensionalIndexesPerType.ContainsKey(modelType))
-            {
-                var indexForType = CreateMultidimensionalIndexForType<M>();
-                _multiDimensionalIndexesPerType.Add(modelType, indexForType);
-            }
+            // Adding a multi-dimensional index for this type if it doesn't yet exist.
+            AddMultidimensionalIndexForType<M>();
 
             // Then, adding the new models to the DB and updating their index.
-            //ExecuteDatabaseCommandsWithinTransaction<object>(() =>
-            _database.BeginTransaction();
-            try
+            ExecuteDatabaseCommandsWithinTransaction<object>(() =>
             {
+                var modelType = typeof(M);
                 var multiDimensionalIndexForModelType = _multiDimensionalIndexesPerType[modelType];
 
                 foreach (var model in newModels)
@@ -123,14 +117,8 @@ namespace Benchmarking_program.Configurations.Databases.DatabaseApis.SQL
                     multiDimensionalIndexForModelType.Add(model);
                     _database.AddRecord(modelType, model);
                 }
-
-                //return null; // Have to return 'something' from func 
-            }
-            catch (Exception e)
-            {
-                _database.RollbackTransaction();
-                throw e;
-            }
+                return null; // Have to return 'something' from func, even if return value isnt used
+            });
         }
 
         public void Update<M>(IEnumerable<M> modelsWithNewValues) where M : IModel, new()
@@ -148,7 +136,7 @@ namespace Benchmarking_program.Configurations.Databases.DatabaseApis.SQL
                     multiDimensionalIndexForModelType.Add(model);
                 }
 
-                return null; // Have to return 'something' from func 
+                return null; // Have to return 'something' from func, even if return value isnt used 
             });
         }
 
@@ -182,14 +170,20 @@ namespace Benchmarking_program.Configurations.Databases.DatabaseApis.SQL
         }
 
 
-        private MultidimensionalIndex CreateMultidimensionalIndexForType<M>() where M : IModel, new()
+        private void AddMultidimensionalIndexForType<M>() where M : IModel, new()
         {
-            var publicFieldsOfModel = typeof(M).GetFields(BindingFlags.Public | BindingFlags.Instance);
+            var modelType = typeof(M);
+            var publicFieldsOfModel = modelType.GetFields(BindingFlags.Public | BindingFlags.Instance);
 
             string[] searchableFields = publicFieldsOfModel.Select(x => x.Name)
                                                            .ToArray();
 
-            return _storage.CreateMultidimensionalIndex(typeof(M), searchableFields, treateZeroAsUndefinedValue: true);
+            var index = _storage.CreateMultidimensionalIndex(modelType, searchableFields, treateZeroAsUndefinedValue: true);
+
+            if (!_multiDimensionalIndexesPerType.ContainsKey(modelType))
+            {
+                _multiDimensionalIndexesPerType.Add(modelType, index);
+            }
         }
 
         private T ExecuteDatabaseCommandsWithinTransaction<T>(Func<T> actionToExecute)

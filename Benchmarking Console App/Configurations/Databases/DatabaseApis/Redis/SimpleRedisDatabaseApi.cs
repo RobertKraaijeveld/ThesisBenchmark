@@ -27,7 +27,6 @@ namespace Benchmarking_program.Configurations.Databases.DatabaseApis.SQL
             _connection = ConnectionMultiplexer.Connect(connectionString);
         }
 
-        // Ye be warned: This could crash the app and the redis server if a lot of keys are present
         public IEnumerable<M> GetAll<M>(IGetAllModel<M> getAllModel) where M : IModel, new() 
         {
             var getAllCommandText = getAllModel.CreateGetAllString();
@@ -36,14 +35,13 @@ namespace Benchmarking_program.Configurations.Databases.DatabaseApis.SQL
             var db = _connection.GetDatabase();
             var allKeys = (RedisKey[]) db.Execute(cmdAndArgs.Item1, cmdAndArgs.Item2);
 
-            // TODO: Execute these commands one-by-one if running on cluster. Improve temp fix.
             try
             {
                 return this.SerializeRedisValues<M>(db.StringGet(allKeys));
             }
-            catch (Exception e)
+            catch (Exception e) // Clustered redis throws exceptions when trying to retrieve set of keys all at once.
             {
-                // In cluster, so cant get all keys at once.
+                // So we retrieve them one-by-one instead.
                 List<RedisValue> values = new List<RedisValue>();
 
                 foreach (var redisKey in allKeys)
@@ -51,7 +49,6 @@ namespace Benchmarking_program.Configurations.Databases.DatabaseApis.SQL
                     var val = db.StringGet(redisKey);
                     values.Add(val);
                 }
-
                 return this.SerializeRedisValues<M>(values.ToArray());
             }
         }
@@ -70,8 +67,8 @@ namespace Benchmarking_program.Configurations.Databases.DatabaseApis.SQL
         {
             var db = _connection.GetDatabase();
 
-            // returns count of all keys because we cannot find out count of 
-            // keys with specific type of value without doing an O(N) loop through all the keys.
+            // returns count of all keys. We cannot get the amount of keys for a specific type
+            // without doing an O(N) loop, so this less specific solution is used instead.
             return (int) db.Execute("DBSIZE");
         }
 
@@ -116,8 +113,16 @@ namespace Benchmarking_program.Configurations.Databases.DatabaseApis.SQL
 
         public void TruncateAll()
         {
-            var db = _connection.GetDatabase();
-            db.Execute("FLUSHDB");
+            // Connecting with admin rights, then flushing all databases on all cluster nodes
+            using (var adminConnection = ConnectionMultiplexer.Connect($"{_connectionString},allowAdmin=true"))
+            {
+                var endpoints = adminConnection.GetEndPoints();
+                var masterServers = endpoints.Select(x => adminConnection.GetServer(x))
+                                             .Where(x => !x.IsSlave)
+                                             .ToList();
+
+                masterServers.ForEach(x => x.FlushDatabase());
+            }
         }
 
         public void Truncate<M>() where M : IModel, new()

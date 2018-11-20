@@ -3,24 +3,25 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using Benchmarking_Console_App.Configurations.Databases.DatabaseTypes;
-using Benchmarking_Console_App.Tests;
 using Benchmarking_program.Configurations.Databases.DatabaseTypes;
-using Benchmarking_program.Models.DatabaseModels;
 
 namespace Benchmarking_Console_App.Testing
 {
     public class DbWithSimpleDriverTest : AbstractPerformanceTest
     {
         public DbWithSimpleDriverTest(int amountOfModelsToCreate, int amountOfModelsToRetrieveByPrimaryKey,
-                                      int amountOfModelsToRetrieveByContent, int amountOfModelsToUpdate)
+            int amountOfModelsToRetrieveByContent, int amountOfModelsToUpdate)
             : base(amountOfModelsToCreate, amountOfModelsToRetrieveByPrimaryKey,
-                   amountOfModelsToRetrieveByContent, amountOfModelsToUpdate)
-        { }
+                amountOfModelsToRetrieveByContent, amountOfModelsToUpdate)
+        {
+        }
 
-        protected override ActionsToMeasure GetActionsToMeasure<M>(IDatabaseType databaseType, bool wipeExistingDatabase) 
+        protected override ActionsToMeasure GetActionsToMeasure<M>(IDatabaseType databaseType,
+            bool wipeExistingDatabase)
         {
             var randomModelsToInsert = base.GetRandomModels<M>(amountOfModelsToCreate)
                                            .ToList();
+
             Action createAction;
             Action deleteAction;
             Action getAllAction;
@@ -67,7 +68,7 @@ namespace Benchmarking_Console_App.Testing
 
 
                 var modelsWithUpdatedValues = randomModelsToInsert.Take(this.amountOfModelsToUpdate)
-                                                                  .ToList();
+                    .ToList();
 
                 randomizeAction = new Action(() =>
                 {
@@ -89,11 +90,10 @@ namespace Benchmarking_Console_App.Testing
                 getAllAction = () => apiForDatabaseType.GetAll(crudModelsForDatabaseType.GetAllModel);
 
 
-                var columnsToDeleteOn = new string[] { currentModelTypePrimaryKeyName };
+                var columnsToDeleteOn = new string[] {currentModelTypePrimaryKeyName};
                 crudModelsForDatabaseType.DeleteModel.IdentifiersToDeleteOn = columnsToDeleteOn;
 
-                deleteAction = () => apiForDatabaseType.Delete(randomModelsToInsert,
-                                                            crudModelsForDatabaseType.DeleteModel);
+                deleteAction = () => apiForDatabaseType.Delete(randomModelsToInsert, crudModelsForDatabaseType.DeleteModel);
 
 
                 var modelsToSearchForByPk = randomModelsToInsert.Take(amountOfModelsToRetrieveByPrimaryKey)
@@ -101,9 +101,9 @@ namespace Benchmarking_Console_App.Testing
                 getByPkAction = () =>
                 {
                     // Each model has it's own combo of Primary Key: Value.
-                    // So we update the ISearchModel for each model, then search for that specific model. 
                     foreach (var model in modelsToSearchForByPk)
                     {
+                        // So we update the ISearchModel with the PK of the current model, then search for that specific model. 
                         var columnsAndValuesToSearchFor = new Dictionary<string, object>();
 
                         var primaryKeyName = model.GetPrimaryKeyFieldName();
@@ -111,33 +111,32 @@ namespace Benchmarking_Console_App.Testing
 
                         columnsAndValuesToSearchFor.Add(primaryKeyName, primaryKeyValue);
 
-                        crudModelsForDatabaseType.SearchModel.IdentifiersAndValuesToSearchFor =
-                            columnsAndValuesToSearchFor;
+                        crudModelsForDatabaseType.SearchModel.IdentifiersAndValuesToSearchFor = columnsAndValuesToSearchFor;
                         apiForDatabaseType.Search(crudModelsForDatabaseType.SearchModel);
                     }
                 };
 
 
                 var modelsWithUpdatedValues = randomModelsToInsert.Take(this.amountOfModelsToUpdate);
-
                 randomizeAction = () =>
                 {
                     var random = new Random();
 
-                    modelsWithUpdatedValues
-                        .Select(m =>
-                        {
-                            m.RandomizeValuesExceptPrimaryKey(random);
-                            return m;
-                        })
-                        .ToList();
+                    modelsWithUpdatedValues = modelsWithUpdatedValues
+                                                    .Select(m =>
+                                                    {
+                                                        m.RandomizeValuesExceptPrimaryKey(random);
+                                                        return m;
+                                                    })
+                                                    .ToList();
                 };
 
 
                 var columnsToUpdateOn = columnsToDeleteOn;
                 crudModelsForDatabaseType.UpdateModel.IdentifiersToFilterOn = columnsToUpdateOn;
 
-                updateAction = () => apiForDatabaseType.Update(modelsWithUpdatedValues, crudModelsForDatabaseType.UpdateModel);
+                updateAction = () =>
+                    apiForDatabaseType.Update(modelsWithUpdatedValues, crudModelsForDatabaseType.UpdateModel);
             }
 
             return new ActionsToMeasure()
@@ -149,9 +148,14 @@ namespace Benchmarking_Console_App.Testing
                 UpdateAction = updateAction,
                 GetAllAction = getAllAction,
                 TruncateAction = truncateAction,
-                
+
                 WipeExistingDatabase = wipeExistingDatabase
             };
+        }
+
+        protected override string GetDatabaseTypeString(IDatabaseType dbType)
+        {
+            return dbType.ToEnum().ToString();
         }
     }
 }

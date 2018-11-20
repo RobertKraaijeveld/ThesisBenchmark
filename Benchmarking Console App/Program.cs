@@ -6,6 +6,7 @@ using Benchmarking_Console_App.Configurations.Databases.DatabaseTypes;
 using Benchmarking_Console_App.Models.DatabaseModels;
 using Benchmarking_Console_App.Testing;
 using Benchmarking_Console_App.Tests;
+using Benchmarking_Console_App.Tests.CQRS;
 using Benchmarking_Console_App.Tests.ORM;
 using Benchmarking_program.Configurations.Databases.DatabaseApis;
 using Benchmarking_program.Configurations.Databases.DatabaseApis.SQL;
@@ -20,61 +21,64 @@ namespace Benchmarking_program
         public static void Main(string[] args)
         {
             var hasScalingBeenEnabled = DatabaseConnectionStringFactory.IsConfigFileForScaledServersUsed();
+
+            RunCqrsTests(hasScalingBeenEnabled, wipeExistingDatabase: true);
             RunSimpleDriversTests(hasScalingBeenEnabled, wipeExistingDatabase: true);
         }
 
+        // TODO: Create distinction through params between simple api, oo api and orm api tests
         private static void RunSimpleDriversTests(bool hasScalingBeenEnabled, bool wipeExistingDatabase)
         {
             CreateSqlCollections();
 
             List<TestReport> allTestReports = new List<TestReport>();
-            int[] modelAmounts = new[] {10, 100, 250, 500, 1000, 1500};// 2000, 2500, 3000 };
+            int[] modelAmounts = new[] { 100, 250, 500, 1000, 5000, 10000, 50000 };
 
             foreach (var amount in modelAmounts)
             {
-                var simpleDriverTest = new DbWithSimpleDriverTest(amount, amount, amount, amount);
+                var simpleDriverTest = new DbWithSimpleDriverTest(amount, amount / 2, amount / 2, amount / 2);
 
-                //Simple driver tests
-                var perstSimpleDriverTestReport = simpleDriverTest.GetTestReport<MinuteAveragesRowForPerst>(databaseType: new PerstDatabaseType(),
-                                                                                                            scaled: hasScalingBeenEnabled, 
-                                                                                                            wipeExistingDatabase: true);
+                ////Simple driver tests
+                //var perstSimpleDriverTestReport = simpleDriverTest.GetTestReport<MinuteAveragesRowForPerst>(databaseType: new PerstDatabaseType(),
+                //                                                                                            scaled: hasScalingBeenEnabled,
+                //                                                                                            wipeExistingDatabase: wipeExistingDatabase);
 
-                var mySqlSimpleDriverTestReport = simpleDriverTest.GetTestReport<MinuteAveragesRow>(databaseType: new MySQLDatabaseType(),
-                                                                                                    scaled: hasScalingBeenEnabled, 
-                                                                                                    wipeExistingDatabase: wipeExistingDatabase);
+                //var mySqlSimpleDriverTestReport = simpleDriverTest.GetTestReport<MinuteAveragesRow>(databaseType: new MySQLDatabaseType(),
+                //                                                                                    scaled: hasScalingBeenEnabled, 
+                //                                                                                    wipeExistingDatabase: wipeExistingDatabase);
 
-                var postgreSqlSimpleDriverTestReport = simpleDriverTest.GetTestReport<MinuteAveragesRow>(databaseType: new PostgreSQLDatabaseType(),
-                                                                                                         scaled: hasScalingBeenEnabled, 
-                                                                                                         wipeExistingDatabase: wipeExistingDatabase);
+                //var postgreSqlSimpleDriverTestReport = simpleDriverTest.GetTestReport<MinuteAveragesRow>(databaseType: new PostgreSQLDatabaseType(),
+                //                                                                                         scaled: hasScalingBeenEnabled,
+                //                                                                                         wipeExistingDatabase: wipeExistingDatabase);
 
                 var redisSimpleDriverTestReport = simpleDriverTest.GetTestReport<MinuteAveragesRow>(databaseType: new RedisDatabaseType(),
-                                                                                                    scaled: hasScalingBeenEnabled, 
+                                                                                                    scaled: hasScalingBeenEnabled,
                                                                                                     wipeExistingDatabase: wipeExistingDatabase);
 
                 var cassandraSimpleDriverTestReport = simpleDriverTest.GetTestReport<MinuteAveragesRow>(databaseType: new CassandraDatabaseType(),
-                                                                                                        scaled: hasScalingBeenEnabled, 
+                                                                                                        scaled: hasScalingBeenEnabled,
                                                                                                         wipeExistingDatabase: wipeExistingDatabase);
 
-                var mongoSimpleDriverTestReport = simpleDriverTest.GetTestReport<MinuteAveragesRow>(databaseType: new MongoDbDatabaseType(),
-                                                                                                    scaled: hasScalingBeenEnabled, 
-                                                                                                    wipeExistingDatabase: wipeExistingDatabase);
+                //var mongoSimpleDriverTestReport = simpleDriverTest.GetTestReport<MinuteAveragesRow>(databaseType: new MongoDbDatabaseType(),
+                //                                                                                    scaled: hasScalingBeenEnabled,
+                //                                                                                    wipeExistingDatabase: wipeExistingDatabase);
 
-                // Dapper is technically an ORM, but it's such a thin layer over standard ADO.net that we decided 
-                // to re-use the simpleDriverTest for it. The SqlDapperOrmDatabaseApi implements IDatabaseApi anyway so it's okay.
-                var mySqlDapperTestReport = simpleDriverTest.GetTestReport<MinuteAveragesRow>(databaseType: new MySqlWithDapperDatabaseType(),
-                                                                                              scaled: hasScalingBeenEnabled, 
-                                                                                              wipeExistingDatabase: wipeExistingDatabase);
+                //// Dapper is technically an ORM, but it's such a thin layer over standard ADO.net that we decided 
+                //// to re-use the simpleDriverTest for it. The SqlDapperOrmDatabaseApi implements IDatabaseApi anyway so it's okay.
+                //var mySqlDapperTestReport = simpleDriverTest.GetTestReport<MinuteAveragesRow>(databaseType: new MySqlWithDapperDatabaseType(),
+                //                                                                              scaled: hasScalingBeenEnabled, 
+                //                                                                              wipeExistingDatabase: wipeExistingDatabase);
 
-                allTestReports.Add(mySqlSimpleDriverTestReport);
-                allTestReports.Add(postgreSqlSimpleDriverTestReport);
+                ////allTestReports.Add(mySqlSimpleDriverTestReport);
+                //allTestReports.Add(postgreSqlSimpleDriverTestReport);
                 allTestReports.Add(cassandraSimpleDriverTestReport);
-                allTestReports.Add(mongoSimpleDriverTestReport);
+                //allTestReports.Add(mongoSimpleDriverTestReport);
                 allTestReports.Add(redisSimpleDriverTestReport);
-                allTestReports.Add(perstSimpleDriverTestReport);
-                allTestReports.Add(mySqlDapperTestReport);
+                //allTestReports.Add(perstSimpleDriverTestReport);
+                //allTestReports.Add(mySqlDapperTestReport);
 
                 //Entity framework tests
-                var entityFrameworkTest = new DbWithEntityFrameworkTest(amount, amount, amount, amount);
+                var entityFrameworkTest = new DbWithEntityFrameworkTest(amount, amount / 2, amount / 2, amount / 2);
 
                 var mysqlOrmTestReport = entityFrameworkTest.GetTestReport<MinuteAveragesRow>(databaseType: new MySQLDatabaseType(),
                                                                                               scaled: hasScalingBeenEnabled,
@@ -92,6 +96,26 @@ namespace Benchmarking_program
             TestReport.CombineTestReportsIntoCsvFile(allTestReports, reportName);
         }
 
+        // TODO: Duplication here.
+        private static void RunCqrsTests(bool hasScalingBeenEnabled, bool wipeExistingDatabase)
+        {
+            CreateSqlCollections();
+
+            List<TestReport> allTestReports = new List<TestReport>();
+            int[] modelAmounts = new[] {100, 250, 500, 1000, 5000, 10000, 50000};
+
+            foreach (var amount in modelAmounts)
+            {
+                var cqrsTest = new DbWithCqrsTest(amount, amount, amount, amount, new RedisDatabaseType());
+                var cqrsSqlAndRedisTestReport = cqrsTest.GetTestReport<MinuteAveragesRow>(new MySQLDatabaseType(), 
+                                                                                          scaled: hasScalingBeenEnabled,
+                                                                                          wipeExistingDatabase: wipeExistingDatabase);
+                allTestReports.Add(cqrsSqlAndRedisTestReport);
+            }
+
+            string reportName = hasScalingBeenEnabled ? "scaled_cqrs_tests" : "unscaled_cqrs_tests";
+            TestReport.CombineTestReportsIntoCsvFile(allTestReports, reportName);
+        } 
 
         private static void CreateSqlCollections()
         {
