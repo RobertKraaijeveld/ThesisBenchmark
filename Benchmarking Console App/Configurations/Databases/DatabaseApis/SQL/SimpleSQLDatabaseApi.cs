@@ -162,7 +162,7 @@ namespace Benchmarking_program.Configurations.Databases.DatabaseApis.SQL
         }
 
 
-        private IEnumerable<M> GetResults<M>(string query) where M: IModel, new() // TODO: CAN BE OPTIMIZED
+        private IEnumerable<M> GetResults<M>(string query) where M: IModel, new() 
         {
             var resultingModels = new List<M>();
 
