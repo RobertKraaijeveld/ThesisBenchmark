@@ -113,8 +113,6 @@ namespace Benchmarking_program
             return resultingTestReports;
         }
 
-
-
         private static void CreateSqlCollections()
         {
             // Creating collections in case they don't exist yet. Only applies to fixed-schema, SQL-like databases.

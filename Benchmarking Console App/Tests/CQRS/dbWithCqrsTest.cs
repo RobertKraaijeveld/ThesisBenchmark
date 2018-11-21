@@ -78,10 +78,15 @@ namespace Benchmarking_Console_App.Tests.CQRS
 
 
             //TODO
-            //var updateAction = new Action(() =>
-            //{
-            //    ormApiForDatabase.Update(randomizedStartingModels);
-            //});
+            var columnsToUpdateOn = columnsToDeleteOn;
+            var updateAction = new Action(() =>
+            {
+                cqrsWriter.crudModels.UpdateModel.IdentifiersToFilterOn = columnsToUpdateOn;
+                cqrsReader.crudModels.UpdateModel.IdentifiersToFilterOn = columnsToUpdateOn;
+
+                cqrsWriter.Update((IEnumerable<M>) randomizedStartingModels);
+            });
+
 
             var randomizeAction = new Action(() =>
             {

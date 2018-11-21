@@ -135,8 +135,7 @@ namespace Benchmarking_Console_App.Testing
                 var columnsToUpdateOn = columnsToDeleteOn;
                 crudModelsForDatabaseType.UpdateModel.IdentifiersToFilterOn = columnsToUpdateOn;
 
-                updateAction = () =>
-                    apiForDatabaseType.Update(modelsWithUpdatedValues, crudModelsForDatabaseType.UpdateModel);
+                updateAction = () => apiForDatabaseType.Update(modelsWithUpdatedValues, crudModelsForDatabaseType.UpdateModel);
             }
 
             return new ActionsToMeasure()

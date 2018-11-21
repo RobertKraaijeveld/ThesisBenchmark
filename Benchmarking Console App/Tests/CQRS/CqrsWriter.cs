@@ -27,18 +27,17 @@ namespace Benchmarking_Console_App.Tests.CQRS
             }
         }
 
-        // TODO: IMPLEMENT LATER
-        //public void Update<M, P>(IEnumerable<M> modelsWithNewValues, 
-        //                         IEnumerable<P> oldModelPrimaryKeys, 
-        //                         IUpdateModel updateModel) where M : IModel, new()
-        //{
-        //    api.Update(modelsWithNewValues, updateModel);
+        public void Update<M>(IEnumerable<M> modelsWithNewValues, 
+                              IUpdateModel updateModel) where M : IModel, new()
+        {
+           api.Update(modelsWithNewValues, updateModel);
 
-        //    foreach (var updatedModel in modelsWithNewValues)
-        //    {
-
-        //    }
-        //}
+           foreach (var updatedModel in modelsWithNewValues)
+           {
+                var eventForUpdatedModel = new CqrsEvent<M>(ECqrsEventType.UpdateEvent, updatedModel);
+                CqrsEventHandler<M>.AddEvent(eventForUpdatedModel);
+           }
+        }
 
         public void Delete(IEnumerable<M> modelsToDelete) 
         { 
