@@ -114,7 +114,7 @@ namespace Benchmarking_Console_App.Tests.CQRS
 
         protected override string GetDatabaseTypeString(IDatabaseType writeDatabaseType)
         {
-            return $"CQRS (Read DB {readDatabaseType.ToEnum()}, Write DB {writeDatabaseType.ToEnum()}";
+            return $"CQRS (Read DB {readDatabaseType.ToEnum()} Write DB {writeDatabaseType.ToEnum()}";
         }
     }
 }
