@@ -18,24 +18,24 @@ namespace Benchmarking_Console_App.Tests.CQRS
             this.crudModels = crudModels;
 
             // Subscribing to event handler
-            CqrsEventHandler.Subscribe(cqrsEvent =>
+            CqrsEventHandler<M>.Subscribe(cqrsEvent =>
             {
-                if (cqrsEvent.EventType.Equals(CqrtsEventType.CreateEvent))
+                if (cqrsEvent.EventType.Equals(ECqrsEventType.CreateEvent))
                 {
                     // When the CqrsWriter has added a model through THEIR database, we add it in OUR database.
-                    api.Create(new List<M>() { (M)cqrsEvent.model }, crudModels.CreateModel);
+                    api.Create(new List<M>() { (M)cqrsEvent.Model }, crudModels.CreateModel);
                 }
-                else if (cqrsEvent.EventType.Equals(CqrtsEventType.DeleteEvent))
+                else if (cqrsEvent.EventType.Equals(ECqrsEventType.DeleteEvent))
                 {
                     // When the CqrsWriter has removed a model from THEIR database, we remove it from OUR database.
-                    api.Delete<M>(new List<M>(){(M) cqrsEvent.model}, crudModels.DeleteModel);
+                    api.Delete<M>(new List<M>(){(M) cqrsEvent.Model}, crudModels.DeleteModel);
                 }
             });            
         }
 
-        public IEnumerable<M> GetAll()
+        public IEnumerable<M> GetAll(IGetAllModel<M> getAllModel)
         {
-            return api.GetAll(crudModels.GetAllModel);
+            return api.GetAll(getAllModel);
         }
 
         public IEnumerable<M> Search(ISearchModel<M> searchModel) 

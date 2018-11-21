@@ -22,8 +22,8 @@ namespace Benchmarking_Console_App.Tests.CQRS
 
             foreach (var newModel in newModels)
             {
-                var eventForNewModel = new CqrsEvent(CqrtsEventType.CreateEvent, newModel);
-                CqrsEventHandler.AddEvent(eventForNewModel);
+                var eventForNewModel = new CqrsEvent<M>(ECqrsEventType.CreateEvent, newModel);
+                CqrsEventHandler<M>.AddEvent(eventForNewModel);
             }
         }
 
@@ -46,8 +46,8 @@ namespace Benchmarking_Console_App.Tests.CQRS
 
             foreach (var deletedModel in modelsToDelete)
             {
-                var eventForDeletedModel = new CqrsEvent(CqrtsEventType.DeleteEvent, deletedModel);
-                CqrsEventHandler.AddEvent(eventForDeletedModel);
+                var eventForDeletedModel = new CqrsEvent<M>(ECqrsEventType.DeleteEvent, deletedModel);
+                CqrsEventHandler<M>.AddEvent(eventForDeletedModel);
             }
         }
 

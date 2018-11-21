@@ -29,7 +29,7 @@ namespace Benchmarking_Console_App.Tests.CQRS
 
             // Getting api's for both read and write db's, creating CqrsReader and CqrsWriter which use these api's.
             var apiForReadDatabase = readDatabaseType.GetDatabaseApis().NormalDatabaseApi;
-            var apiForWriteDatabase = readDatabaseType.GetDatabaseApis().NormalDatabaseApi;
+            var apiForWriteDatabase = writeDatabaseType.GetDatabaseApis().NormalDatabaseApi;
 
             var readDatabaseCrudModels = readDatabaseType.GetCrudModelsForDatabaseType<M>();
             var writeDatabaseCrudModels = writeDatabaseType.GetCrudModelsForDatabaseType<M>();
@@ -39,7 +39,7 @@ namespace Benchmarking_Console_App.Tests.CQRS
 
 
             // Creating read database actions
-            Action getAllAction = () => cqrsReader.GetAll();
+            Action getAllAction = () => cqrsReader.GetAll(readDatabaseCrudModels.GetAllModel);
 
 
 
@@ -58,8 +58,8 @@ namespace Benchmarking_Console_App.Tests.CQRS
 
                     columnsAndValuesToSearchFor.Add(primaryKeyName, primaryKeyValue);
 
-                    cqrsReader.crudModels.SearchModel.IdentifiersAndValuesToSearchFor = columnsAndValuesToSearchFor;
-                    cqrsReader.Search(cqrsReader.crudModels.SearchModel);
+                    readDatabaseCrudModels.SearchModel.IdentifiersAndValuesToSearchFor = columnsAndValuesToSearchFor;
+                    cqrsReader.Search(readDatabaseCrudModels.SearchModel);
                 }
             };
 
@@ -71,6 +71,8 @@ namespace Benchmarking_Console_App.Tests.CQRS
             Action deleteAllAction = () =>
             {
                 cqrsWriter.crudModels.DeleteModel.IdentifiersToDeleteOn = columnsToDeleteOn;
+                cqrsReader.crudModels.DeleteModel.IdentifiersToDeleteOn = columnsToDeleteOn;
+
                 cqrsWriter.Delete((IEnumerable<M>) randomizedStartingModels);
             };
 

@@ -106,7 +106,7 @@ namespace Benchmarking_program
 
             foreach (var amount in modelAmounts)
             {
-                var cqrsTest = new DbWithCqrsTest(amount, amount, amount, amount, new RedisDatabaseType());
+                var cqrsTest = new DbWithCqrsTest(amount, amount, amount, amount, readDatabaseType: new RedisDatabaseType());
                 var cqrsSqlAndRedisTestReport = cqrsTest.GetTestReport<MinuteAveragesRow>(new MySQLDatabaseType(), 
                                                                                           scaled: hasScalingBeenEnabled,
                                                                                           wipeExistingDatabase: wipeExistingDatabase);
