@@ -1,5 +1,4 @@
 ﻿using Benchmarking_Console_App.Configurations.Databases.DatabaseApis;
-using Benchmarking_Console_App.Configurations.Databases.DatabaseApis.MongoDB;
 using Benchmarking_program.Configurations.Databases.DatabaseApis;
 using Benchmarking_program.Configurations.Databases.DatabaseApis.SQL;
 using Benchmarking_program.Configurations.Databases.DatabaseTypes;
@@ -20,7 +19,6 @@ namespace Benchmarking_Console_App.Configurations.Databases.DatabaseTypes
             {
                 CreateModel = new MongoDbCreateModel(),
                 DeleteModel = new MongoDbDeleteModel(),
-                GetAllModel = new MongoDbGetAllModel<M>(),
                 SearchModel = new MongoDbSearchModel<M>(),
                 UpdateModel = new MongoDbUpdateModel()
             };

@@ -19,7 +19,7 @@ namespace Benchmarking_Console_App.Tests
         public double TimeSpentRetrievingModelsByPrimaryKey;
 
         public int AmountOfModelsRetrievedByContent;
-        public double TimeSpentRetrievingModelsByContent;
+        public double TimeSpentRetrievingModelsByValue;
 
         public int AmountOfModelsUpdated;
         public int FieldsUpdatedPerModel;

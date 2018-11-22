@@ -38,8 +38,8 @@ namespace Benchmarking_Console_App.Configurations.Databases.DatabaseApis.SQL
                 foreach (var model in modelsToCreate)
                 {
                     dbContext.Set<M>().Add(model);
-                    dbContext.SaveChanges();
                 }
+                dbContext.SaveChanges();
             }
         }
 

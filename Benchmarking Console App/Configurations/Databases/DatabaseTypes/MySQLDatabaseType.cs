@@ -21,7 +21,6 @@ namespace Benchmarking_Console_App.Configurations.Databases.DatabaseTypes
             {
                 CreateModel = new SqlCreateModel(),
                 DeleteModel = new SqlDeleteModel(),
-                GetAllModel = new SqlGetAllModel<M>(),
                 SearchModel = new SqlSearchModel<M>(),
                 UpdateModel = new SqlUpdateModel()
             };
@@ -33,7 +32,7 @@ namespace Benchmarking_Console_App.Configurations.Databases.DatabaseTypes
 
             return new DatabaseApis()
             {
-                NormalDatabaseApi = new SimpleSQLDatabaseApi<MySqlCommand, MySqlConnection>(connString),
+                NormalDatabaseApi = new SimpleSQLDatabaseApi<MySqlCommand, MySqlConnection, MySqlDataAdapter>(connString),
                 ObjectOrientedDatabaseApi = null
             };
         }

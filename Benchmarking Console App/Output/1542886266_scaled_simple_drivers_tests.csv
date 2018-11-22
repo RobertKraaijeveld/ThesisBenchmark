@@ -1,0 +1,10 @@
+DatabaseTypeUsedStr,ModelTypeName,AmountOfModelsInserted,TimeSpentInsertingModels,TimeSpentRetrievingAllModels,AmountOfModelsRetrievedByPrimaryKey,TimeSpentRetrievingModelsByPrimaryKey,AmountOfModelsRetrievedByContent,TimeSpentRetrievingModelsByValue,AmountOfModelsUpdated,FieldsUpdatedPerModel,TimeSpentUpdatingModels,TimeSpentDeletingAllModels
+MySQL (scaled),MinuteAveragesRow,1000,4922,337,500,166,500,233,500,0,236,4661
+PostgreSQL (scaled),MinuteAveragesRow,1000,2329,30,500,235,500,224,500,0,247,2315
+Redis (scaled),MinuteAveragesRow,1000,526,219,500,117,500,117,500,0,262,405
+Cassandra (scaled),MinuteAveragesRow,1000,7597,172,500,1605,500,5285,500,0,3412,6535
+MongoDB (scaled),MinuteAveragesRow,1000,1479,131,500,1250,500,1272,500,0,1240,986
+MySQLWithDapper (scaled),MinuteAveragesRow,1000,5203,49,500,821,500,949,500,0,226,6069
+Perst (scaled),MinuteAveragesRowForPerst,1000,339,5,500,288,500,292,500,0,18,22
+Entity Framework MySQL (scaled),MinuteAveragesRow,1000,16172,27,500,14,500,14,500,0,363,882
+CQRS (Read DB Redis with Write DB MySQL) (scaled),MinuteAveragesRow,1000,14084,188,500,115,500,129,500,0,495,13792

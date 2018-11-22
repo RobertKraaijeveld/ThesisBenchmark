@@ -17,6 +17,11 @@ namespace Benchmarking_program.Configurations.Databases.DatabaseApis.SQL
             this.IdentifiersAndValuesToSearchFor = identifiersAndValuesToSearchFor;
         }
 
+        public ISearchModel<M> Clone()
+        {
+            return new SqlSearchModel<M>(this.IdentifiersAndValuesToSearchFor);
+        }
+
 
         public string GetSearchString<M>()
         {

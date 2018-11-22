@@ -7,7 +7,6 @@ namespace Benchmarking_Console_App.Configurations.Databases.DatabaseApis
     public struct CrudModels<M> where M : IModel, new()
     {
         public ICreateModel CreateModel;
-        public IGetAllModel<M> GetAllModel;
         public ISearchModel<M> SearchModel;
         public IUpdateModel UpdateModel;
         public IDeleteModel DeleteModel;

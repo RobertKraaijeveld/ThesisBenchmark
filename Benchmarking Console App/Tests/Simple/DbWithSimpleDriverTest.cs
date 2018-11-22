@@ -4,18 +4,12 @@ using System.Linq;
 using System.Reflection;
 using Benchmarking_Console_App.Configurations.Databases.DatabaseTypes;
 using Benchmarking_program.Configurations.Databases.DatabaseTypes;
+using Benchmarking_program.Configurations.Databases.Interfaces;
 
 namespace Benchmarking_Console_App.Testing
 {
     public class DbWithSimpleDriverTest : AbstractPerformanceTest
     {
-        public DbWithSimpleDriverTest(int amountOfModelsToCreate, int amountOfModelsToRetrieveByPrimaryKey,
-            int amountOfModelsToRetrieveByContent, int amountOfModelsToUpdate)
-            : base(amountOfModelsToCreate, amountOfModelsToRetrieveByPrimaryKey,
-                amountOfModelsToRetrieveByContent, amountOfModelsToUpdate)
-        {
-        }
-
         protected override ActionsToMeasure GetActionsToMeasure<M>(IDatabaseType databaseType,
             bool wipeExistingDatabase)
         {
@@ -24,8 +18,8 @@ namespace Benchmarking_Console_App.Testing
 
             Action createAction;
             Action deleteAction;
-            Action getAllAction;
             Action getByPkAction;
+            Action getByValueAction;
             Action updateAction;
             Action randomizeAction;
             Action truncateAction;
@@ -36,10 +30,9 @@ namespace Benchmarking_Console_App.Testing
 
                 truncateAction = () => ooDatabaseApi.DeleteAll();
                 createAction = () => ooDatabaseApi.Create(randomModelsToInsert);
-                getAllAction = () => ooDatabaseApi.GetAll<M>();
                 deleteAction = () => ooDatabaseApi.Delete(randomModelsToInsert);
 
-                var modelsToRetrieveByPk = randomModelsToInsert.Take(this.amountOfModelsToRetrieveByPrimaryKey)
+                var modelsToRetrieveByPk = randomModelsToInsert.Take(this.amountOfModelsToRetrieveByPk)
                     .Select(m =>
                     {
                         // Perst will search for the PK only if all other fields are null.
@@ -67,8 +60,17 @@ namespace Benchmarking_Console_App.Testing
                 };
 
 
-                var modelsWithUpdatedValues = randomModelsToInsert.Take(this.amountOfModelsToUpdate)
-                    .ToList();
+                var modelsToRetrieveByValue = randomModelsToInsert.Take(this.amountOfModelsToRetrieveByContent);
+                getByValueAction = () =>
+                {
+                    foreach (var model in modelsToRetrieveByValue)
+                    {
+                        ooDatabaseApi.GetByComparison<M>(model);
+                    }
+                };
+
+
+                var modelsWithUpdatedValues = randomModelsToInsert.Take(this.amountOfModelsToUpdate).ToList();
 
                 randomizeAction = new Action(() =>
                 {
@@ -85,39 +87,83 @@ namespace Benchmarking_Console_App.Testing
 
                 var currentModelTypePrimaryKeyName = randomModelsToInsert.First().GetPrimaryKeyFieldName();
 
-                truncateAction = () => apiForDatabaseType.Truncate<M>();
-                createAction = () => apiForDatabaseType.Create(randomModelsToInsert, crudModelsForDatabaseType.CreateModel);
-                getAllAction = () => apiForDatabaseType.GetAll(crudModelsForDatabaseType.GetAllModel);
-
-
-                var columnsToDeleteOn = new string[] {currentModelTypePrimaryKeyName};
-                crudModelsForDatabaseType.DeleteModel.IdentifiersToDeleteOn = columnsToDeleteOn;
-
-                deleteAction = () => apiForDatabaseType.Delete(randomModelsToInsert, crudModelsForDatabaseType.DeleteModel);
-
-
-                var modelsToSearchForByPk = randomModelsToInsert.Take(amountOfModelsToRetrieveByPrimaryKey)
-                                                                .ToList();
-                getByPkAction = () =>
+                // Truncate, create, get all Actions
+                truncateAction = () => 
                 {
-                    // Each model has it's own combo of Primary Key: Value.
-                    foreach (var model in modelsToSearchForByPk)
-                    {
-                        // So we update the ISearchModel with the PK of the current model, then search for that specific model. 
-                        var columnsAndValuesToSearchFor = new Dictionary<string, object>();
+                    apiForDatabaseType.OpenConnection();
+                    apiForDatabaseType.Truncate<M>();
+                    apiForDatabaseType.CloseConnection();
+                };
 
-                        var primaryKeyName = model.GetPrimaryKeyFieldName();
-                        var primaryKeyValue = model.GetFieldsWithValues()[primaryKeyName];
-
-                        columnsAndValuesToSearchFor.Add(primaryKeyName, primaryKeyValue);
-
-                        crudModelsForDatabaseType.SearchModel.IdentifiersAndValuesToSearchFor = columnsAndValuesToSearchFor;
-                        apiForDatabaseType.Search(crudModelsForDatabaseType.SearchModel);
-                    }
+                createAction = () => 
+                {
+                    apiForDatabaseType.OpenConnection();
+                    apiForDatabaseType.Create(randomModelsToInsert, crudModelsForDatabaseType.CreateModel);
+                    apiForDatabaseType.CloseConnection();
                 };
 
 
-                var modelsWithUpdatedValues = randomModelsToInsert.Take(this.amountOfModelsToUpdate);
+                // Deleting Action
+                var columnsToDeleteOn = new string[] {currentModelTypePrimaryKeyName};
+                crudModelsForDatabaseType.DeleteModel.IdentifiersToDeleteOn = columnsToDeleteOn;
+
+                deleteAction = () => 
+                {
+                    apiForDatabaseType.OpenConnection();
+                    apiForDatabaseType.Delete(randomModelsToInsert, crudModelsForDatabaseType.DeleteModel);
+                    apiForDatabaseType.CloseConnection();
+                };
+
+                // Getting by primary key Action
+                var modelsToSearchFor = randomModelsToInsert.Take(amountOfModelsToRetrieveByPk)
+                                                                .ToList();
+                var primaryKeyAndValuePerModel = base.GetPrimaryKeyAndValuePerModel(modelsToSearchFor);
+
+                getByPkAction = () =>
+                {
+                    apiForDatabaseType.OpenConnection();
+
+                    for (int i = 0; i < primaryKeyAndValuePerModel.Count; i++)
+                    {
+                        var primaryKeyAndValueOfThisModel = primaryKeyAndValuePerModel[i];
+
+                        // We update the ISearchModel with the PK name and value of the current model, then search for that specific model. 
+                        crudModelsForDatabaseType.SearchModel.IdentifiersAndValuesToSearchFor = new Dictionary<string, object>();
+                        crudModelsForDatabaseType.SearchModel.IdentifiersAndValuesToSearchFor.Add(primaryKeyAndValueOfThisModel.Key,
+                                                                                                  primaryKeyAndValueOfThisModel.Value);
+
+                        apiForDatabaseType.Search(new List<ISearchModel<M>> { crudModelsForDatabaseType.SearchModel });
+                    }
+
+                    apiForDatabaseType.CloseConnection();
+                };
+
+
+                // Getting by Value Action
+                var firstNonPkAttributePerModel = base.GetFirstNonPrimaryKeyAttributePerModel(modelsToSearchFor);
+                getByValueAction = () =>
+                {
+                    var searchModels = new List<ISearchModel<M>>();
+
+                    for (int i = 0; i < firstNonPkAttributePerModel.Count; i++)
+                    {
+                        var firstNonPkAttributeNameAndValueOfCurrModel = firstNonPkAttributePerModel[i];
+
+                        // Again, updating the ISearchModel of the CqrsReader, but using the name/value of the first non-primary key attribute this time.
+                        crudModelsForDatabaseType.SearchModel.IdentifiersAndValuesToSearchFor = new Dictionary<string, object>();
+                        crudModelsForDatabaseType.SearchModel.IdentifiersAndValuesToSearchFor.Add(firstNonPkAttributeNameAndValueOfCurrModel.Key,
+                                                                                                  firstNonPkAttributeNameAndValueOfCurrModel.Value);
+                        searchModels.Add(crudModelsForDatabaseType.SearchModel.Clone());
+                    }
+
+                    apiForDatabaseType.OpenConnection();
+                    apiForDatabaseType.Search(searchModels);
+                    apiForDatabaseType.CloseConnection();
+                };
+
+
+                // Updating action
+                var modelsWithUpdatedValues = randomModelsToInsert.Take(this.amountOfModelsToUpdate).ToList();
                 randomizeAction = () =>
                 {
                     var random = new Random();
@@ -135,7 +181,12 @@ namespace Benchmarking_Console_App.Testing
                 var columnsToUpdateOn = columnsToDeleteOn;
                 crudModelsForDatabaseType.UpdateModel.IdentifiersToFilterOn = columnsToUpdateOn;
 
-                updateAction = () => apiForDatabaseType.Update(modelsWithUpdatedValues, crudModelsForDatabaseType.UpdateModel);
+                updateAction = () => 
+                {
+                    apiForDatabaseType.OpenConnection();
+                    apiForDatabaseType.Update(modelsWithUpdatedValues, crudModelsForDatabaseType.UpdateModel);
+                    apiForDatabaseType.CloseConnection();
+                };
             }
 
             return new ActionsToMeasure()
@@ -143,9 +194,9 @@ namespace Benchmarking_Console_App.Testing
                 CreateAction = createAction,
                 DeleteAction = deleteAction,
                 GetByPkAction = getByPkAction,
+                GetByValueAction = getByValueAction,
                 RandomizeAction = randomizeAction,
                 UpdateAction = updateAction,
-                GetAllAction = getAllAction,
                 TruncateAction = truncateAction,
 
                 WipeExistingDatabase = wipeExistingDatabase

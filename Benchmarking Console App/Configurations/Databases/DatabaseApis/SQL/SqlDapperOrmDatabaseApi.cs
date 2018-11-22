@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Data;
 using System.Data.Common;
 using System.Linq;
 using Benchmarking_Console_App.Configurations.Databases.Interfaces;
@@ -12,97 +13,74 @@ namespace Benchmarking_Console_App.Configurations.Databases.DatabaseApis.SQL
     public class SimpleDapperOrmDatabaseApi<ConnectionType> : IDatabaseApi where ConnectionType : DbConnection, new()
     {
         private readonly string _connectionString;
+        private ConnectionType _connection;
 
         public SimpleDapperOrmDatabaseApi(string connectionString)
         {
             _connectionString = connectionString;
+            _connection = new ConnectionType() { ConnectionString = _connectionString };
         }
 
 
-        public IEnumerable<M> GetAll<M>(IGetAllModel<M> getAllModel) where M : IModel, new()
+        public void OpenConnection()
         {
-            IEnumerable<M> result = new List<M>();
-            var getAllQuery = getAllModel.CreateGetAllString();
-
-            using (var conn = new ConnectionType() {ConnectionString = _connectionString})
+            if (_connection.State == ConnectionState.Closed)
             {
-                conn.Open();
-
-                result = conn.Query<M>(getAllQuery);
+                _connection.Open();
             }
-            return result;
         }
 
-        public IEnumerable<M> Search<M>(ISearchModel<M> searchModel) where M : IModel, new()
+        public void CloseConnection()
         {
-            IEnumerable<M> result = new List<M>();
-            var searchQuery = searchModel.GetSearchString<M>();
-
-            using (var conn = new ConnectionType() { ConnectionString = _connectionString })
+            if (_connection.State == ConnectionState.Open)
             {
-                conn.Open();
-
-                result = conn.Query<M>(searchQuery);
+                _connection.Close();
             }
+        }
+
+        // TODO: OPTIMIZE
+        public List<M> Search<M>(List<ISearchModel<M>> searchModel) where M : IModel, new()
+        {
+            List<M> result = new List<M>();
+            var searchQuery = searchModel.First().GetSearchString<M>();
+
+            result = _connection.Query<M>(searchQuery).ToList();
             return result;
         }
 
         public int Amount<M>() where M : IModel, new()
         {
-            using (var conn = new ConnectionType() {ConnectionString = _connectionString})
+            return _connection.Query<int>($"SELECT COUNT(*) FROM {typeof(M).Name}").First();
+        }
+
+
+        public void Create<M>(List<M> newModels, ICreateModel createModel) where M : IModel, new()
+        {
+            foreach (var model in newModels)
             {
-                conn.Open();
-                return conn.Query<int>($"SELECT COUNT(*) FROM {typeof(M).Name}").First();
+                _connection.Execute(createModel.GetCreateString(model));
             }
         }
 
-        public void Create<M>(IEnumerable<M> newModels, ICreateModel createModel) where M : IModel, new()
+        public void Update<M>(List<M> modelsWithNewValues, IUpdateModel updateModel) where M : IModel, new()
         {
-            using (var conn = new ConnectionType() { ConnectionString = _connectionString })
+            foreach (var modelWithNewVals in modelsWithNewValues)
             {
-                conn.Open();
-
-                foreach (var model in newModels)
-                {
-                    conn.Execute(createModel.GetCreateString(model));
-                }
+                _connection.Execute(updateModel.GetUpdateString(modelWithNewVals));
             }
         }
 
-        public void Update<M>(IEnumerable<M> modelsWithNewValues, IUpdateModel updateModel) where M : IModel, new()
+        public void Delete<M>(List<M> modelsToDelete, IDeleteModel deleteModel) where M : IModel, new()
         {
-            using (var conn = new ConnectionType() { ConnectionString = _connectionString })
+            foreach (var model in modelsToDelete)
             {
-                conn.Open();
-
-                foreach (var modelWithNewVals in modelsWithNewValues)
-                {
-                    conn.Execute(updateModel.GetUpdateString(modelWithNewVals));
-                }
-            }
-        }
-
-        public void Delete<M>(IEnumerable<M> modelsToDelete, IDeleteModel deleteModel) where M : IModel, new()
-        {
-            using (var conn = new ConnectionType() { ConnectionString = _connectionString })
-            {
-                conn.Open();
-
-                foreach (var model in modelsToDelete)
-                {
-                    conn.Execute(deleteModel.GetDeleteString(model));
-                }
+                _connection.Execute(deleteModel.GetDeleteString(model));
             }
         }
 
         public void Truncate<M>() where M : IModel, new()
         {
-            using (var conn = new ConnectionType() { ConnectionString = _connectionString })
-            {
-                conn.Open();
-
-                conn.Execute($"TRUNCATE {typeof(M).Name.ToLower()};");
-            }
+            _connection.Execute($"TRUNCATE {typeof(M).Name.ToLower()};");
         }
     }
 }

@@ -7,17 +7,20 @@ namespace Benchmarking_program.Configurations.Databases.DatabaseApis
 {
     public interface IDatabaseApi
     {
-        IEnumerable<M> GetAll<M>(IGetAllModel<M> getAllModel) where M : IModel, new();
+        void OpenConnection();
+        void CloseConnection();
 
-        IEnumerable<M> Search<M>(ISearchModel<M> searchModel) where M : IModel, new();
+
+        List<M> Search<M>(List<ISearchModel<M>> searchModels) where M : IModel, new();
 
         int Amount<M>() where M : IModel, new();
 
-        void Create<M>(IEnumerable<M> newModels, ICreateModel createModel) where M : IModel, new();
 
-        void Update<M>(IEnumerable<M> modelsWithNewValues, IUpdateModel updateModel) where M : IModel, new();
+        void Create<M>(List<M> newModels, ICreateModel createModel) where M : IModel, new();
 
-        void Delete<M>(IEnumerable<M> modelsToDelete, IDeleteModel deleteModel) where M : IModel, new();
+        void Update<M>(List<M> modelsWithNewValues, IUpdateModel updateModel) where M : IModel, new();
+
+        void Delete<M>(List<M> modelsToDelete, IDeleteModel deleteModel) where M : IModel, new();
 
         void Truncate<M>() where M : IModel, new();
     }

@@ -5,8 +5,6 @@ namespace Benchmarking_Console_App.Configurations.Databases.Interfaces
 {
     public interface IObjectOrientedDatabaseApi
     {
-        IEnumerable<M> GetAll<M>() where M : IModel, new();
-
         IEnumerable<M> GetByComparison<M>(M patternObject) where M : IModel, new();
 
         IEnumerable<M> GetByRange<M>(M low, M high) where M : IModel, new();

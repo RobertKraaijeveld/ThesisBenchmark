@@ -1,0 +1,37 @@
+DatabaseTypeUsedStr,ModelTypeName,AmountOfModelsInserted,TimeSpentInsertingModels,TimeSpentRetrievingAllModels,AmountOfModelsRetrievedByPrimaryKey,TimeSpentRetrievingModelsByPrimaryKey,AmountOfModelsRetrievedByContent,TimeSpentRetrievingModelsByValue,AmountOfModelsUpdated,FieldsUpdatedPerModel,TimeSpentUpdatingModels,TimeSpentDeletingAllModels
+MySQL (scaled),MinuteAveragesRow,10,62,312,5,10,5,87,5,0,5,59
+PostgreSQL (scaled),MinuteAveragesRow,10,23,8,5,3,5,3,5,0,2,23
+Redis (scaled),MinuteAveragesRow,10,42,233,5,1,5,5,5,0,2,4
+Cassandra (scaled),MinuteAveragesRow,10,238,178,5,16,5,39,5,0,66,39
+MongoDB (scaled),MinuteAveragesRow,10,215,93,5,11,5,27,5,0,15,23
+MySQLWithDapper (scaled),MinuteAveragesRow,10,48,42,5,5,5,14,5,0,5,46
+MySQL (scaled),MinuteAveragesRow,20,105,1,10,8,10,11,10,0,6,84
+PostgreSQL (scaled),MinuteAveragesRow,20,42,1,10,6,10,6,10,0,5,46
+Redis (scaled),MinuteAveragesRow,20,11,363,10,2,10,3,10,0,5,6
+Cassandra (scaled),MinuteAveragesRow,20,208,149,10,54,10,102,10,0,108,123
+MongoDB (scaled),MinuteAveragesRow,20,29,5,10,15,10,15,10,0,39,19
+MySQLWithDapper (scaled),MinuteAveragesRow,20,108,1,10,6,10,19,10,0,7,81
+MySQL (scaled),MinuteAveragesRow,50,238,2,25,26,25,31,25,0,20,218
+PostgreSQL (scaled),MinuteAveragesRow,50,101,1,25,15,25,14,25,0,13,101
+Redis (scaled),MinuteAveragesRow,50,38,1079,25,5,25,7,25,0,12,17
+Cassandra (scaled),MinuteAveragesRow,50,581,125,25,122,25,341,25,0,359,505
+MongoDB (scaled),MinuteAveragesRow,50,65,5,25,33,25,32,25,0,65,49
+MySQLWithDapper (scaled),MinuteAveragesRow,50,250,1,25,23,25,57,25,0,17,214
+MySQL (scaled),MinuteAveragesRow,100,450,3,50,45,50,60,50,0,29,483
+PostgreSQL (scaled),MinuteAveragesRow,100,301,2,50,29,50,37,50,0,28,242
+Redis (scaled),MinuteAveragesRow,100,49,2123,50,10,50,12,50,0,24,35
+Cassandra (scaled),MinuteAveragesRow,100,1238,150,50,208,50,504,50,0,527,709
+MongoDB (scaled),MinuteAveragesRow,100,146,8,50,68,50,71,50,0,298,97
+MySQLWithDapper (scaled),MinuteAveragesRow,100,595,2,50,56,50,99,50,0,32,466
+Perst (scaled),MinuteAveragesRowForPerst,10,35,5,5,1,5,5,5,0,1,5
+Perst (scaled),MinuteAveragesRowForPerst,20,0,0,10,0,10,0,10,0,0,0
+Perst (scaled),MinuteAveragesRowForPerst,50,1,0,25,0,25,0,25,0,0,0
+Perst (scaled),MinuteAveragesRowForPerst,100,4,0,50,3,50,3,50,0,0,1
+Entity Framework MySQL (scaled),MinuteAveragesRow,10,434,21,5,2,5,4,5,0,4,65
+Entity Framework MySQL (scaled),MinuteAveragesRow,20,120,1,10,1,10,1,10,0,4,20
+Entity Framework MySQL (scaled),MinuteAveragesRow,50,333,1,25,2,25,1,25,0,10,44
+Entity Framework MySQL (scaled),MinuteAveragesRow,100,681,1,50,1,50,1,50,0,22,79
+CQRS (Read DB Redis with Write DB MySQL (scaled),MinuteAveragesRow,10,65,2087,5,1,5,2,5,0,6,47
+CQRS (Read DB Redis with Write DB MySQL (scaled),MinuteAveragesRow,20,119,2473,10,3,10,3,10,0,15,121
+CQRS (Read DB Redis with Write DB MySQL (scaled),MinuteAveragesRow,50,336,2655,25,7,25,46,25,0,31,334
+CQRS (Read DB Redis with Write DB MySQL (scaled),MinuteAveragesRow,100,687,2182,50,10,50,14,50,0,65,670

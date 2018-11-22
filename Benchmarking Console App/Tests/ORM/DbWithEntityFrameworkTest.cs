@@ -11,13 +11,6 @@ namespace Benchmarking_Console_App.Tests.ORM
 {
     public class DbWithEntityFrameworkTest : AbstractPerformanceTest
     {
-        public DbWithEntityFrameworkTest(int amountOfModelsToCreate, int amountOfModelsToRetrieveByPrimaryKey,
-                                         int amountOfModelsToRetrieveByContent, int amountOfModelsToUpdate)
-            : base(amountOfModelsToCreate, amountOfModelsToRetrieveByPrimaryKey,
-                   amountOfModelsToRetrieveByContent, amountOfModelsToUpdate)
-        {
-        }
-
         protected override ActionsToMeasure GetActionsToMeasure<M>(IDatabaseType databaseType, bool wipeExistingDatabase) 
         {
             var databaseTypeEnum = databaseType.ToEnum();
@@ -32,7 +25,6 @@ namespace Benchmarking_Console_App.Tests.ORM
                                                .ToList();
 
 
-            // Creating action lambdas
             var createAction = new Action(() =>
             {
                 ormApiForDatabase.Create(randomizedStartingModels);
@@ -46,6 +38,12 @@ namespace Benchmarking_Console_App.Tests.ORM
             var getByPkAction = new Action(() =>
             {
                 ormApiForDatabase.Search<MinuteAveragesRow>(new Func<MinuteAveragesRow, bool>(x => randomizedStartingModels.Contains(x)));
+            });
+
+            var modelsValues = randomizedStartingModels.Select(x => x.startid).ToList();
+            var getByValueAction = new Action(() =>
+            {
+                ormApiForDatabase.Search<MinuteAveragesRow>(new Func<MinuteAveragesRow, bool>(x => modelsValues.Contains(x.startid)));
             });
 
             var deleteAllAction = new Action(() =>
@@ -78,9 +76,9 @@ namespace Benchmarking_Console_App.Tests.ORM
                 CreateAction = createAction,
                 DeleteAction = deleteAllAction,
                 GetByPkAction = getByPkAction,
+                GetByValueAction = getByValueAction,
                 RandomizeAction = randomizeAction,
                 UpdateAction = updateAction,
-                GetAllAction = getAllAction,
                 TruncateAction = truncateAction,
 
                 WipeExistingDatabase = wipeExistingDatabase

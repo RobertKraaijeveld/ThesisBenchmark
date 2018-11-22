@@ -23,24 +23,34 @@ namespace Benchmarking_Console_App.Tests.CQRS
                 if (cqrsEvent.EventType.Equals(ECqrsEventType.CreateEvent))
                 {
                     // When the CqrsWriter has added a model through THEIR database, we add it in OUR database.
+                    api.OpenConnection();
                     api.Create(new List<M>() { (M)cqrsEvent.Model }, crudModels.CreateModel);
+                    api.CloseConnection();
                 }
                 else if (cqrsEvent.EventType.Equals(ECqrsEventType.DeleteEvent))
                 {
                     // When the CqrsWriter has removed a model from THEIR database, we remove it from OUR database.
+                    api.OpenConnection();
                     api.Delete<M>(new List<M>(){(M) cqrsEvent.Model}, crudModels.DeleteModel);
+                    api.CloseConnection();
                 }
             });            
         }
 
-        public IEnumerable<M> GetAll(IGetAllModel<M> getAllModel)
+        public void OpenConnectionToApi()
         {
-            return api.GetAll(getAllModel);
+            this.api.OpenConnection();
         }
 
-        public IEnumerable<M> Search(ISearchModel<M> searchModel) 
+        public void CloseConnectionToApi()
         {
-            return api.Search(searchModel);
+            this.api.CloseConnection();
+        }
+        
+
+        public List<M> Search(List<ISearchModel<M>> searchModels) 
+        {
+            return api.Search(searchModels);
         }
     }
 }

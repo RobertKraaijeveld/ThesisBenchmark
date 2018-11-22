@@ -26,7 +26,6 @@ namespace Benchmarking_Console_App.Configurations.Databases.DatabaseTypes
             {
                 CreateModel = new SqlCreateModel(),
                 DeleteModel = new SqlDeleteModel(),
-                GetAllModel = new SqlGetAllModel<M>(),
                 SearchModel = new SqlSearchModel<M>(),
                 UpdateModel = new SqlUpdateModel()
             };

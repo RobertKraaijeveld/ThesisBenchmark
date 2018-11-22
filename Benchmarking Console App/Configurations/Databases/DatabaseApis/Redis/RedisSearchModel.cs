@@ -17,6 +17,11 @@ namespace Benchmarking_Console_App.Configurations.Databases.DatabaseApis.Redis
             this.IdentifiersAndValuesToSearchFor = identifiersAndValuesToSearchFor;
         }
 
+        public ISearchModel<M> Clone()
+        {
+            return new RedisSearchModel<M>(this.IdentifiersAndValuesToSearchFor);
+        }
+
         public string GetSearchString<M>()
         {
             if (this.IdentifiersAndValuesToSearchFor.Count > 1)

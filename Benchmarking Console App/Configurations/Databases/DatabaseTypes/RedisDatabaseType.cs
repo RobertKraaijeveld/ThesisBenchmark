@@ -1,5 +1,4 @@
 ﻿using Benchmarking_Console_App.Configurations.Databases.DatabaseApis;
-using Benchmarking_Console_App.Configurations.Databases.DatabaseApis.MongoDB;
 using Benchmarking_Console_App.Configurations.Databases.DatabaseApis.Redis;
 using Benchmarking_program.Configurations.Databases.DatabaseApis;
 using Benchmarking_program.Configurations.Databases.DatabaseApis.SQL;
@@ -21,7 +20,6 @@ namespace Benchmarking_Console_App.Configurations.Databases.DatabaseTypes
             {
                 CreateModel = new RedisCreateModel(),
                 DeleteModel = new RedisDeleteModel(),
-                GetAllModel = new RedisGetAllModel<M>(),
                 SearchModel = new RedisSearchModel<M>(),
                 UpdateModel = new RedisUpdateModel()
             };

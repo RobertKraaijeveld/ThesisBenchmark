@@ -1,5 +1,7 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.RegularExpressions;
 using Benchmarking_Console_App.Configurations.Databases.Interfaces;
 using Benchmarking_program.Configurations.Databases.Interfaces;
 using Benchmarking_program.Models.DatabaseModels;
@@ -27,37 +29,31 @@ namespace Benchmarking_program.Configurations.Databases.DatabaseApis.SQL
             _database = _mongodbConnection.GetDatabase("BenchmarkDB");
         }
 
-        public IEnumerable<M> GetAll<M>(IGetAllModel<M> getAllModel) where M : IModel, new()
+
+        public void OpenConnection()
         {
-            var getAllQuery = getAllModel.CreateGetAllString();
-            return this.GetResults<M>(getAllQuery);
         }
 
-        public IEnumerable<M> Search<M>(ISearchModel<M> searchModel) where M : IModel, new()
+        public void CloseConnection()
         {
-            var searchQuery = searchModel.GetSearchString<M>();
-            return this.GetResults<M>(searchQuery);
+        }
+
+
+        public List<M> Search<M>(List<ISearchModel<M>> searchModels) where M : IModel, new()
+        {
+            var searchQueries = new List<string>();
+            searchModels.ForEach(s => searchQueries.Add(s.GetSearchString<M>()));
+
+            var filtersAndProjection = MultipleBsonToSingleFilterAndProjection(searchQueries);
+            return this.GetResults<M>(filtersAndProjection);
         }
 
         public bool Exists<M>(M model) where M : IModel, new()
         {
             var identifiersAndValuesToSearchFor = model.GetFieldsWithValues();
-            var identifiersToRetrieve = model.GetFieldsWithValues().Keys.ToList();
+            var searchModel = new MongoDbSearchModel<M>(identifiersAndValuesToSearchFor);
 
-            var searchModel = new MongoDbSearchModel<M>(identifiersAndValuesToSearchFor, identifiersToRetrieve);
-
-            return this.Search<M>(searchModel).Any();
-        }
-
-        public void Create<M>(IEnumerable<M> newModels, ICreateModel createModel) where M : IModel, new()
-        {
-            foreach (var model in newModels)
-            {
-                var createQueryText = createModel.GetCreateString(model);
-
-                _database.GetCollection<M>(nameof(M))
-                    .InsertOne(BsonSerializer.Deserialize<M>(createQueryText));
-            }
+            return this.Search<M>(new List<ISearchModel<M>> {searchModel}).Any();
         }
 
         public int Amount<M>() where M : IModel, new()
@@ -66,7 +62,22 @@ namespace Benchmarking_program.Configurations.Databases.DatabaseApis.SQL
                 .CountDocuments(FilterDefinition<M>.Empty);
         }
 
-        public void Update<M>(IEnumerable<M> modelsWithNewValues, IUpdateModel updateModel) where M : IModel, new()
+
+        public void Create<M>(List<M> newModels, ICreateModel createModel) where M : IModel, new()
+        {
+            List<M> deserializedModels = new List<M>();
+
+            foreach (var model in newModels)
+            {
+                var createQueryText = createModel.GetCreateString(model);
+                var deserializedVal = BsonSerializer.Deserialize<M>(createQueryText);
+
+                deserializedModels.Add(deserializedVal);
+            }
+            _database.GetCollection<M>(nameof(M)).InsertMany(deserializedModels);
+        }
+
+        public void Update<M>(List<M> modelsWithNewValues, IUpdateModel updateModel) where M : IModel, new()
         {
             var createModel = new MongoDbCreateModel();
             var deleteModel = new MongoDbDeleteModel(updateModel.IdentifiersToFilterOn);
@@ -80,7 +91,7 @@ namespace Benchmarking_program.Configurations.Databases.DatabaseApis.SQL
             }
         }
 
-        public void Delete<M>(IEnumerable<M> modelsToDelete, IDeleteModel deleteModel) where M : IModel, new()
+        public void Delete<M>(List<M> modelsToDelete, IDeleteModel deleteModel) where M : IModel, new()
         {
             foreach (var model in modelsToDelete)
             {
@@ -104,16 +115,16 @@ namespace Benchmarking_program.Configurations.Databases.DatabaseApis.SQL
         }
 
 
-        private IEnumerable<M> GetResults<M>(string bsonFilterAndProjection) where M : IModel, new()
+        //FilterAndProjection separateFilterAndProjection
+        private List<M> GetResults<M>(FilterAndProjection filterAndProjection) where M : IModel, new()
         {
             var results = new List<M>();
 
-            var separateFilterAndProjection = this.GetSeparateFilterAndProjection(bsonFilterAndProjection);
 
             var cursor = _database.GetCollection<M>(nameof(M))
-                .Find(separateFilterAndProjection.Filter)
-                .Project(separateFilterAndProjection.Projection)
-                .ToCursor();
+                                  .Find(filterAndProjection.Filter)
+                                  .Project(filterAndProjection.Projection)
+                                  .ToCursor();
 
             while (cursor.MoveNext())
             {
@@ -125,6 +136,59 @@ namespace Benchmarking_program.Configurations.Databases.DatabaseApis.SQL
                 }
             }
             return results;
+        }
+
+        // Takes a collection of searchModel output strings, each in the form of { "attributeName": "valueToFilterOn" } 
+        // And turns them into { "attributeName1": { $in: ["value1", "value2"] }, .. etc } 
+        private FilterAndProjection MultipleBsonToSingleFilterAndProjection(List<string> bsonStrings)
+        {
+            // First, turning the list of strings into a list of filter:projection pairs. 
+            List<FilterAndProjection> allFilterAndProjections = new List<FilterAndProjection>();
+            bsonStrings.ForEach(x => allFilterAndProjections.Add(GetSeparateFilterAndProjection(x)));
+
+            // Then, getting the values that we want to filter on PER attribute, as a dict<string, list<string>>
+            var attributesAndValues = new Dictionary<string, List<string>>();
+
+            foreach (var filterAndProjection in allFilterAndProjections)
+            {
+                var key = filterAndProjection.Filter.Elements.First().Name;
+                var val = filterAndProjection.Filter.Elements.First().Value.ToString();
+
+                if (attributesAndValues.ContainsKey(key))
+                {
+                    attributesAndValues[key].Add(val);
+                }
+                else
+                {
+                    attributesAndValues.Add(key, new List<string> { val });
+                }
+            }
+
+            // Finally, constructing the complete filtering string out of that.\
+            string projection = "{}"; // todo fixme
+            string flattenedFilterString = "";
+            foreach (var attributeAndValues in attributesAndValues)
+            {
+                var attribute = attributeAndValues.Key;
+                flattenedFilterString += $"{{ {attribute}: {{ $in: [";
+
+                foreach (var val in attributeAndValues.Value)
+                {
+                    flattenedFilterString += $"{val},";
+                }
+
+                // removing trailing comma
+                flattenedFilterString = flattenedFilterString.Remove(flattenedFilterString.Length - 1);
+
+                flattenedFilterString += $"] }} }}";
+            }
+
+            // Combining projection and filter
+            return new FilterAndProjection()
+            {
+                Filter = BsonSerializer.Deserialize<BsonDocument>(flattenedFilterString),
+                Projection = BsonSerializer.Deserialize<BsonDocument>(projection)
+            };
         }
 
         private FilterAndProjection GetSeparateFilterAndProjection(string queryWithFilterAndProjectionJson)

@@ -4,6 +4,7 @@ using System.Linq;
 using Benchmarking_Console_App.Configurations.Databases.DatabaseTypes;
 using Benchmarking_Console_App.Models.DatabaseModels;
 using Benchmarking_Console_App.Testing;
+using Benchmarking_program.Configurations.Databases.Interfaces;
 
 namespace Benchmarking_Console_App.Tests.CQRS
 {
@@ -11,17 +12,14 @@ namespace Benchmarking_Console_App.Tests.CQRS
     {
         private readonly IDatabaseType readDatabaseType;
 
-        public DbWithCqrsTest(int amountOfModelsToCreate, int amountOfModelsToRetrieveByPrimaryKey,
-                              int amountOfModelsToRetrieveByContent, int amountOfModelsToUpdate, IDatabaseType readDatabaseType)
-            : base(amountOfModelsToCreate, amountOfModelsToRetrieveByPrimaryKey,
-                   amountOfModelsToRetrieveByContent, amountOfModelsToUpdate)
-        {
+        public DbWithCqrsTest(IDatabaseType readDatabaseType)
+        {    
             this.readDatabaseType = readDatabaseType;
         }
 
         protected override ActionsToMeasure GetActionsToMeasure<M>(IDatabaseType writeDatabaseType, bool wipeExistingDatabase)
         {
-            var randomizedStartingModels = base.GetRandomModels<MinuteAveragesRow>(amountOfModelsToCreate)
+            var randomizedStartingModels = base.GetRandomModels<M>(amountOfModelsToCreate)
                                                .ToList();
 
             var currentModelTypePrimaryKeyName = randomizedStartingModels.First().GetPrimaryKeyFieldName();
@@ -39,55 +37,94 @@ namespace Benchmarking_Console_App.Tests.CQRS
 
 
             // Creating read database actions
-            Action getAllAction = () => cqrsReader.GetAll(readDatabaseCrudModels.GetAllModel);
+            var modelsToSearchFor = randomizedStartingModels.Take(amountOfModelsToRetrieveByPk).ToList();
+            var primaryKeyAndValuePerModel = base.GetPrimaryKeyAndValuePerModel(modelsToSearchFor);
 
-
-
-            var modelsToSearchForByPk = randomizedStartingModels.Take(amountOfModelsToRetrieveByPrimaryKey)
-                                                                .ToList();
             Action getByPkAction = () =>
             {
-                // Each model has it's own combo of Primary Key: Value.
-                foreach (var model in modelsToSearchForByPk)
+                var primaryKeySearchModels = new List<ISearchModel<M>>();
+
+                for (int i = 0; i < primaryKeyAndValuePerModel.Count; i++)
                 {
-                    // So we update the ISearchModel of the CqrsReader with the PK of the current model, then search for that specific model. 
-                    var columnsAndValuesToSearchFor = new Dictionary<string, object>();
+                    var primaryKeyAndValueOfThisModel = primaryKeyAndValuePerModel[i];
 
-                    var primaryKeyName = model.GetPrimaryKeyFieldName();
-                    var primaryKeyValue = model.GetFieldsWithValues()[primaryKeyName];
+                    // We update the ISearchModel of the CqrsReader with the PK name and value of the current model, then search for that specific model. 
+                    readDatabaseCrudModels.SearchModel.IdentifiersAndValuesToSearchFor = new Dictionary<string, object>();
+                    readDatabaseCrudModels.SearchModel.IdentifiersAndValuesToSearchFor.Add(primaryKeyAndValueOfThisModel.Key, 
+                                                                                           primaryKeyAndValueOfThisModel.Value);
 
-                    columnsAndValuesToSearchFor.Add(primaryKeyName, primaryKeyValue);
-
-                    readDatabaseCrudModels.SearchModel.IdentifiersAndValuesToSearchFor = columnsAndValuesToSearchFor;
-                    cqrsReader.Search(readDatabaseCrudModels.SearchModel);
+                    primaryKeySearchModels.Add(readDatabaseCrudModels.SearchModel.Clone());
                 }
+
+                cqrsReader.OpenConnectionToApi();
+                cqrsReader.Search(primaryKeySearchModels);
+                cqrsReader.CloseConnectionToApi();
             };
 
 
-            // Creating write database actions
-            Action createAction = () => cqrsWriter.Create((IEnumerable<M>) randomizedStartingModels);
+            // Get by value action
+            var firstNonPkAttributePerModel = base.GetFirstNonPrimaryKeyAttributePerModel(modelsToSearchFor);
+            Action getByValueAction = () =>
+            {
+                List<ISearchModel<M>> valueSearchModels = new List<ISearchModel<M>>();
 
+                for (int i = 0; i < firstNonPkAttributePerModel.Count; i++)
+                {
+                    var firstNonPkAttributeNameAndValueOfCurrModel = firstNonPkAttributePerModel[i];
+
+                    // Again, updating the ISearchModel of the CqrsReader, but using the name/value of the first non-primary key attribute this time.
+                    readDatabaseCrudModels.SearchModel.IdentifiersAndValuesToSearchFor = new Dictionary<string, object>();
+                    readDatabaseCrudModels.SearchModel.IdentifiersAndValuesToSearchFor.Add(firstNonPkAttributeNameAndValueOfCurrModel.Key,
+                                                                                           firstNonPkAttributeNameAndValueOfCurrModel.Value);
+                    valueSearchModels.Add(readDatabaseCrudModels.SearchModel.Clone());
+                }
+
+                cqrsReader.OpenConnectionToApi();
+                cqrsReader.Search(valueSearchModels);
+                cqrsReader.CloseConnectionToApi();
+            };
+
+
+            // Create action
+            Action createAction = () =>
+            {
+                cqrsWriter.OpenConnectionToApi();
+                cqrsWriter.Create(randomizedStartingModels);
+                cqrsWriter.CloseConnectionToApi();
+            };
+
+
+            // Delete action
             var columnsToDeleteOn = new string[] { currentModelTypePrimaryKeyName };
             Action deleteAllAction = () =>
             {
+                cqrsWriter.OpenConnectionToApi();
+
                 cqrsWriter.crudModels.DeleteModel.IdentifiersToDeleteOn = columnsToDeleteOn;
                 cqrsReader.crudModels.DeleteModel.IdentifiersToDeleteOn = columnsToDeleteOn;
 
-                cqrsWriter.Delete((IEnumerable<M>) randomizedStartingModels);
+                cqrsWriter.Delete(randomizedStartingModels);
+
+                cqrsWriter.CloseConnectionToApi();
             };
 
 
-            //TODO
+            // Update action
             var columnsToUpdateOn = columnsToDeleteOn;
             var updateAction = new Action(() =>
             {
+                cqrsWriter.OpenConnectionToApi();
+
                 cqrsWriter.crudModels.UpdateModel.IdentifiersToFilterOn = columnsToUpdateOn;
                 cqrsReader.crudModels.UpdateModel.IdentifiersToFilterOn = columnsToUpdateOn;
 
-                cqrsWriter.Update((IEnumerable<M>) randomizedStartingModels);
+                cqrsWriter.Update(randomizedStartingModels);
+
+                cqrsWriter.CloseConnectionToApi();
             });
 
 
+            // Truncation action
             var randomizeAction = new Action(() =>
             {
                 var random = new Random();
@@ -99,7 +136,9 @@ namespace Benchmarking_Console_App.Tests.CQRS
 
             var truncateAction = new Action(() =>
             {
+                cqrsWriter.OpenConnectionToApi();
                 cqrsWriter.Truncate();
+                cqrsWriter.CloseConnectionToApi();
             });
 
 
@@ -109,8 +148,8 @@ namespace Benchmarking_Console_App.Tests.CQRS
                 DeleteAction = deleteAllAction,
                 GetByPkAction = getByPkAction,
                 RandomizeAction = randomizeAction,
-                UpdateAction = () => {}, // TODO
-                GetAllAction = getAllAction,
+                UpdateAction = updateAction,
+                GetByValueAction = getByValueAction,
                 TruncateAction = truncateAction,
 
                 WipeExistingDatabase = wipeExistingDatabase
@@ -119,7 +158,7 @@ namespace Benchmarking_Console_App.Tests.CQRS
 
         protected override string GetDatabaseTypeString(IDatabaseType writeDatabaseType)
         {
-            return $"CQRS (Read DB {readDatabaseType.ToEnum()} Write DB {writeDatabaseType.ToEnum()}";
+            return $"CQRS (Read DB {readDatabaseType.ToEnum()} with Write DB {writeDatabaseType.ToEnum()})";
         }
     }
 }

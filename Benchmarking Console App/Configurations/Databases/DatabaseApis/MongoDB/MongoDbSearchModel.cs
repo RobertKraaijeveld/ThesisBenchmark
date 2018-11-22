@@ -11,13 +11,17 @@ namespace Benchmarking_program.Configurations.Databases.DatabaseApis.SQL
 
         public MongoDbSearchModel() { }
 
-        public MongoDbSearchModel(Dictionary<string, object> identifiersAndValuesToSearchFor, 
-                                  List<string> identifiersToRetrieve)
+        public MongoDbSearchModel(Dictionary<string, object> identifiersAndValuesToSearchFor)
         {
             this.IdentifiersAndValuesToSearchFor = identifiersAndValuesToSearchFor;
         }
 
-        /// <summary>
+        public ISearchModel<M> Clone()
+        {
+            return new MongoDbSearchModel<M>(this.IdentifiersAndValuesToSearchFor);
+        }
+
+            /// <summary>
         /// Returns the full BSON query text for filtering collection @tableName for
         /// values @identifiersAndValuesToSearchFor and retrieving the properties in @identifiersToRetrieve.
         /// </summary>

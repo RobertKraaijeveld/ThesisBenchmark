@@ -20,7 +20,6 @@ namespace Benchmarking_Console_App.Configurations.Databases.DatabaseTypes
             {
                 CreateModel = new CassandraCreateModel(),
                 DeleteModel = new CassandraDeleteModel(),
-                GetAllModel = new CassandraGetAllModel<M>(),
                 SearchModel = new CassandraSearchModel<M>(),
                 UpdateModel = new CassandraUpdateModel()
             };

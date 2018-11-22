@@ -15,6 +15,11 @@ namespace Benchmarking_program.Configurations.Databases.DatabaseApis.SQL
             this.IdentifiersAndValuesToSearchFor = IdentifiersAndValuesToSearchFor;
         }
 
+        public ISearchModel<M> Clone()
+        {
+            return new CassandraSearchModel<M>(this.IdentifiersAndValuesToSearchFor);
+        }
+
 
         public string GetSearchString<T>()
         {

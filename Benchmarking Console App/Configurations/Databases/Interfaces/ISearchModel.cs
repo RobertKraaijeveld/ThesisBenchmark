@@ -12,6 +12,9 @@ namespace Benchmarking_program.Configurations.Databases.Interfaces
     {
         string GetSearchString<M>();
 
+        // Used when needing to prepare many searches at once without knowing the derived type of an ISearchModel
+        ISearchModel<M> Clone(); 
+
         Dictionary<string, object> IdentifiersAndValuesToSearchFor { get; set; }
     }
 }

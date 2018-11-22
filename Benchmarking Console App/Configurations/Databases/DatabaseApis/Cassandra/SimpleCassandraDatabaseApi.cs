@@ -34,15 +34,19 @@ namespace Benchmarking_program.Configurations.Databases.DatabaseApis.SQL
             _cassandraMapper = new Mapper(_cassandraSession);
         }
 
-        public IEnumerable<M> GetAll<M>(IGetAllModel<M> getAllModel) where M : IModel, new()
+
+        public void OpenConnection()
         {
-            var getAllQueryText = getAllModel.CreateGetAllString();
-            return _cassandraMapper.Fetch<M>(getAllQueryText).ToList();
         }
 
-        public IEnumerable<M> Search<M>(ISearchModel<M> searchModel) where M : IModel, new()
+        public void CloseConnection()
         {
-            var searchQueryText = searchModel.GetSearchString<M>();
+        }
+
+        // TODO: OPTIMIZE
+        public List<M> Search<M>(List<ISearchModel<M>> searchModels) where M : IModel, new()
+        {
+            var searchQueryText = searchModels.First().GetSearchString<M>();
             return _cassandraMapper.Fetch<M>(searchQueryText).ToList();
         }
 
@@ -58,6 +62,13 @@ namespace Benchmarking_program.Configurations.Databases.DatabaseApis.SQL
             return amount;
         }
 
+        public IEnumerable<string> GetAllTableNames()
+        {
+            var query = $"SELECT table_name FROM system_schema.tables WHERE keyspace_name = '{this.KEYSPACE_NAME}';";
+            return _cassandraMapper.Fetch<string>(query);
+        }
+
+
         public void CreateCollectionIfNotExists<M>(ICreateCollectionModel<M> createCollectionModel) where M : IModel, new()
         {
             if (this.GetAllTableNames().Contains(typeof(M).Name.ToLower()) == false)
@@ -67,7 +78,7 @@ namespace Benchmarking_program.Configurations.Databases.DatabaseApis.SQL
             }
         }
 
-        public void Create<M>(IEnumerable<M> newModels, ICreateModel createModel) where M : IModel, new()
+        public void Create<M>(List<M> newModels, ICreateModel createModel) where M : IModel, new()
         {
             foreach (var model in newModels)
             {
@@ -76,7 +87,7 @@ namespace Benchmarking_program.Configurations.Databases.DatabaseApis.SQL
             }
         }
 
-        public void Update<M>(IEnumerable<M> modelsWithNewValues, IUpdateModel updateModel) where M : IModel, new()
+        public void Update<M>(List<M> modelsWithNewValues, IUpdateModel updateModel) where M : IModel, new()
         {
             foreach (var model in modelsWithNewValues)
             {
@@ -85,7 +96,7 @@ namespace Benchmarking_program.Configurations.Databases.DatabaseApis.SQL
             }
         }
 
-        public void Delete<M>(IEnumerable<M> modelsToDelete, IDeleteModel deleteModel) where M : IModel, new()
+        public void Delete<M>(List<M> modelsToDelete, IDeleteModel deleteModel) where M : IModel, new()
         {
             foreach (var model in modelsToDelete)
             {
@@ -106,12 +117,6 @@ namespace Benchmarking_program.Configurations.Databases.DatabaseApis.SQL
         public void Truncate<M>() where M : IModel, new()
         {
             _cassandraMapper.Execute($"TRUNCATE {this.KEYSPACE_NAME}.{typeof(M).Name}");
-        }
-
-        public IEnumerable<string> GetAllTableNames()
-        {
-            var query = $"SELECT table_name FROM system_schema.tables WHERE keyspace_name = '{this.KEYSPACE_NAME}';";
-            return _cassandraMapper.Fetch<string>(query);
         }
     }
 }

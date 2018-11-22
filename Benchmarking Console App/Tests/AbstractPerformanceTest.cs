@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Linq;
 using Benchmarking_Console_App.Configurations.Databases.DatabaseTypes;
 using Benchmarking_Console_App.Tests;
 using Benchmarking_program.Models.DatabaseModels;
@@ -10,25 +11,15 @@ namespace Benchmarking_Console_App.Testing
     public abstract class AbstractPerformanceTest
     {
         protected int amountOfModelsToCreate;
-        protected int amountOfModelsToRetrieveByPrimaryKey;
+        protected int amountOfModelsToRetrieveByPk;
         protected int amountOfModelsToRetrieveByContent;
         protected int amountOfModelsToUpdate;
 
         protected double timeSpentInsertingModels = 0;
-        protected double timeSpentGettingAllModels = 0;
+        protected double timeSpentGettingModelsByValue = 0;
         protected double timeSpentGettingModelsByPrimaryKey = 0;
         protected double timeSpentUpdatingModels = 0;
         protected double timeSpentDeletingModels = 0;
-
-
-        protected AbstractPerformanceTest(int amountOfModelsToCreate, int amountOfModelsToRetrieveByPrimaryKey,
-                                          int amountOfModelsToRetrieveByContent, int amountOfModelsToUpdate)
-        {
-            this.amountOfModelsToCreate = amountOfModelsToCreate;
-            this.amountOfModelsToRetrieveByPrimaryKey = amountOfModelsToRetrieveByPrimaryKey;
-            this.amountOfModelsToRetrieveByContent = amountOfModelsToRetrieveByContent;
-            this.amountOfModelsToUpdate = amountOfModelsToUpdate;
-        }
 
 
         public TestReport GetTestReport<M>(IDatabaseType databaseType, bool scaled, bool wipeExistingDatabase) where M : class, IModel, new()
@@ -45,21 +36,73 @@ namespace Benchmarking_Console_App.Testing
 
                 TimeSpentDeletingAllModels = timeSpentDeletingModels,
                 TimeSpentInsertingModels = timeSpentInsertingModels,
-                TimeSpentRetrievingAllModels = timeSpentGettingAllModels,
-                //TimeSpentRetrievingModelsByContent = timeSpentGettingModelsByContent, TODO
+                TimeSpentRetrievingModelsByValue = timeSpentGettingModelsByValue,
                 TimeSpentRetrievingModelsByPrimaryKey = timeSpentGettingModelsByPrimaryKey,
                 TimeSpentUpdatingModels = timeSpentUpdatingModels,
 
                 AmountOfModelsInserted = amountOfModelsToCreate,
                 AmountOfModelsRetrievedByContent = amountOfModelsToRetrieveByContent,
-                AmountOfModelsRetrievedByPrimaryKey = amountOfModelsToRetrieveByPrimaryKey,
+                AmountOfModelsRetrievedByPrimaryKey = amountOfModelsToRetrieveByPk,
                 AmountOfModelsUpdated = amountOfModelsToUpdate
             };
+        }
+
+        public void SetAmounts(int AmountOfModelsToCreate, int AmountOfModelsToRetrieveByPk,
+                               int AmountOfModelsToRetrieveByContent, int AmountOfModelsToUpdate)
+        {
+            this.amountOfModelsToCreate = AmountOfModelsToCreate;
+            this.amountOfModelsToRetrieveByPk = AmountOfModelsToRetrieveByPk;
+            this.amountOfModelsToRetrieveByContent = AmountOfModelsToRetrieveByContent;
+            this.amountOfModelsToUpdate = AmountOfModelsToUpdate;
         }
 
         protected abstract ActionsToMeasure GetActionsToMeasure<M>(IDatabaseType databaseType, bool wipeExistingDatabase) where M: class, IModel, new();
 
         protected abstract string GetDatabaseTypeString(IDatabaseType dbType);
+
+        protected List<KeyValuePair<string, object>> GetPrimaryKeyAndValuePerModel<M>(List<M> models) where M: class, IModel, new()
+        {
+            var primaryKeyAndValuePerModel = new List<KeyValuePair<string, object>>();
+
+            // Each model has it's own combo of Primary Key: Value. 
+            // We retrieve it for each model, and add it to the list as a dictionary.
+            foreach (var model in models)
+            {
+                var primaryKeyName = model.GetPrimaryKeyFieldName();
+                var primaryKeyValue = model.GetFieldsWithValues()[primaryKeyName];
+
+                var columnsAndValuesToSearchFor = new KeyValuePair<string, object>(primaryKeyName, primaryKeyValue);
+
+                primaryKeyAndValuePerModel.Add(columnsAndValuesToSearchFor);
+            }
+
+            return primaryKeyAndValuePerModel;
+        }
+
+        protected List<KeyValuePair<string, object>> GetFirstNonPrimaryKeyAttributePerModel<M>(List<M> models) where M : class, IModel, new()
+        {
+            var attributeNameAndValuePerModel = new List<KeyValuePair<string, object>>();
+
+            string firstNonPrimaryKeyAttributeName = null;
+            foreach (var model in models)
+            {
+                if (firstNonPrimaryKeyAttributeName == null)
+                {
+                    var modelPrimaryKeyName = model.GetPrimaryKeyFieldName();
+                    var modelFieldsAndValues = model.GetFieldsWithValues();
+
+                    firstNonPrimaryKeyAttributeName = modelFieldsAndValues.Keys
+                                                                          .First(x => x.Equals(modelPrimaryKeyName));
+                }
+
+                var valueOfFirstNonPkAttribute = model.GetFieldsWithValues()[firstNonPrimaryKeyAttributeName];
+                var columnsAndValuesToSearchFor = new KeyValuePair<string, object>(firstNonPrimaryKeyAttributeName, valueOfFirstNonPkAttribute);
+
+                attributeNameAndValuePerModel.Add(columnsAndValuesToSearchFor);
+            }
+
+            return attributeNameAndValuePerModel;
+        }
 
         protected IEnumerable<M> GetRandomModels<M>(int amountToCreate) where M : IModel, new()
         {
@@ -89,7 +132,7 @@ namespace Benchmarking_Console_App.Testing
         {
             public Action CreateAction;
             public Action DeleteAction;
-            public Action GetAllAction;
+            public Action GetByValueAction;
             public Action GetByPkAction;
             public Action UpdateAction;
             public Action TruncateAction;
@@ -106,7 +149,7 @@ namespace Benchmarking_Console_App.Testing
                 this.timeSpentInsertingModels = GetTimeSpentOnActionMs(actions.CreateAction);
             }
 
-            this.timeSpentGettingAllModels = GetTimeSpentOnActionMs(actions.GetAllAction);
+            this.timeSpentGettingModelsByValue = GetTimeSpentOnActionMs(actions.GetByValueAction);
             this.timeSpentGettingModelsByPrimaryKey = GetTimeSpentOnActionMs(actions.GetByPkAction);
 
             if (actions.WipeExistingDatabase)
@@ -117,7 +160,7 @@ namespace Benchmarking_Console_App.Testing
 
             // Re-randomizing models and re-inserting before updating so some actual changes are made.
             actions.RandomizeAction.Invoke();
-            //this.timeSpentUpdatingModels = GetTimeSpentOnActionMs(actions.UpdateAction); TODO
+            this.timeSpentUpdatingModels = GetTimeSpentOnActionMs(actions.UpdateAction); 
 
             // Forcing garbage collection to ensure old models are not retained in memory.
             // This would skew the performance (especially memory) measurements.
