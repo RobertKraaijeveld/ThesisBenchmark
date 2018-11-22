@@ -34,7 +34,7 @@ namespace Benchmarking_program.Configurations.Databases.DatabaseApis.SQL
 
                 deleteCmdText += $"_id: {base.ValueToString(primaryKeyValue)}";
 
-                return deleteCmdText += "}"; 
+                return $"{{ {deleteCmdText} }}, {{}} }}";
             }
 
             foreach (var identifier in IdentifiersToDeleteOn)
@@ -46,7 +46,7 @@ namespace Benchmarking_program.Configurations.Databases.DatabaseApis.SQL
             deleteCmdText = deleteCmdText.Remove(deleteCmdText.Length - 1, 1);
             deleteCmdText += "}";
 
-            return deleteCmdText;
+            return $"{{ {deleteCmdText} }}, {{}} }}"; // bogus projection in order to satisfy parser later on
         }
     }
 }

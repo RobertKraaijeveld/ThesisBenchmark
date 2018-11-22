@@ -82,25 +82,22 @@ namespace Benchmarking_program.Configurations.Databases.DatabaseApis.SQL
             var createModel = new MongoDbCreateModel();
             var deleteModel = new MongoDbDeleteModel(updateModel.IdentifiersToFilterOn);
 
-            foreach (var model in modelsWithNewValues)
-            {
-                var modelAsList = new List<M> {model};
-
-                this.Delete(modelAsList, deleteModel);
-                this.Create(modelAsList, createModel);
-            }
+            this.Delete(modelsWithNewValues, deleteModel);
+            this.Create(modelsWithNewValues, createModel);
         }
 
         public void Delete<M>(List<M> modelsToDelete, IDeleteModel deleteModel) where M : IModel, new()
         {
+            List<string> deleteQueries = new List<string>();
+
             foreach (var model in modelsToDelete)
             {
                 var deleteQueryText = deleteModel.GetDeleteString(model);
-                var asBsonDoc = BsonSerializer.Deserialize<BsonDocument>(deleteQueryText);
-
-                _database.GetCollection<M>(nameof(M))
-                    .DeleteOne(asBsonDoc);
+                deleteQueries.Add(deleteQueryText);
             }
+
+            var filtersAndProjection = MultipleBsonToSingleFilterAndProjection(deleteQueries);
+            _database.GetCollection<M>(nameof(M)).DeleteMany(filtersAndProjection.Filter);
         }
 
         public void TruncateAll()

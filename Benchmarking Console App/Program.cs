@@ -41,12 +41,12 @@ namespace Benchmarking_program
             var simpleDriverTest = new DbWithSimpleDriverTest();
             var tests = new List<Tuple<AbstractPerformanceTest, IDatabaseType>>()
             {
-                new Tuple<AbstractPerformanceTest, IDatabaseType>(simpleDriverTest, new MySQLDatabaseType()),
-                new Tuple<AbstractPerformanceTest, IDatabaseType>(simpleDriverTest, new PostgreSQLDatabaseType()),
-                new Tuple<AbstractPerformanceTest, IDatabaseType>(simpleDriverTest, new RedisDatabaseType()),
-                new Tuple<AbstractPerformanceTest, IDatabaseType>(simpleDriverTest, new CassandraDatabaseType()),
+                //new Tuple<AbstractPerformanceTest, IDatabaseType>(simpleDriverTest, new MySQLDatabaseType()),
+                //new Tuple<AbstractPerformanceTest, IDatabaseType>(simpleDriverTest, new PostgreSQLDatabaseType()),
+                //new Tuple<AbstractPerformanceTest, IDatabaseType>(simpleDriverTest, new RedisDatabaseType()),
+                //new Tuple<AbstractPerformanceTest, IDatabaseType>(simpleDriverTest, new CassandraDatabaseType()),
                 new Tuple<AbstractPerformanceTest, IDatabaseType>(simpleDriverTest, new MongoDbDatabaseType()),
-                new Tuple<AbstractPerformanceTest, IDatabaseType>(simpleDriverTest, new MySqlWithDapperDatabaseType())
+                //new Tuple<AbstractPerformanceTest, IDatabaseType>(simpleDriverTest, new MySqlWithDapperDatabaseType())
             };
             ExecuteTests<MinuteAveragesRow>(tests, modelAmounts, hasScalingBeenEnabled, wipeExistingDatabase);
 
