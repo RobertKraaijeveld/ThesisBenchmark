@@ -1,3 +1,0 @@
-DatabaseTypeUsedStr,ModelTypeName,AmountOfModelsInserted,TimeSpentInsertingModels,TimeSpentRetrievingAllModels,AmountOfModelsRetrievedByPrimaryKey,TimeSpentRetrievingModelsByPrimaryKey,AmountOfModelsRetrievedByContent,TimeSpentRetrievingModelsByContent,AmountOfModelsUpdated,FieldsUpdatedPerModel,TimeSpentUpdatingModels,TimeSpentDeletingAllModels
-Redis (scaled),MinuteAveragesRow,5000,2710,98046,2500,741,2500,0,2500,0,1214,1951
-Entity Framework MySQL (scaled),MinuteAveragesRow,5000,57405,39,5000,253,5000,0,5000,0,0,11379

@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using Benchmarking_Console_App.Configurations.Databases.Interfaces;
 using Benchmarking_program.Configurations.Databases.Interfaces;
 using Benchmarking_program.Models.DatabaseModels;
@@ -40,14 +41,25 @@ namespace Benchmarking_program.Configurations.Databases.DatabaseApis.SQL
             _databaseConnection = null;
         }
 
-        // TODO: OPTIMIZE
+
         public List<M> Search<M>(List<ISearchModel<M>> searchModels) where M : IModel, new()
         {
-            var searchCommandText = searchModels.First().GetSearchString<M>();
+            var allSearchKeys = searchModels.Select(x => (RedisKey) x.GetSearchString<M>())
+                                                          .ToList();
 
-            var resultJson = _databaseConnection.StringGet(searchCommandText);
-            return new List<M>() { JsonConvert.DeserializeObject<M>(resultJson) };
+            var taskList = new List<Task<RedisValue>>();
+            var readBatch = _databaseConnection.CreateBatch();
+
+            foreach (var key in allSearchKeys)
+            {
+                var task = readBatch.StringGetAsync(key);
+                taskList.Add(task);
+            }
+            readBatch.Execute();
+
+            return taskList.Select(x => JsonConvert.DeserializeObject<M>(x.Result)).ToList();
         }
+
 
         public int Amount<M>() where M : IModel, new()
         {
@@ -56,37 +68,54 @@ namespace Benchmarking_program.Configurations.Databases.DatabaseApis.SQL
             return (int)_databaseConnection.Execute("DBSIZE");
         }
 
+
         public void Create<M>(List<M> newModels, ICreateModel createModel) where M : IModel, new()
         {
+            List<Task> creationTasks = new List<Task>();
+
             foreach (var model in newModels)
             {
                 var createStr = createModel.GetCreateString(model);
                 var cmdAndArgs = this.SeparateCmdAndArguments(createStr);
 
-                _databaseConnection.Execute(cmdAndArgs.Item1, cmdAndArgs.Item2);
+                var createModelTask = _databaseConnection.ExecuteAsync(cmdAndArgs.Item1, cmdAndArgs.Item2);
+                creationTasks.Add(createModelTask);
             }
+
+            Task.WaitAll(creationTasks.ToArray());
         }
 
         public void Update<M>(List<M> modelsWithNewValues, IUpdateModel updateModel) where M : IModel, new()
         {
+            List<Task> updatingTasks = new List<Task>();
+
             foreach (var model in modelsWithNewValues)
             {
                 var updateStr = updateModel.GetUpdateString(model);
                 var cmdAndArgs = this.SeparateCmdAndArguments(updateStr);
 
-                _databaseConnection.Execute(cmdAndArgs.Item1, cmdAndArgs.Item2);
+                var updateModelTask = _databaseConnection.ExecuteAsync(cmdAndArgs.Item1, cmdAndArgs.Item2);
+                updatingTasks.Add(updateModelTask);
             }
+
+            Task.WaitAll(updatingTasks.ToArray());
         }
 
         public void Delete<M>(List<M> modelsToDelete, IDeleteModel deleteModel) where M : IModel, new()
         {
+            List<Task> deletionTasks = new List<Task>();
+
             foreach (var model in modelsToDelete)
             {
                 var deleteStr = deleteModel.GetDeleteString(model);
                 var cmdAndArgs = this.SeparateCmdAndArguments(deleteStr);
-
-                _databaseConnection.Execute(cmdAndArgs.Item1, cmdAndArgs.Item2);
+                
+                // Note that this ExecuteAsync command will only be executed once creationBatch.Execute() is called
+                var deleteTask = _databaseConnection.ExecuteAsync(cmdAndArgs.Item1, cmdAndArgs.Item2);
+                deletionTasks.Add(deleteTask);
             }
+
+            Task.WaitAll(deletionTasks.ToArray());
         }
 
         public void TruncateAll()

@@ -121,8 +121,8 @@ namespace Benchmarking_Console_App.Testing
 
                 getByPkAction = () =>
                 {
-                    apiForDatabaseType.OpenConnection();
 
+                    List<ISearchModel<M>> primaryKeySearchModels = new List<ISearchModel<M>>();
                     for (int i = 0; i < primaryKeyAndValuePerModel.Count; i++)
                     {
                         var primaryKeyAndValueOfThisModel = primaryKeyAndValuePerModel[i];
@@ -132,9 +132,11 @@ namespace Benchmarking_Console_App.Testing
                         crudModelsForDatabaseType.SearchModel.IdentifiersAndValuesToSearchFor.Add(primaryKeyAndValueOfThisModel.Key,
                                                                                                   primaryKeyAndValueOfThisModel.Value);
 
-                        apiForDatabaseType.Search(new List<ISearchModel<M>> { crudModelsForDatabaseType.SearchModel });
+                        primaryKeySearchModels.Add(crudModelsForDatabaseType.SearchModel.Clone());
                     }
 
+                    apiForDatabaseType.OpenConnection();
+                    apiForDatabaseType.Search(primaryKeySearchModels);
                     apiForDatabaseType.CloseConnection();
                 };
 

@@ -1,3 +1,0 @@
-DatabaseTypeUsedStr,ModelTypeName,AmountOfModelsInserted,TimeSpentInsertingModels,TimeSpentRetrievingAllModels,AmountOfModelsRetrievedByPrimaryKey,TimeSpentRetrievingModelsByPrimaryKey,AmountOfModelsRetrievedByContent,TimeSpentRetrievingModelsByContent,AmountOfModelsUpdated,FieldsUpdatedPerModel,TimeSpentUpdatingModels,TimeSpentDeletingAllModels
-MongoDB (scaled),MinuteAveragesRow,1000,0,45,1000,2445,1000,0,1000,0,2595,0
-Entity Framework MySQL (scaled),MinuteAveragesRow,1000,0,4,1000,2733,1000,0,1000,0,0,0

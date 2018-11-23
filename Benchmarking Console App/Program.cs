@@ -21,34 +21,38 @@ namespace Benchmarking_program
     {
         public static void Main(string[] args)
         {
+            //CreateSqlCollections();
+
             bool hasScalingBeenEnabled = DatabaseConnectionStringFactory.IsConfigFileForScaledServersUsed();
             bool wipeExistingDatabase = true;
-            int[] modelAmounts = new int[] { 1000 }; //0, 500, 1000, 5000, 10000, 100000, 1000000000};
+            int[] modelAmounts = new int[] { 10, 100, 1000 }; //0, 500, 1000, 5000, 10000, 100000, 1000000000};
 
-            CreateSqlCollections();
+            var allTestReports = new List<TestReport>();
+            //allTestReports.AddRange(GetSimpleDriverTestReports(modelAmounts, hasScalingBeenEnabled, wipeExistingDatabase));
+            allTestReports.AddRange(GetEntityFrameworkTestReports(modelAmounts, hasScalingBeenEnabled, wipeExistingDatabase));
+            allTestReports.AddRange(GetCqrsTestReports(modelAmounts, hasScalingBeenEnabled, wipeExistingDatabase));
 
-            RunSimpleDriverTests(modelAmounts, hasScalingBeenEnabled, wipeExistingDatabase);
-            RunEntityFrameworkTests(modelAmounts, hasScalingBeenEnabled, wipeExistingDatabase);
-            RunCqrsTestReports(modelAmounts, hasScalingBeenEnabled, wipeExistingDatabase);
+            string reportName = hasScalingBeenEnabled ? "scaled_simple_drivers_tests" : "unscaled_simple_drivers_tests";
+            TestReport.CombineTestReportsIntoCsvFile(allTestReports, reportName);
         }
 
 
-
-        private static void RunSimpleDriverTests(int[] modelAmounts,
-                                                        bool hasScalingBeenEnabled,
-                                                        bool wipeExistingDatabase)
+        private static List<TestReport> GetSimpleDriverTestReports(int[] modelAmounts,
+                                                                   bool hasScalingBeenEnabled,
+                                                                   bool wipeExistingDatabase)
         {
             var simpleDriverTest = new DbWithSimpleDriverTest();
             var tests = new List<Tuple<AbstractPerformanceTest, IDatabaseType>>()
             {
-                //new Tuple<AbstractPerformanceTest, IDatabaseType>(simpleDriverTest, new MySQLDatabaseType()),
-                //new Tuple<AbstractPerformanceTest, IDatabaseType>(simpleDriverTest, new PostgreSQLDatabaseType()),
-                //new Tuple<AbstractPerformanceTest, IDatabaseType>(simpleDriverTest, new RedisDatabaseType()),
-                //new Tuple<AbstractPerformanceTest, IDatabaseType>(simpleDriverTest, new CassandraDatabaseType()),
+                new Tuple<AbstractPerformanceTest, IDatabaseType>(simpleDriverTest, new MySQLDatabaseType()),
+                new Tuple<AbstractPerformanceTest, IDatabaseType>(simpleDriverTest, new PostgreSQLDatabaseType()),
+                new Tuple<AbstractPerformanceTest, IDatabaseType>(simpleDriverTest, new RedisDatabaseType()),
+                new Tuple<AbstractPerformanceTest, IDatabaseType>(simpleDriverTest, new CassandraDatabaseType()),
                 new Tuple<AbstractPerformanceTest, IDatabaseType>(simpleDriverTest, new MongoDbDatabaseType()),
-                //new Tuple<AbstractPerformanceTest, IDatabaseType>(simpleDriverTest, new MySqlWithDapperDatabaseType())
+                new Tuple<AbstractPerformanceTest, IDatabaseType>(simpleDriverTest, new MySqlWithDapperDatabaseType())
             };
-            ExecuteTests<MinuteAveragesRow>(tests, modelAmounts, hasScalingBeenEnabled, wipeExistingDatabase);
+
+            var allTestReports = ExecuteTests<MinuteAveragesRow>(tests, modelAmounts, hasScalingBeenEnabled, wipeExistingDatabase);
 
 
             // Perst uses a different type of model (because it cannot cope with properties instead of fields)
@@ -56,10 +60,12 @@ namespace Benchmarking_program
             {
                 new Tuple<AbstractPerformanceTest, IDatabaseType>(simpleDriverTest, new PerstDatabaseType())
             };
-            ExecuteTests<MinuteAveragesRowForPerst>(perstTest, modelAmounts, hasScalingBeenEnabled, wipeExistingDatabase);
+            allTestReports.AddRange(ExecuteTests<MinuteAveragesRowForPerst>(perstTest, modelAmounts, hasScalingBeenEnabled, wipeExistingDatabase));
+
+            return allTestReports;
         }
 
-        private static void RunEntityFrameworkTests(int[] modelAmounts,
+        private static List<TestReport> GetEntityFrameworkTestReports(int[] modelAmounts,
                                                                       bool hasScalingBeenEnabled,
                                                                       bool wipeExistingDatabase)
         {
@@ -70,30 +76,30 @@ namespace Benchmarking_program
                 // new Tuple<AbstractPerformanceTest, IDatabaseType>(entityFrameworkTest, new PostgreSQLDatabaseType())
             };
 
-            ExecuteTests<MinuteAveragesRow>(tests, modelAmounts, hasScalingBeenEnabled, wipeExistingDatabase);
+            return ExecuteTests<MinuteAveragesRow>(tests, modelAmounts, hasScalingBeenEnabled, wipeExistingDatabase);
         }
 
-        private static void RunCqrsTestReports(int[] modelAmounts,
+        private static List<TestReport> GetCqrsTestReports(int[] modelAmounts,
                                                            bool hasScalingBeenEnabled,
                                                            bool wipeExistingDatabase)
         {
             // TODO: APPLY CQRS TO MULTIPLE DBs
             var test = new DbWithCqrsTest(readDatabaseType: new RedisDatabaseType());
-            var databaseType = new MySQLDatabaseType();
+            var writeDatabaseType = new PostgreSQLDatabaseType();
 
             var tests = new List<Tuple<AbstractPerformanceTest, IDatabaseType>>
             {
-                new Tuple<AbstractPerformanceTest, IDatabaseType>(test, databaseType)
+                new Tuple<AbstractPerformanceTest, IDatabaseType>(test, writeDatabaseType)
             };
 
-            ExecuteTests<MinuteAveragesRow>(tests, modelAmounts, hasScalingBeenEnabled, wipeExistingDatabase);
+            return ExecuteTests<MinuteAveragesRow>(tests, modelAmounts, hasScalingBeenEnabled, wipeExistingDatabase);
         }
 
 
-        private static void ExecuteTests<M>(List<Tuple<AbstractPerformanceTest, IDatabaseType>> testsToExecute,
-                                            int[] modelAmounts,
-                                            bool hasScalingBeenEnabled,
-                                            bool wipeExistingDatabase) where M : class, IModel, new()
+        private static List<TestReport> ExecuteTests<M>(List<Tuple<AbstractPerformanceTest, IDatabaseType>> testsToExecute,
+                                                        int[] modelAmounts,
+                                                        bool hasScalingBeenEnabled,
+                                                        bool wipeExistingDatabase) where M : class, IModel, new()
         {
             List<TestReport> resultingTestReports = new List<TestReport>();
 
@@ -111,21 +117,23 @@ namespace Benchmarking_program
                 });
 
 
-                string reportName = hasScalingBeenEnabled ? "scaled_simple_drivers_tests" : "unscaled_simple_drivers_tests";
-                Console.WriteLine($"Done with test for {amount} models, writing to {reportName}.csv");
+                Console.WriteLine($"Done with test for {amount} models");
 
-                TestReport.CombineTestReportsIntoCsvFile(resultingTestReports, reportName);
             }
+            return resultingTestReports;
         }
 
+        /// <summary>
+        /// <b>WARNING</b>: Only call this function once when the Docker machines have just started up, or suffer a performance penalty. 
+        /// </summary>
         private static void CreateSqlCollections()
         {
             // Creating collections in case they don't exist yet. Only applies to fixed-schema, SQL-like databases.
             var mysqlConnString = DatabaseConnectionStringFactory.GetDatabaseConnectionString(EDatabaseType.MySQL);
-            var mysqlApi = new SimpleSQLDatabaseApi<MySqlCommand, MySqlConnection, MySqlDataAdapter>(mysqlConnString);
+            var mysqlApi = new SimpleSQLDatabaseApi<MySqlCommand, MySqlConnection>(mysqlConnString);
 
             var postgresqlConnString = DatabaseConnectionStringFactory.GetDatabaseConnectionString(EDatabaseType.PostgreSQL);
-            var postgresqlApi = new SimpleSQLDatabaseApi<NpgsqlCommand, NpgsqlConnection, NpgsqlDataAdapter>(postgresqlConnString);
+            var postgresqlApi = new SimpleSQLDatabaseApi<NpgsqlCommand, NpgsqlConnection>(postgresqlConnString);
 
             var cassandraConnString = DatabaseConnectionStringFactory.GetDatabaseConnectionString(EDatabaseType.Cassandra);
             var cassandraApi = new SimpleCassandraDatabaseApi(cassandraConnString);
@@ -137,7 +145,7 @@ namespace Benchmarking_program
             postgresqlApi.OpenConnection();
             postgresqlApi.CreateCollectionIfNotExists(new SqlCreateCollectionModel<MinuteAveragesRow>());
             postgresqlApi.CloseConnection();
-            
+
             cassandraApi.OpenConnection();
             cassandraApi.CreateCollectionIfNotExists(new CassandraCreateCollectionModel<MinuteAveragesRow>(cassandraApi.KEYSPACE_NAME));
             cassandraApi.CloseConnection();

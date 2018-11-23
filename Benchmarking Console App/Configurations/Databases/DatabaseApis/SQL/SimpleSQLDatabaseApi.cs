@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Data.Common;
+using Benchmarking_Console_App.Configurations.Databases;
 using Benchmarking_Console_App.Configurations.Databases.Interfaces;
 using Benchmarking_program.Configurations.Databases.Interfaces;
 using Benchmarking_program.Models.DatabaseModels;
@@ -13,14 +14,10 @@ using Npgsql;
 
 namespace Benchmarking_program.Configurations.Databases.DatabaseApis.SQL
 {
-    public class SimpleSQLDatabaseApi<CommandType, ConnectionType, DataAdapterType> : IDatabaseApi
+    public class SimpleSQLDatabaseApi<CommandType, ConnectionType> : IDatabaseApi
                                                                      where CommandType: DbCommand, new()
                                                                      where ConnectionType: DbConnection, new()
-                                                                     where DataAdapterType: DbDataAdapter, new()
     {
-        // Used to store table names that have been filled, these tablenames are used when calling TruncateAll().
-        // Weak solution since tables might be filled without being touched by this API.
-        private static HashSet<string> NamesOfFilledTables = new HashSet<string>();
         private readonly string _connectionString;
         private ConnectionType _connection;     
 
@@ -28,8 +25,6 @@ namespace Benchmarking_program.Configurations.Databases.DatabaseApis.SQL
         {
             _connectionString = connectionString;
             _connection = new ConnectionType(){ ConnectionString = _connectionString };
-
-            CreateDatabase();
         }
 
 
@@ -49,11 +44,15 @@ namespace Benchmarking_program.Configurations.Databases.DatabaseApis.SQL
             }
         }
 
+
         // TODO: OPTIMIZE
         public List<M> Search<M>(List<ISearchModel<M>> searchModels) where M : IModel, new()
         {
-            var searchQuery = searchModels.First().GetSearchString<M>();
-            return this.GetResults<M>(searchQuery);
+            var queries = searchModels.Select(x => x.GetSearchString<M>())
+                                      .ToArray();
+
+            var flattenedSearchQuery = UtilityFunctions.FlattenQueries(queries);
+            return this.GetResults<M>(flattenedSearchQuery);
         }
 
         public int Amount<M>() where M : IModel, new()
@@ -86,32 +85,58 @@ namespace Benchmarking_program.Configurations.Databases.DatabaseApis.SQL
 
         public void Create<M>(List<M> newModels, ICreateModel createModel) where M : IModel, new()
         {
-            foreach(var model in newModels)
+            var queries = new string[newModels.Count];
+            for (int i = 0; i < newModels.Count; i++)
             {
-                var cmd = new CommandType() { CommandText = createModel.GetCreateString(model),
-                                              Connection = _connection };
+                queries[i] = createModel.GetCreateString(newModels[i]);
+            }
+            var flattenedCreateQueries = UtilityFunctions.FlattenQueries(queries);
 
+            using (var trans = _connection.BeginTransaction())
+            { 
+                var cmd = new CommandType() { CommandText = flattenedCreateQueries,
+                                              Connection = _connection };
                 cmd.ExecuteNonQuery();
+
+                trans.Commit();
             }
         }
 
         public void Update<M>(List<M> modelsWithNewValues, IUpdateModel updateModel) where M : IModel, new()
         {
-            foreach (var modelWithNewVals in modelsWithNewValues)
+            var queries = new string[modelsWithNewValues.Count];
+            for (int i = 0; i < modelsWithNewValues.Count; i++)
             {
-                var cmd = new CommandType() { CommandText = updateModel.GetUpdateString(modelWithNewVals),
+                queries[i] = updateModel.GetUpdateString(modelsWithNewValues[i]);
+            }
+            var flattenedUpdateQueries = UtilityFunctions.FlattenQueries(queries);
+
+            using (var trans = _connection.BeginTransaction())
+            {
+                var cmd = new CommandType() { CommandText = flattenedUpdateQueries,
                                               Connection = _connection };
                 cmd.ExecuteNonQuery();
+
+                trans.Commit();
             }
         }
 
         public void Delete<M>(List<M> modelsToDelete, IDeleteModel deleteModel) where M : IModel, new()
         {
-            foreach (var model in modelsToDelete)
+            var queries = new string[modelsToDelete.Count];
+            for (int i = 0; i < modelsToDelete.Count; i++)
             {
-                var cmd = new CommandType() { CommandText = deleteModel.GetDeleteString(model),
+                queries[i] = deleteModel.GetDeleteString(modelsToDelete[i]);
+            }
+            var flattenedUpdateQueries = UtilityFunctions.FlattenQueries(queries);
+
+            using (var trans = _connection.BeginTransaction())
+            {
+                var cmd = new CommandType() { CommandText = flattenedUpdateQueries,
                                               Connection = _connection };
                 cmd.ExecuteNonQuery();
+
+                trans.Commit();
             }
         }
 
@@ -141,7 +166,7 @@ namespace Benchmarking_program.Configurations.Databases.DatabaseApis.SQL
             }
         }
 
-
+        // TODO: OPTIMIZE BY CACHING COLUMN ORDINALS
         private List<M> GetResults<M>(string query) where M: IModel, new() 
         {
             var resultingModels = new List<M>();
@@ -162,7 +187,7 @@ namespace Benchmarking_program.Configurations.Databases.DatabaseApis.SQL
                     reader.GetValues(values);
 
                     var rowAsDict = columnNames.Zip(values, (c, v) => new { column = c, value = v })
-                        .ToDictionary(key => key.column, value => value.value);
+                                               .ToDictionary(key => key.column, value => value.value);
 
                     var rowAsJson = JsonConvert.SerializeObject(rowAsDict);
                     var rowAsModel = JsonConvert.DeserializeObject<M>(rowAsJson);
@@ -171,35 +196,6 @@ namespace Benchmarking_program.Configurations.Databases.DatabaseApis.SQL
                 }
             }
             return resultingModels;
-        }
-
-        private DataTable ConvertToDataTable<T>(IList<T> list)
-        {
-            PropertyDescriptorCollection propertyDescriptorCollection = TypeDescriptor.GetProperties(typeof(T));
-            DataTable table = new DataTable();
-            for (int i = 0; i < propertyDescriptorCollection.Count; i++)
-            {
-                PropertyDescriptor propertyDescriptor = propertyDescriptorCollection[i];
-                Type propType = propertyDescriptor.PropertyType;
-                if (propType.IsGenericType && propType.GetGenericTypeDefinition() == typeof(Nullable<>))
-                {
-                    table.Columns.Add(propertyDescriptor.Name, Nullable.GetUnderlyingType(propType));
-                }
-                else
-                {
-                    table.Columns.Add(propertyDescriptor.Name, propType);
-                }
-            }
-            object[] values = new object[propertyDescriptorCollection.Count];
-            foreach (T listItem in list)
-            {
-                for (int i = 0; i < values.Length; i++)
-                {
-                    values[i] = propertyDescriptorCollection[i].GetValue(listItem);
-                }
-                table.Rows.Add(values);
-            }
-            return table;
         }
     }
 }

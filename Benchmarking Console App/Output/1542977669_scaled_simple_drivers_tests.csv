@@ -1,0 +1,37 @@
+DatabaseTypeUsedStr,ModelTypeName,AmountOfModelsInserted,TimeSpentInsertingModels,TimeSpentRetrievingAllModels,AmountOfModelsRetrievedByPrimaryKey,TimeSpentRetrievingModelsByPrimaryKey,AmountOfModelsRetrievedByContent,TimeSpentRetrievingModelsByValue,AmountOfModelsUpdated,FieldsUpdatedPerModel,TimeSpentUpdatingModels,TimeSpentDeletingAllModels
+CQRS (Read DB Redis with Write DB PostgreSQL) (scaled),MinuteAveragesRow,10,55,0,5,256,5,451,5,0,4,11
+CQRS (Read DB Redis with Write DB PostgreSQL) (scaled),MinuteAveragesRow,100,117,0,50,2548,50,2549,50,0,17,101
+CQRS (Read DB Redis with Write DB PostgreSQL) (scaled),MinuteAveragesRow,500,887,0,250,12947,250,12870,250,0,157,739
+CQRS (Read DB Redis with Write DB PostgreSQL) (scaled),MinuteAveragesRow,1000,2554,0,500,25637,500,26921,500,0,263,1842
+MySQL (scaled),MinuteAveragesRow,10,22,0,5,4,5,365,5,0,5,22
+PostgreSQL (scaled),MinuteAveragesRow,10,17,0,5,2,5,11,5,0,2,4
+Redis (scaled),MinuteAveragesRow,10,7506,0,5,244,5,300,5,0,4,3
+Cassandra (scaled),MinuteAveragesRow,10,9,0,5,5,5,68,5,0,1,1
+MongoDB (scaled),MinuteAveragesRow,10,206,0,5,16,5,111,5,0,3,16
+MySQLWithDapper (scaled),MinuteAveragesRow,10,12,0,5,3,5,53,5,0,3,9
+MySQL (scaled),MinuteAveragesRow,100,15,0,50,10,50,13,50,0,7,14
+PostgreSQL (scaled),MinuteAveragesRow,100,30,0,50,5,50,6,50,0,8,13
+Redis (scaled),MinuteAveragesRow,100,23,0,50,2656,50,2527,50,0,6,10
+Cassandra (scaled),MinuteAveragesRow,100,0,0,50,107,50,102,50,0,1,0
+MongoDB (scaled),MinuteAveragesRow,100,9,0,50,28,50,38,50,0,10,5
+MySQLWithDapper (scaled),MinuteAveragesRow,100,18,0,50,32,50,72,50,0,6,15
+MySQL (scaled),MinuteAveragesRow,500,74,0,250,63,250,79,250,0,30,54
+PostgreSQL (scaled),MinuteAveragesRow,500,64,0,250,31,250,30,250,0,41,64
+Redis (scaled),MinuteAveragesRow,500,36,0,250,12684,250,12927,250,0,16,4
+Cassandra (scaled),MinuteAveragesRow,500,9,0,250,143,250,398,250,0,9,6
+MongoDB (scaled),MinuteAveragesRow,500,44,0,250,79,250,83,250,0,32,22
+MySQLWithDapper (scaled),MinuteAveragesRow,500,60,0,250,137,250,339,250,0,31,59
+MySQL (scaled),MinuteAveragesRow,1000,189,0,500,144,500,169,500,0,63,112
+PostgreSQL (scaled),MinuteAveragesRow,1000,157,0,500,66,500,63,500,0,91,147
+Redis (scaled),MinuteAveragesRow,1000,76,0,500,23665,500,24247,500,0,30,8
+Cassandra (scaled),MinuteAveragesRow,1000,12,0,500,439,500,729,500,0,18,8
+MongoDB (scaled),MinuteAveragesRow,1000,94,0,500,148,500,336,500,0,74,52
+MySQLWithDapper (scaled),MinuteAveragesRow,1000,141,0,500,169,500,692,500,0,69,139
+Perst (scaled),MinuteAveragesRowForPerst,10,34,0,5,1,5,7,5,0,1,6
+Perst (scaled),MinuteAveragesRowForPerst,100,4,0,50,3,50,3,50,0,0,1
+Perst (scaled),MinuteAveragesRowForPerst,500,80,0,250,70,250,69,250,0,6,7
+Perst (scaled),MinuteAveragesRowForPerst,1000,298,0,500,280,500,284,500,0,17,18
+Entity Framework MySQL (scaled),MinuteAveragesRow,10,360,0,5,2,5,17,5,0,5,60
+Entity Framework MySQL (scaled),MinuteAveragesRow,100,97,0,50,2,50,3,50,0,21,88
+Entity Framework MySQL (scaled),MinuteAveragesRow,500,582,0,250,8,250,14,250,0,198,513
+Entity Framework MySQL (scaled),MinuteAveragesRow,1000,1298,0,500,21,500,24,500,0,511,1125

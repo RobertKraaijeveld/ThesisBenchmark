@@ -19,7 +19,7 @@ namespace Benchmarking_Console_App.Configurations.Databases.DatabaseApis.SQL
         {
             using (var dbContext = new BenchmarkDbContext(_connectionString))
             {
-                return dbContext.Set<M>().AsNoTracking().ToList();
+                return dbContext.Set<M>().ToList();
             }
         }
 
@@ -27,7 +27,7 @@ namespace Benchmarking_Console_App.Configurations.Databases.DatabaseApis.SQL
         {
             using (var dbContext = new BenchmarkDbContext(_connectionString))
             {
-                return dbContext.Set<M>().AsNoTracking().Where(predicate).ToList();
+                return dbContext.Set<M>().Where(predicate).ToList();
             }
         }
 
@@ -67,11 +67,7 @@ namespace Benchmarking_Console_App.Configurations.Databases.DatabaseApis.SQL
         {
             using (var dbContext = new BenchmarkDbContext(_connectionString))
             {
-                var set = dbContext.Set<M>();
-                var allEntitiesOfSet = set.ToList();
-
-                set.RemoveRange(allEntitiesOfSet);
-                dbContext.SaveChanges();
+                dbContext.Database.ExecuteSqlCommand($"TRUNCATE TABLE {typeof(M).Name.ToLower()}");
             }
         }
     }

@@ -1,5 +1,8 @@
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
+using Benchmarking_Console_App.Configurations.Databases;
+using Benchmarking_Console_App.Configurations.Databases.DatabaseApis.Cassandra;
 using Benchmarking_Console_App.Configurations.Databases.Interfaces;
 using Benchmarking_program.Configurations.Databases.Interfaces;
 using Benchmarking_program.Models.DatabaseModels;
@@ -16,6 +19,7 @@ namespace Benchmarking_program.Configurations.Databases.DatabaseApis.SQL
     {
         public readonly string KEYSPACE_NAME = "benchmarkdb";
 
+        private readonly int BATCH_SIZE = 10;
         private readonly string _connectionString;
 
         private readonly Cluster _cassandraCluster;
@@ -27,7 +31,13 @@ namespace Benchmarking_program.Configurations.Databases.DatabaseApis.SQL
         {
             _connectionString = connectionString;
 
-            var builder = Cluster.Builder().WithConnectionString(_connectionString);
+            var consistencyLevel = ConsistencyLevel.One;
+            var queryOptions = new QueryOptions();
+            queryOptions.SetConsistencyLevel(consistencyLevel);
+
+            var builder = Cluster.Builder()
+                                 .WithConnectionString(_connectionString)
+                                 .WithQueryOptions(queryOptions);
 
             _cassandraCluster = builder.Build();
             _cassandraSession = _cassandraCluster.Connect(KEYSPACE_NAME);
@@ -43,11 +53,16 @@ namespace Benchmarking_program.Configurations.Databases.DatabaseApis.SQL
         {
         }
 
-        // TODO: OPTIMIZE
+
         public List<M> Search<M>(List<ISearchModel<M>> searchModels) where M : IModel, new()
         {
-            var searchQueryText = searchModels.First().GetSearchString<M>();
-            return _cassandraMapper.Fetch<M>(searchQueryText).ToList();
+            var searchQueries = searchModels.Select(x => x.GetSearchString<M>())
+                                            .ToList();
+
+            var executeQueriesAsyncTask = Task.WhenAll(searchQueries.Select(q => _cassandraMapper.FetchAsync<M>(q)));
+            executeQueriesAsyncTask.Wait();
+
+            return executeQueriesAsyncTask.Result.SelectMany(x => x).ToList();
         }
 
         public int Amount<M>() where M : IModel, new()
@@ -80,29 +95,26 @@ namespace Benchmarking_program.Configurations.Databases.DatabaseApis.SQL
 
         public void Create<M>(List<M> newModels, ICreateModel createModel) where M : IModel, new()
         {
-            foreach (var model in newModels)
-            {
-                var createQueryText = createModel.GetCreateString(model);
-                _cassandraMapper.Execute(createQueryText);
-            }
+            var queries = newModels.Select(m => createModel.GetCreateString(m)).ToList();
+            var batches = CreateBatches(queries);
+
+            batches.ForEach(b => _cassandraSession.ExecuteAsync(b));
         }
 
         public void Update<M>(List<M> modelsWithNewValues, IUpdateModel updateModel) where M : IModel, new()
         {
-            foreach (var model in modelsWithNewValues)
-            {
-                var updateQueryText = updateModel.GetUpdateString(model);
-                _cassandraMapper.Execute(updateQueryText);
-            }
+            var queries = modelsWithNewValues.Select(m => updateModel.GetUpdateString(m)).ToList();
+            var batches = CreateBatches(queries);
+
+            batches.ForEach(b => _cassandraSession.ExecuteAsync(b));
         }
 
         public void Delete<M>(List<M> modelsToDelete, IDeleteModel deleteModel) where M : IModel, new()
         {
-            foreach (var model in modelsToDelete)
-            {
-                var updateQueryText = deleteModel.GetDeleteString(model);
-                _cassandraMapper.Execute(updateQueryText);
-            }
+            var queries = modelsToDelete.Select(m => deleteModel.GetDeleteString(m)).ToList();
+            var batches = CreateBatches(queries);
+
+            batches.ForEach(b => _cassandraSession.ExecuteAsync(b));
         }
 
         public void TruncateAll()
@@ -118,5 +130,40 @@ namespace Benchmarking_program.Configurations.Databases.DatabaseApis.SQL
         {
             _cassandraMapper.Execute($"TRUNCATE {this.KEYSPACE_NAME}.{typeof(M).Name}");
         }
+
+
+        private List<BatchStatement> CreateBatches(List<string> cqlQueries)
+        {
+            var batches = new List<BatchStatement>();
+
+            if (cqlQueries.Count >= BATCH_SIZE) // Need to create more than 1 batch
+            {
+                for (int i = 0; i < cqlQueries.Count; i += BATCH_SIZE)
+                {
+                    var currBatchQueries = cqlQueries.GetRange(i, BATCH_SIZE);
+                    var batch = CreateSingleBatch(currBatchQueries);
+
+                    batches.Add(batch);
+                }
+            }
+            else // Total amount of queries is < batch size so only 1 batch needed
+            {
+                var batch = CreateSingleBatch(cqlQueries);
+                batches.Add(batch);
+            }
+            return batches;
+        }
+
+        private BatchStatement CreateSingleBatch(List<string> cqlQueries)
+        {
+            var batch = new BatchStatement();
+            batch.SetBatchType(BatchType.Logged);
+
+            cqlQueries.ForEach(q => batch.Add(new SimpleStatement(q)));
+
+            return batch;
+        }
+
     }
+
 }

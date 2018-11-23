@@ -161,10 +161,6 @@ namespace Benchmarking_Console_App.Testing
             // Re-randomizing models and re-inserting before updating so some actual changes are made.
             actions.RandomizeAction.Invoke();
             this.timeSpentUpdatingModels = GetTimeSpentOnActionMs(actions.UpdateAction); 
-
-            // Forcing garbage collection to ensure old models are not retained in memory.
-            // This would skew the performance (especially memory) measurements.
-            GC.Collect();
         }
 
     }

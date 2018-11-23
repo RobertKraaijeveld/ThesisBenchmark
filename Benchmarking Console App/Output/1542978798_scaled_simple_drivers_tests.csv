@@ -1,0 +1,28 @@
+DatabaseTypeUsedStr,ModelTypeName,AmountOfModelsInserted,TimeSpentInsertingModels,TimeSpentRetrievingAllModels,AmountOfModelsRetrievedByPrimaryKey,TimeSpentRetrievingModelsByPrimaryKey,AmountOfModelsRetrievedByContent,TimeSpentRetrievingModelsByValue,AmountOfModelsUpdated,FieldsUpdatedPerModel,TimeSpentUpdatingModels,TimeSpentDeletingAllModels
+MySQL (scaled),MinuteAveragesRow,10,20,0,5,2,5,316,5,0,5,24
+PostgreSQL (scaled),MinuteAveragesRow,10,17,0,5,1,5,10,5,0,1,3
+Redis (scaled),MinuteAveragesRow,10,27,0,5,0,5,26,5,0,2,2
+Cassandra (scaled),MinuteAveragesRow,10,8,0,5,4,5,73,5,0,1,1
+MongoDB (scaled),MinuteAveragesRow,10,224,0,5,17,5,120,5,0,4,15
+MySQLWithDapper (scaled),MinuteAveragesRow,10,11,0,5,2,5,54,5,0,4,9
+MySQL (scaled),MinuteAveragesRow,100,15,0,50,11,50,12,50,0,7,15
+PostgreSQL (scaled),MinuteAveragesRow,100,94,0,50,8,50,8,50,0,9,18
+Redis (scaled),MinuteAveragesRow,100,9,0,50,1,50,2,50,0,4,1
+Cassandra (scaled),MinuteAveragesRow,100,1,0,50,58,50,107,50,0,2,0
+MongoDB (scaled),MinuteAveragesRow,100,10,0,50,38,50,42,50,0,8,5
+MySQLWithDapper (scaled),MinuteAveragesRow,100,19,0,50,21,50,68,50,0,27,13
+MySQL (scaled),MinuteAveragesRow,500,78,0,250,59,250,80,250,0,30,54
+PostgreSQL (scaled),MinuteAveragesRow,500,93,0,250,31,250,33,250,0,43,67
+Redis (scaled),MinuteAveragesRow,500,47,0,250,4,250,4,250,0,20,5
+Cassandra (scaled),MinuteAveragesRow,500,9,0,250,206,250,391,250,0,9,125
+MongoDB (scaled),MinuteAveragesRow,500,46,0,250,89,250,107,250,0,36,24
+MySQLWithDapper (scaled),MinuteAveragesRow,500,60,0,250,105,250,351,250,0,35,54
+Perst (scaled),MinuteAveragesRowForPerst,10,38,0,5,1,5,5,5,0,1,6
+Perst (scaled),MinuteAveragesRowForPerst,100,5,0,50,3,50,3,50,0,0,1
+Perst (scaled),MinuteAveragesRowForPerst,500,86,0,250,70,250,72,250,0,7,6
+Entity Framework MySQL (scaled),MinuteAveragesRow,10,394,0,5,2,5,17,5,0,5,60
+Entity Framework MySQL (scaled),MinuteAveragesRow,100,250,0,50,2,50,2,50,0,21,87
+Entity Framework MySQL (scaled),MinuteAveragesRow,500,548,0,250,8,250,8,250,0,174,523
+CQRS (Read DB Redis with Write DB PostgreSQL) (scaled),MinuteAveragesRow,10,110,0,5,2,5,2,5,0,4,9
+CQRS (Read DB Redis with Write DB PostgreSQL) (scaled),MinuteAveragesRow,100,116,0,50,1,50,1,50,0,17,100
+CQRS (Read DB Redis with Write DB PostgreSQL) (scaled),MinuteAveragesRow,500,828,0,250,3,250,5,250,0,164,745

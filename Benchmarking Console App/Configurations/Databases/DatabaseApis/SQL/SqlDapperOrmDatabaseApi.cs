@@ -1,9 +1,11 @@
 ﻿using System.Collections.Generic;
 using System.Data;
 using System.Data.Common;
+using System.Data.SqlClient;
 using System.Linq;
 using Benchmarking_Console_App.Configurations.Databases.Interfaces;
 using Benchmarking_program.Configurations.Databases.DatabaseApis;
+using Benchmarking_program.Configurations.Databases.DatabaseApis.SQL;
 using Benchmarking_program.Configurations.Databases.Interfaces;
 using Benchmarking_program.Models.DatabaseModels;
 using Dapper;
@@ -38,13 +40,21 @@ namespace Benchmarking_Console_App.Configurations.Databases.DatabaseApis.SQL
             }
         }
 
-        // TODO: OPTIMIZE
+
         public List<M> Search<M>(List<ISearchModel<M>> searchModel) where M : IModel, new()
         {
             List<M> result = new List<M>();
-            var searchQuery = searchModel.First().GetSearchString<M>();
+            string[] searchQueries = searchModel.Select(x => x.GetSearchString<M>()).ToArray();
+            string flattenedSearchQueries = UtilityFunctions.FlattenQueries(searchQueries);
 
-            result = _connection.Query<M>(searchQuery).ToList();
+            using (var gridReader = _connection.QueryMultiple(flattenedSearchQueries))
+            {
+                // Grid reader uses one IEnumerable per executed query. 
+                for (int i = 0; i < searchQueries.Length; i++)
+                {
+                    result.AddRange(gridReader.Read<M>());
+                }
+            }
             return result;
         }
 
@@ -56,25 +66,46 @@ namespace Benchmarking_Console_App.Configurations.Databases.DatabaseApis.SQL
 
         public void Create<M>(List<M> newModels, ICreateModel createModel) where M : IModel, new()
         {
-            foreach (var model in newModels)
+            string[] createQueries = new string[newModels.Count];
+            for (int i = 0; i < newModels.Count; i++)
             {
-                _connection.Execute(createModel.GetCreateString(model));
+                createQueries[i] = createModel.GetCreateString(newModels[i]);
+            }
+
+            using (var trans = _connection.BeginTransaction())
+            {
+                _connection.Execute(UtilityFunctions.FlattenQueries(createQueries));
+                trans.Commit();
             }
         }
 
         public void Update<M>(List<M> modelsWithNewValues, IUpdateModel updateModel) where M : IModel, new()
         {
-            foreach (var modelWithNewVals in modelsWithNewValues)
+            string[] updateQueries = new string[modelsWithNewValues.Count];
+            for (int i = 0; i < modelsWithNewValues.Count; i++)
             {
-                _connection.Execute(updateModel.GetUpdateString(modelWithNewVals));
+                updateQueries[i] = updateModel.GetUpdateString(modelsWithNewValues[i]);
+            }
+
+            using (var trans = _connection.BeginTransaction())
+            {
+                _connection.Execute(UtilityFunctions.FlattenQueries(updateQueries));
+                trans.Commit();
             }
         }
 
         public void Delete<M>(List<M> modelsToDelete, IDeleteModel deleteModel) where M : IModel, new()
         {
-            foreach (var model in modelsToDelete)
+            string[] deleteQueries = new string[modelsToDelete.Count];
+            for (int i = 0; i < modelsToDelete.Count; i++)
             {
-                _connection.Execute(deleteModel.GetDeleteString(model));
+                deleteQueries[i] = deleteModel.GetDeleteString(modelsToDelete[i]);
+            }
+
+            using (var trans = _connection.BeginTransaction())
+            {
+                _connection.Execute(UtilityFunctions.FlattenQueries(deleteQueries));
+                trans.Commit();
             }
         }
 

@@ -34,8 +34,12 @@ echo "Sleeping for 40s to avoid accessing DB during intialization..."
 sleep 40
 
 # Creating keyspace: Keyspaces have to be manually recreated each run
-docker-machine ssh cassandra -- 'docker exec cassandrascaled-node1 bash -c "echo \"CREATE KEYSPACE benchmarkdb WITH REPLICATION = { '"'"'class'"'"' : '"'"'SimpleStrategy'"'"', '"'"'replication_factor'"'"' : 1 };\" > createKeyspace.cql";'
+docker-machine ssh cassandra -- 'docker exec cassandrascaled-node1 bash -c "echo \"CREATE KEYSPACE benchmarkdb WITH REPLICATION = { '"'"'class'"'"' : '"'"'SimpleStrategy'"'"', '"'"'replication_factor'"'"' : 1 } AND DURABLE_WRITES = false; \" > createKeyspace.cql";'
 docker-machine ssh cassandra -- 'docker exec cassandrascaled-node1 bash -c "cqlsh -f createKeyspace.cql"'
+docker-machine ssh cassandra -- 'docker exec cassandrascaled-node1 bash -c "sed -i '"'"'s/auto_snapshot: true/auto_snapshot: false/g'"'"' /etc/cassandra/cassandra.yaml"'
+docker-machine ssh cassandra -- 'docker exec cassandrascaled-node2 bash -c "sed -i '"'"'s/auto_snapshot: true/auto_snapshot: false/g'"'"' /etc/cassandra/cassandra.yaml"'
+
+
 
 # Creating benchmark db keyspace:
 # cqlsh -e "CREATE KEYSPACE benchmarkdb WITH REPLICATION = { 'class' : 'SimpleStrategy', 'replication_factor' : 1 };"

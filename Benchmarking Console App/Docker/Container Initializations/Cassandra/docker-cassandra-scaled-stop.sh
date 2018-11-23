@@ -6,7 +6,6 @@ for (( index=0; index<2; index++ )) do
                                                                                            cd */; \ 
                                                                                            cd snapshots/'"${nodes[$index]}"'-backup/; \
                                                                                            pwd;");
-                                     rm -rf $backupdir; 
 
                                      docker cp '"${nodes[$index]}"':$backupdir/. /c/Users/kraaijeveld/DockerBackup/'"${nodes[$index]}"'-volume/;'
     docker-machine ssh cassandra -- 'docker stop '"${nodes[$index]}"''

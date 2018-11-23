@@ -5,35 +5,35 @@ setwd("C:/Projects/Afstudeerexperimenten/Benchmarking Console App/Benchmarking C
 
 
 # Creating all models - visualisation
-plot_result_per_db("1542892228_scaled_simple_drivers_tests.csv",
+plot_result_per_db("1542978798_scaled_simple_drivers_tests.csv",
                    "creating_all_scaled_visualization.png",
                    "Time spent creating all models per database",
                    "Amount of created models", "Time (ms)", 1000, 
                    "AmountOfModelsInserted", "TimeSpentInsertingModels")
 
 # Getting models by pk - visualisation
-plot_result_per_db("1542892228_scaled_simple_drivers_tests.csv",
+plot_result_per_db("1542978798_scaled_simple_drivers_tests.csv",
                    "getting_by_pk_visualization.png",
                    "Time spent retrieving models (by primary key) per database",
-                   "Amount of retrieved models", "Time (ms)", 500, 
+                   "Amount of retrieved models", "Time (ms)", 1000, 
                    "AmountOfModelsRetrievedByPrimaryKey", "TimeSpentRetrievingModelsByPrimaryKey")
 
 # Getting models by value - visualisation
-plot_result_per_db("1542892228_scaled_simple_drivers_tests.csv",
+plot_result_per_db("1542978798_scaled_simple_drivers_tests.csv",
                    "getting_by_value_visualization.png",
                    "Time spent retrieving models (by value) per database",
-                   "Amount of retrieved models", "Time (ms)", 500, 
+                   "Amount of retrieved models", "Time (ms)", 1000, 
                    "AmountOfModelsRetrievedByContent", "TimeSpentRetrievingModelsByValue")
 
 # Deleting all models - visualisation
-plot_result_per_db("1542892228_scaled_simple_drivers_tests.csv",
+plot_result_per_db("1542978798_scaled_simple_drivers_tests.csv",
                    "deleting_all_scaled_visualization.png",
                    "Time spent deleting all models per database",
                    "Amount of deleted models", "Time (ms)", 1000, 
                    "AmountOfModelsRetrievedByPrimaryKey", "TimeSpentDeletingAllModels")
  
 # Updating all models - visualisation
-plot_result_per_db("1542892228_scaled_simple_drivers_tests.csv",
+plot_result_per_db("1542978798_scaled_simple_drivers_tests.csv",
                    "updating_all_scaled_visualization.png",
                    "Time spent updating all models per database",
                    "Amount of updated models", "Time (ms)", 1000, 

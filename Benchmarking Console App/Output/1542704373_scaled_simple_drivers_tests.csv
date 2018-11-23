@@ -1,3 +1,0 @@
-DatabaseTypeUsedStr,ModelTypeName,AmountOfModelsInserted,TimeSpentInsertingModels,TimeSpentRetrievingAllModels,AmountOfModelsRetrievedByPrimaryKey,TimeSpentRetrievingModelsByPrimaryKey,AmountOfModelsRetrievedByContent,TimeSpentRetrievingModelsByContent,AmountOfModelsUpdated,FieldsUpdatedPerModel,TimeSpentUpdatingModels,TimeSpentDeletingAllModels
-Entity Framework MySQL (scaled),MinuteAveragesRow,10,0,1278,10,5,10,0,10,0,0,0
-Entity Framework MySQL (scaled),MinuteAveragesRow,100,0,1,100,1,100,0,100,0,0,0

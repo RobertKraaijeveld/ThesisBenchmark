@@ -32,7 +32,7 @@ namespace Benchmarking_Console_App.Configurations.Databases.DatabaseTypes
 
             return new DatabaseApis()
             {
-                NormalDatabaseApi = new SimpleSQLDatabaseApi<MySqlCommand, MySqlConnection, MySqlDataAdapter>(connString),
+                NormalDatabaseApi = new SimpleSQLDatabaseApi<MySqlCommand, MySqlConnection>(connString),
                 ObjectOrientedDatabaseApi = null
             };
         }

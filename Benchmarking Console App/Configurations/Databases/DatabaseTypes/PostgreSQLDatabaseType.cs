@@ -33,7 +33,7 @@ namespace Benchmarking_Console_App.Configurations.Databases.DatabaseTypes
 
             return new DatabaseApis()
             {
-                NormalDatabaseApi = new SimpleSQLDatabaseApi<NpgsqlCommand, NpgsqlConnection, NpgsqlDataAdapter>(connString),
+                NormalDatabaseApi = new SimpleSQLDatabaseApi<NpgsqlCommand, NpgsqlConnection>(connString),
                 ObjectOrientedDatabaseApi = null
             };
         }
