@@ -28,7 +28,7 @@ namespace Benchmarking_program
             int[] modelAmounts = new int[] { 10, 100, 1000 }; //0, 500, 1000, 5000, 10000, 100000, 1000000000};
 
             var allTestReports = new List<TestReport>();
-            //allTestReports.AddRange(GetSimpleDriverTestReports(modelAmounts, hasScalingBeenEnabled, wipeExistingDatabase));
+            allTestReports.AddRange(GetSimpleDriverTestReports(modelAmounts, hasScalingBeenEnabled, wipeExistingDatabase));
             allTestReports.AddRange(GetEntityFrameworkTestReports(modelAmounts, hasScalingBeenEnabled, wipeExistingDatabase));
             allTestReports.AddRange(GetCqrsTestReports(modelAmounts, hasScalingBeenEnabled, wipeExistingDatabase));
 
