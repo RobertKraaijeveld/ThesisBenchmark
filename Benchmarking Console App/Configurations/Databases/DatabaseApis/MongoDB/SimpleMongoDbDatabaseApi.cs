@@ -112,11 +112,9 @@ namespace Benchmarking_program.Configurations.Databases.DatabaseApis.SQL
         }
 
 
-        //FilterAndProjection separateFilterAndProjection
         private List<M> GetResults<M>(FilterAndProjection filterAndProjection) where M : IModel, new()
         {
             var results = new List<M>();
-
 
             var cursor = _database.GetCollection<M>(nameof(M))
                                   .Find(filterAndProjection.Filter)
@@ -161,8 +159,8 @@ namespace Benchmarking_program.Configurations.Databases.DatabaseApis.SQL
                 }
             }
 
-            // Finally, constructing the complete filtering string out of that.\
-            string projection = "{}"; // todo fixme
+            // Finally, constructing the complete filtering string out of that.
+            string projection = "{}";
             string flattenedFilterString = "";
             foreach (var attributeAndValues in attributesAndValues)
             {

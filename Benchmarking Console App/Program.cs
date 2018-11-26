@@ -48,7 +48,7 @@ namespace Benchmarking_program
             {
                 new Tuple<AbstractPerformanceTest, IDatabaseType>(simpleDriverTest, new PerstDatabaseType())
             };
-            var allTestReports = ExecuteTests<MinuteAveragesRowForPerst>(perstTest, modelAmounts, hasScalingBeenEnabled, wipeExistingDatabase); // CRASHES AT 50K
+            var allTestReports = ExecuteTests<MinuteAveragesRowForPerst>(perstTest, modelAmounts, hasScalingBeenEnabled, wipeExistingDatabase); 
 
             var tests = new List<Tuple<AbstractPerformanceTest, IDatabaseType>>()
             {
