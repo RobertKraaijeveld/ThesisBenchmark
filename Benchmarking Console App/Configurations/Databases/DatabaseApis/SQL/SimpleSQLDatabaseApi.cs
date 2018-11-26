@@ -15,30 +15,30 @@ using Npgsql;
 namespace Benchmarking_program.Configurations.Databases.DatabaseApis.SQL
 {
     public class SimpleSQLDatabaseApi<CommandType, ConnectionType> : IDatabaseApi
-                                                                     where CommandType: DbCommand, new()
-                                                                     where ConnectionType: DbConnection, new()
+                                                                     where CommandType : DbCommand, new()
+                                                                     where ConnectionType : DbConnection, new()
     {
         private readonly string _connectionString;
-        private ConnectionType _connection;     
+        private ConnectionType _connection;
 
         public SimpleSQLDatabaseApi(string connectionString)
         {
             _connectionString = connectionString;
-            _connection = new ConnectionType(){ ConnectionString = _connectionString };
+            _connection = new ConnectionType() { ConnectionString = _connectionString };
         }
 
 
         public void OpenConnection()
         {
-            if(_connection.State == ConnectionState.Closed)
-            { 
+            if (_connection.State == ConnectionState.Closed)
+            {
                 _connection.Open();
             }
         }
 
         public void CloseConnection()
         {
-            if(_connection.State == ConnectionState.Open)
+            if (_connection.State == ConnectionState.Open)
             {
                 _connection.Close();
             }
@@ -57,8 +57,12 @@ namespace Benchmarking_program.Configurations.Databases.DatabaseApis.SQL
 
         public int Amount<M>() where M : IModel, new()
         {
-            using (var cmd = new CommandType() { CommandText = $"SELECT COUNT(*) FROM {typeof(M).Name.ToLower()};",
-                                                 Connection = _connection })
+            using (var cmd = new CommandType()
+            {
+                CommandText = $"SELECT COUNT(*) FROM {typeof(M).Name.ToLower()};",
+                Connection = _connection,
+                CommandTimeout = 2000000
+            })
             {
                 // scalar == retrieve first row, first column only.
                 return int.Parse(cmd.ExecuteScalar().ToString());
@@ -75,8 +79,12 @@ namespace Benchmarking_program.Configurations.Databases.DatabaseApis.SQL
             }
             catch (Exception e) // table does not exist so we create it
             {
-                using (var cmd = new CommandType() { CommandText = createCollectionModel.GetCreateCollectionText(),
-                                                     Connection = _connection })
+                using (var cmd = new CommandType()
+                {
+                    CommandText = createCollectionModel.GetCreateCollectionText(),
+                    Connection = _connection,
+                    CommandTimeout = 2000000
+                })
                 {
                     cmd.ExecuteNonQuery();
                 }
@@ -93,9 +101,13 @@ namespace Benchmarking_program.Configurations.Databases.DatabaseApis.SQL
             var flattenedCreateQueries = UtilityFunctions.FlattenQueries(queries);
 
             using (var trans = _connection.BeginTransaction())
-            { 
-                var cmd = new CommandType() { CommandText = flattenedCreateQueries,
-                                              Connection = _connection };
+            {
+                var cmd = new CommandType()
+                {
+                    CommandText = flattenedCreateQueries,
+                    Connection = _connection,
+                    CommandTimeout = 2000000
+                };
                 cmd.ExecuteNonQuery();
 
                 trans.Commit();
@@ -113,8 +125,12 @@ namespace Benchmarking_program.Configurations.Databases.DatabaseApis.SQL
 
             using (var trans = _connection.BeginTransaction())
             {
-                var cmd = new CommandType() { CommandText = flattenedUpdateQueries,
-                                              Connection = _connection };
+                var cmd = new CommandType()
+                {
+                    CommandText = flattenedUpdateQueries,
+                    Connection = _connection,
+                    CommandTimeout = 2000000
+                };
                 cmd.ExecuteNonQuery();
 
                 trans.Commit();
@@ -132,17 +148,21 @@ namespace Benchmarking_program.Configurations.Databases.DatabaseApis.SQL
 
             using (var trans = _connection.BeginTransaction())
             {
-                var cmd = new CommandType() { CommandText = flattenedUpdateQueries,
-                                              Connection = _connection };
+                var cmd = new CommandType()
+                {
+                    CommandText = flattenedUpdateQueries,
+                    Connection = _connection,
+                    CommandTimeout = 2000000
+                };
                 cmd.ExecuteNonQuery();
 
                 trans.Commit();
             }
         }
 
-        public void Truncate<M>() where M: IModel, new()
+        public void Truncate<M>() where M : IModel, new()
         {
-            var cmd = new CommandType() {CommandText = $"TRUNCATE {typeof(M).Name.ToLower()};", Connection = _connection };
+            var cmd = new CommandType() { CommandText = $"TRUNCATE {typeof(M).Name.ToLower()};", Connection = _connection, CommandTimeout = 2000000 };
             cmd.ExecuteNonQuery();
 
             cmd.Dispose();
@@ -155,8 +175,8 @@ namespace Benchmarking_program.Configurations.Databases.DatabaseApis.SQL
 
             try
             {
-                var createDbCmd = new CommandType() { CommandText = "CREATE DATABASE benchmarkdb;", Connection = _connection };
-        
+                var createDbCmd = new CommandType() { CommandText = "CREATE DATABASE benchmarkdb;", Connection = _connection, CommandTimeout = 2000000 };
+
                 createDbCmd.ExecuteNonQuery();
                 createDbCmd.Dispose();
             }
@@ -166,12 +186,11 @@ namespace Benchmarking_program.Configurations.Databases.DatabaseApis.SQL
             }
         }
 
-        // TODO: OPTIMIZE BY CACHING COLUMN ORDINALS
-        private List<M> GetResults<M>(string query) where M: IModel, new() 
+        private List<M> GetResults<M>(string query) where M : IModel, new()
         {
             var resultingModels = new List<M>();
 
-            using (var cmd = new CommandType() { CommandText =query, Connection = _connection })
+            using (var cmd = new CommandType() { CommandText = query, Connection = _connection, CommandTimeout = 2000000 })
             using (var reader = cmd.ExecuteReader())
             {
                 // Getting column names and types, making sure all col names are lowercase, comparison will also be lowercase

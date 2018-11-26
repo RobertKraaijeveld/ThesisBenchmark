@@ -1,42 +1,45 @@
 library(plotrix)
+library(Cairo)
+windowsFonts(cmuserif = windowsFont("CMU Serif")) 
+par(family = "timesnewroman", font = 1, font.lab = 1, font.axis = 1)
 
 # setting wd
 setwd("C:/Projects/Afstudeerexperimenten/Benchmarking Console App/Benchmarking Console App/Output")
 
 
 # Creating all models - visualisation
-plot_result_per_db("1542978798_scaled_simple_drivers_tests.csv",
+plot_result_per_db("unscaled_result_0_to_50k.csv",
                    "creating_all_scaled_visualization.png",
                    "Time spent creating all models per database",
-                   "Amount of created models", "Time (ms)", 1000, 
+                   "Amount of created models", "Time (ms)", 50000, 
                    "AmountOfModelsInserted", "TimeSpentInsertingModels")
 
 # Getting models by pk - visualisation
-plot_result_per_db("1542978798_scaled_simple_drivers_tests.csv",
+plot_result_per_db("unscaled_result_0_to_50k.csv",
                    "getting_by_pk_visualization.png",
                    "Time spent retrieving models (by primary key) per database",
-                   "Amount of retrieved models", "Time (ms)", 1000, 
+                   "Amount of retrieved models", "Time (ms)", 50000, 
                    "AmountOfModelsRetrievedByPrimaryKey", "TimeSpentRetrievingModelsByPrimaryKey")
 
 # Getting models by value - visualisation
-plot_result_per_db("1542978798_scaled_simple_drivers_tests.csv",
+plot_result_per_db("unscaled_result_0_to_50k.csv",
                    "getting_by_value_visualization.png",
                    "Time spent retrieving models (by value) per database",
-                   "Amount of retrieved models", "Time (ms)", 1000, 
+                   "Amount of retrieved models", "Time (ms)", 50000, 
                    "AmountOfModelsRetrievedByContent", "TimeSpentRetrievingModelsByValue")
 
 # Deleting all models - visualisation
-plot_result_per_db("1542978798_scaled_simple_drivers_tests.csv",
+plot_result_per_db("unscaled_result_0_to_50k.csv",
                    "deleting_all_scaled_visualization.png",
                    "Time spent deleting all models per database",
-                   "Amount of deleted models", "Time (ms)", 1000, 
+                   "Amount of deleted models", "Time (ms)", 50000, 
                    "AmountOfModelsRetrievedByPrimaryKey", "TimeSpentDeletingAllModels")
  
 # Updating all models - visualisation
-plot_result_per_db("1542978798_scaled_simple_drivers_tests.csv",
+plot_result_per_db("unscaled_result_0_to_50k.csv",
                    "updating_all_scaled_visualization.png",
                    "Time spent updating all models per database",
-                   "Amount of updated models", "Time (ms)", 1000, 
+                   "Amount of updated models", "Time (ms)", 50000, 
                    "AmountOfModelsUpdated", "TimeSpentUpdatingModels")
 
 
@@ -60,6 +63,7 @@ plot_result_per_db <- function(filename, outfilename, visualizationtitle,
 {
   # Creating png with 'cairo' driver so that anti-aliasing is used. Looks prettier
   png(outfilename, 800, 800, type='cairo')
+  par(family="CMU Serif") # Setting font to same font as LaTeX
   
   # making lines thicker
   par(lwd=2,cex=1)
@@ -98,7 +102,7 @@ plot_result_per_db <- function(filename, outfilename, visualizationtitle,
       title(visualizationtitle,cex.main=1.7)
       axis(1, at=1:csvColumnOnXAxisLength, labels=csvColumnOnXAxisLabels, 
            cex.lab=1.5, cex.axis=1.25)
-      axis(2, at = seq(0, yAxisMax, by = 500), 
+      axis(2, at = seq(0, yAxisMax, by = 5000), 
            cex.lab=1.5, cex.axis=1.25)
       
     }

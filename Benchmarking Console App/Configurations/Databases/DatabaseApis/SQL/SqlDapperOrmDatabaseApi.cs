@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Data;
 using System.Data.Common;
 using System.Data.SqlClient;
@@ -47,7 +48,7 @@ namespace Benchmarking_Console_App.Configurations.Databases.DatabaseApis.SQL
             string[] searchQueries = searchModel.Select(x => x.GetSearchString<M>()).ToArray();
             string flattenedSearchQueries = UtilityFunctions.FlattenQueries(searchQueries);
 
-            using (var gridReader = _connection.QueryMultiple(flattenedSearchQueries))
+            using (var gridReader = _connection.QueryMultiple(flattenedSearchQueries, commandTimeout: Int32.MaxValue))
             {
                 // Grid reader uses one IEnumerable per executed query. 
                 for (int i = 0; i < searchQueries.Length; i++)
@@ -74,7 +75,7 @@ namespace Benchmarking_Console_App.Configurations.Databases.DatabaseApis.SQL
 
             using (var trans = _connection.BeginTransaction())
             {
-                _connection.Execute(UtilityFunctions.FlattenQueries(createQueries));
+                _connection.Execute(UtilityFunctions.FlattenQueries(createQueries), commandTimeout: Int32.MaxValue);
                 trans.Commit();
             }
         }
@@ -89,7 +90,7 @@ namespace Benchmarking_Console_App.Configurations.Databases.DatabaseApis.SQL
 
             using (var trans = _connection.BeginTransaction())
             {
-                _connection.Execute(UtilityFunctions.FlattenQueries(updateQueries));
+                _connection.Execute(UtilityFunctions.FlattenQueries(updateQueries), commandTimeout: Int32.MaxValue);
                 trans.Commit();
             }
         }
@@ -104,7 +105,7 @@ namespace Benchmarking_Console_App.Configurations.Databases.DatabaseApis.SQL
 
             using (var trans = _connection.BeginTransaction())
             {
-                _connection.Execute(UtilityFunctions.FlattenQueries(deleteQueries));
+                _connection.Execute(UtilityFunctions.FlattenQueries(deleteQueries), commandTimeout: Int32.MaxValue);
                 trans.Commit();
             }
         }

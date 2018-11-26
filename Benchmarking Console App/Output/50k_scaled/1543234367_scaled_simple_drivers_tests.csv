@@ -1,0 +1,3 @@
+DatabaseTypeUsedStr,ModelTypeName,AmountOfModelsInserted,TimeSpentInsertingModels,TimeSpentRetrievingAllModels,AmountOfModelsRetrievedByPrimaryKey,TimeSpentRetrievingModelsByPrimaryKey,AmountOfModelsRetrievedByContent,TimeSpentRetrievingModelsByValue,AmountOfModelsUpdated,FieldsUpdatedPerModel,TimeSpentUpdatingModels,TimeSpentDeletingAllModels
+Entity Framework MySQL (scaled),MinuteAveragesRow,50000,44336,0,25000,23592,25000,18085,25000,0,1180011,1195538
+CQRS (Read DB Redis with Write DB PostgreSQL) (scaled),MinuteAveragesRow,50000,35186,0,25000,414,25000,624,25000,0,8073,27519

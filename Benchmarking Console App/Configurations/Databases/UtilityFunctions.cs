@@ -10,12 +10,12 @@ namespace Benchmarking_Console_App.Configurations.Databases
     {
         public static string FlattenQueries(string[] queries)
         {
-            string ret = "";
+            StringBuilder sb = new StringBuilder();
             for (int i = 0; i < queries.Length; i++)
             {
-                ret += $"{queries[i]}";
+                sb.Append(queries[i]);
             }
-            return ret;
+            return sb.ToString();
         }
     }
 }

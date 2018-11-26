@@ -8,6 +8,7 @@ using Benchmarking_program.Configurations.Databases.Interfaces;
 using Benchmarking_program.Models.DatabaseModels;
 using Cassandra;
 using Cassandra.Mapping;
+using Newtonsoft.Json;
 
 
 namespace Benchmarking_program.Configurations.Databases.DatabaseApis.SQL
@@ -56,13 +57,16 @@ namespace Benchmarking_program.Configurations.Databases.DatabaseApis.SQL
 
         public List<M> Search<M>(List<ISearchModel<M>> searchModels) where M : IModel, new()
         {
+            var returnList = new List<M>();
             var searchQueries = searchModels.Select(x => x.GetSearchString<M>())
-                                            .ToList();
+                                            .ToArray();
 
-            var executeQueriesAsyncTask = Task.WhenAll(searchQueries.Select(q => _cassandraMapper.FetchAsync<M>(q)));
-            executeQueriesAsyncTask.Wait();
+            foreach (var query in searchQueries) // TODO: CONNECTIONS BUSY EXCEPTION FOR MANY QUERIES
+            {
+                returnList.AddRange(_cassandraMapper.Fetch<M>(query).ToList());
+            }
 
-            return executeQueriesAsyncTask.Result.SelectMany(x => x).ToList();
+            return returnList;
         }
 
         public int Amount<M>() where M : IModel, new()
@@ -98,7 +102,11 @@ namespace Benchmarking_program.Configurations.Databases.DatabaseApis.SQL
             var queries = newModels.Select(m => createModel.GetCreateString(m)).ToList();
             var batches = CreateBatches(queries);
 
-            batches.ForEach(b => _cassandraSession.ExecuteAsync(b));
+            batches.ForEach(b =>
+            {
+                var task = _cassandraSession.ExecuteAsync(b);
+                task.Wait();
+            });
         }
 
         public void Update<M>(List<M> modelsWithNewValues, IUpdateModel updateModel) where M : IModel, new()
@@ -106,7 +114,11 @@ namespace Benchmarking_program.Configurations.Databases.DatabaseApis.SQL
             var queries = modelsWithNewValues.Select(m => updateModel.GetUpdateString(m)).ToList();
             var batches = CreateBatches(queries);
 
-            batches.ForEach(b => _cassandraSession.ExecuteAsync(b));
+            batches.ForEach(b =>
+            {
+                var task = _cassandraSession.ExecuteAsync(b);
+                task.Wait();
+            });
         }
 
         public void Delete<M>(List<M> modelsToDelete, IDeleteModel deleteModel) where M : IModel, new()
@@ -114,7 +126,11 @@ namespace Benchmarking_program.Configurations.Databases.DatabaseApis.SQL
             var queries = modelsToDelete.Select(m => deleteModel.GetDeleteString(m)).ToList();
             var batches = CreateBatches(queries);
 
-            batches.ForEach(b => _cassandraSession.ExecuteAsync(b));
+            batches.ForEach(b =>
+            {
+                var task = _cassandraSession.ExecuteAsync(b);
+                task.Wait();
+            });
         }
 
         public void TruncateAll()
@@ -163,7 +179,5 @@ namespace Benchmarking_program.Configurations.Databases.DatabaseApis.SQL
 
             return batch;
         }
-
     }
-
 }

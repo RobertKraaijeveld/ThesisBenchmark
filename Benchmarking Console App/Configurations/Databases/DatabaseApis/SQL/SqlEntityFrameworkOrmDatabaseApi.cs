@@ -35,10 +35,7 @@ namespace Benchmarking_Console_App.Configurations.Databases.DatabaseApis.SQL
         {
             using (var dbContext = new BenchmarkDbContext(_connectionString))
             {
-                foreach (var model in modelsToCreate)
-                {
-                    dbContext.Set<M>().Add(model);
-                }
+                dbContext.Set<M>().AddRange(modelsToCreate);
                 dbContext.SaveChanges();
             }
         }
