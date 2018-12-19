@@ -26,7 +26,7 @@ Pre-requisites
 First-time setup steps
 -----------------------------------------
 0. > cd Docker/Container\ Initializations/
-1. Create all necessary Docker machines using > .create_all_machines.sh
+1. Create all necessary Docker machines using .create_all_machines.sh
 2. Start either the unscaled or scaled versions of the DB's listed above by running either unscaled_startall.sh or scaled_startall.sh
 3. Adjust the string in configFileToUse.config to the location of the config file that you wish to use: point it to unscaled.config to 
    use the unscaled versions of the databases, and scaled.config for the scaled variants.
