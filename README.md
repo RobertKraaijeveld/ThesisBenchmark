@@ -25,7 +25,7 @@ Pre-requisites
 
 First-time setup steps
 -----------------------------------------
-0. `cd Benchmarking\ Console\ App`
+0. `cd Benchmarking\ Console\ App/`
 1. `cd Docker/Container\ Initializations/`
 2. Create all necessary Docker machines using `./create_all_machines.sh`
 3. Start either the unscaled or scaled versions of the DB's listed above by running either `unscaled_startall.sh` or `scaled_startall.sh`
