@@ -25,13 +25,14 @@ Pre-requisites
 
 First-time setup steps
 -----------------------------------------
-0. > cd Docker/Container\ Initializations/
-1. Create all necessary Docker machines using ./create_all_machines.sh
-2. Start either the unscaled or scaled versions of the DB's listed above by running either unscaled_startall.sh or scaled_startall.sh
-3. Adjust the string in configFileToUse.config to the location of the config file that you wish to use: point it to unscaled.config to 
+0. `cd Benchmarking\ Console\ App/`
+1. `cd Docker/Container\ Initializations/`
+2. Create all necessary Docker machines using `./create_all_machines.sh`
+3. Start either the unscaled or scaled versions of the DB's listed above by running either `unscaled_startall.sh` or `scaled_startall.sh`
+4. Adjust the string in configFileToUse.config to the location of the config file that you wish to use: point it to unscaled.config to 
    use the unscaled versions of the databases, and scaled.config for the scaled variants.
-4. If necessary, adjust the connection strings in either the unscaled.config or the scaled.config files.
-5. If you want to, you can adjust the amount of models to be tested by editing the 'modelAmounts' variable in Program.cs.
-6. Run the project in an IDE of your choice.
-7. The resulting output files can be found in the \Output directory, along with results that were generated during the course of the thesis project, visualisations included.
+5. If necessary, adjust the connection strings in either the unscaled.config or the scaled.config files.
+6. If you want to, you can adjust the amount of models to be tested by editing the 'modelAmounts' variable in Program.cs.
+7. Run the project in an IDE of your choice.
+8. The resulting output files can be found in the \Output directory.
 
