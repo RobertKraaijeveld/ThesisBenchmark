@@ -24,5 +24,4 @@ docker-machine ssh mysql -- 'docker cp /c/Users/kraaijeveld/DockerBackup/mysqlsc
 echo "Sleeping for 20s to avoid accessing DB before it is fully initialized..."
 sleep 20
 
-# executing the dumped sql backup file
-docker-machine ssh mysql -- "docker exec mysqlscaled bash -c 'mysql -u root --password=password < /dump/benchmarkdb-backup.sql'"
+docker-machine ssh mysql -- "docker exec mysqlscaled bash -c 'mysql -u root --password=password -e \"CREATE DATABASE benchmarkdb;\"'"

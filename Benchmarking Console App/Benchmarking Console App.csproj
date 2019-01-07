@@ -215,7 +215,6 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       <SubType>Designer</SubType>
     </None>
-    <None Include="Docker\.env" />
     <None Include="Docker\Container Initializations\Cassandra\docker-cassandra-scaled-start.sh" />
     <None Include="Docker\Container Initializations\Cassandra\docker-cassandra-scaled-stop.sh" />
     <None Include="Docker\Container Initializations\Cassandra\docker-cassandra-unscaled-start.sh" />

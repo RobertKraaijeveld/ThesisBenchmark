@@ -12,9 +12,10 @@ namespace Benchmarking_program.Configurations.Databases.DatabaseApis
 
         static DatabaseConnectionStringFactory()
         {
+            string configFileName = GetConfigFileName();
+
             ConnectionStringPerDatabase = 
-                File.ReadAllLines(GetConfigFileName()) 
-                    .Where(l => !l.StartsWith("//")) // ignoring commented-out lines
+                File.ReadAllLines(configFileName) 
                     .ToDictionary(key =>
                     {
                         return key.Split(':')[0];
@@ -65,7 +66,7 @@ namespace Benchmarking_program.Configurations.Databases.DatabaseApis
 
         private static string GetConfigFileName()
         {
-            return File.ReadAllLines("C:\\Projects\\Afstudeerexperimenten\\Benchmarking Console App\\Benchmarking Console App\\configFileToUse.config")
+            return File.ReadAllLines("../../configFileToUse.config")
                        .First();
         }
     }

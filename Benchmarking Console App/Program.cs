@@ -25,7 +25,7 @@ namespace Benchmarking_program
 
             bool hasScalingBeenEnabled = DatabaseConnectionStringFactory.IsConfigFileForScaledServersUsed();
             bool wipeExistingDatabase = true;
-            int[] modelAmounts = new int[] {10, 500, 1000, 5000, 500000};
+            int[] modelAmounts = new int[] {10, 500, 1000, 5000};
 
             var allTestReports = new List<TestReport>();
             allTestReports.AddRange(GetSimpleDriverTestReports(modelAmounts, hasScalingBeenEnabled, wipeExistingDatabase));

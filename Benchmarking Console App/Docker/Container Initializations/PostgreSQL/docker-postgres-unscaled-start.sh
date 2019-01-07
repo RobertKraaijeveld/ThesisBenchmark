@@ -24,4 +24,4 @@ echo "Sleeping for 20s to avoid accessing DB before it is fully initialized..."
 sleep 20
 
 # executing the dumped sql backup file
-docker-machine ssh postgresql --  "docker exec postgresqlunscaled bash -c 'PGPASSWORD=password; psql -U postgres < /dump/BenchmarkDB.dump'"
+docker-machine ssh postgresql --  "docker exec postgresqlunscaled bash -c 'PGPASSWORD=password; psql -U postgres -c \"create database benchmarkdb;\"'"

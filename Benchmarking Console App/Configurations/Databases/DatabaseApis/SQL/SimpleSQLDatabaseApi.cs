@@ -45,7 +45,6 @@ namespace Benchmarking_program.Configurations.Databases.DatabaseApis.SQL
         }
 
 
-        // TODO: OPTIMIZE
         public List<M> Search<M>(List<ISearchModel<M>> searchModels) where M : IModel, new()
         {
             var queries = searchModels.Select(x => x.GetSearchString<M>())

@@ -27,4 +27,5 @@ sleep 20
 
 
 # executing the dumped sql backup file
-docker-machine ssh mysql -- "docker exec mysqlunscaled bash -c 'mysql -u root --password=password < /dump/benchmarkdb-backup.sql'"
+docker-machine ssh mysql -- "docker exec mysqlunscaled bash -c 'mysql -u root --password=password -e \"CREATE DATABASE benchmarkdb;\"'"
+
