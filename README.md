@@ -34,5 +34,5 @@ First-time setup steps
 5. If necessary, adjust the connection strings in either the unscaled.config or the scaled.config files.
 6. If you want to, you can adjust the amount of models to be tested by editing the 'modelAmounts' variable in Program.cs.
 7. Run the project in an IDE of your choice.
-8. The resulting output files can be found in the \Output directory, along with results that were generated during the course of the thesis project, visualisations included.
+8. The resulting output files can be found in the \Output directory.
 
