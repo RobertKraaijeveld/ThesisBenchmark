@@ -1,2 +1,0 @@
-DatabaseTypeUsedStr,ModelTypeName,AmountOfModelsInserted,TimeSpentInsertingModels,TimeSpentRetrievingAllModels,AmountOfModelsRetrievedByPrimaryKey,TimeSpentRetrievingModelsByPrimaryKey,AmountOfModelsRetrievedByContent,TimeSpentRetrievingModelsByValue,AmountOfModelsUpdated,FieldsUpdatedPerModel,TimeSpentUpdatingModels,TimeSpentDeletingAllModels
-CQRS (Read DB Redis with Write DB PostgreSQL) (unscaled),MinuteAveragesRow,5000,7290,0,2500,25,2500,29,2500,0,1756,6550
