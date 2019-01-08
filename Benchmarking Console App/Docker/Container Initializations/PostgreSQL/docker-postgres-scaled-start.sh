@@ -17,9 +17,6 @@ docker-machine ssh postgresql --  "docker run -d \
                                       --memory='4gb' \
                                       postgres;"
 
-# then, copying from our local backup dir into the container's mounted /dump/ dir, so that the volume is populated.
-docker-machine ssh postgresql --  'docker cp /c/Users/kraaijeveld/DockerBackup/postgresqlscaled-volume/. postgresqlscaled:/dump/' 
-
 echo "Sleeping for 20s to avoid accessing DB before it is fully initialized..."
 sleep 20
 

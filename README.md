@@ -36,3 +36,4 @@ First-time setup steps
 7. Run the project in an IDE of your choice.
 8. The resulting output files can be found in the \Output directory.
 
+> Should an 'Cannot access a disposed object' exception occur at the end of the benchmark, you can safely ignore it and exit the program. This behavior is caused by a known bug in the Perst database; your results will still be saved.

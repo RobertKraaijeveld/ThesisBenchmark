@@ -13,8 +13,6 @@ namespace Benchmarking_Console_App.Tests
         public int AmountOfModelsInserted;
         public double TimeSpentInsertingModels;
 
-        public double TimeSpentRetrievingAllModels;
-
         public int AmountOfModelsRetrievedByPrimaryKey;
         public double TimeSpentRetrievingModelsByPrimaryKey;
 
@@ -22,7 +20,6 @@ namespace Benchmarking_Console_App.Tests
         public double TimeSpentRetrievingModelsByValue;
 
         public int AmountOfModelsUpdated;
-        public int FieldsUpdatedPerModel;
         public double TimeSpentUpdatingModels;
 
         public double TimeSpentDeletingAllModels;

@@ -113,7 +113,6 @@ namespace Benchmarking_program
                     resultingTestReports.Add(result);
 
                     string reportName = hasScalingBeenEnabled ? "scaled_simple_drivers_tests" : "unscaled_simple_drivers_tests";
-                    TestReport.CombineTestReportsIntoCsvFile(new List<TestReport>(){result}, $"{reportName}_{result.DatabaseTypeUsedStr}");
                     Console.WriteLine($"Done with test for {amount} models for db {result.DatabaseTypeUsedStr}");
                 });
             }
